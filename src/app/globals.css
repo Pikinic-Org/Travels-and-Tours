@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neutral scale */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f7f8f7;
+  --color-neutral-100: #eef0ef;
+  --color-neutral-200: #dee1df;
+  --color-neutral-300: #c4c9c5;
+  --color-neutral-400: #9ba39d;
+  --color-neutral-500: #757d78;
+  --color-neutral-600: #565d58;
+  --color-neutral-700: #3d423e;
+  --color-neutral-800: #262a27;
+  --color-neutral-900: #141613;
+  --color-neutral-1000: #000000;
+
+  /* Brand green scale */
+  --color-green-50: #effbf3;
+  --color-green-100: #d7f3e1;
+  --color-green-200: #aee7c4;
+  --color-green-300: #7dd9a3;
+  --color-green-400: #56ce8b;
+  --color-green-500: #43c074; /* exact brand value — decorative/large surfaces only, fails AA for small text */
+  --color-green-600: #2f9d5c;
+  --color-green-700: #227a48; /* text-safe brand green, 5.3:1 on white */
+  --color-green-800: #175934;
+  --color-green-900: #012613; /* exact brand dark value */
+
+  /* Semantic aliases */
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-tertiary: var(--color-neutral-400);
+  --color-text-disabled: var(--color-neutral-300);
+  --color-text-inverse: var(--color-neutral-0);
+  --color-text-brand: var(--color-green-700);
+
+  --color-background-primary: var(--color-neutral-50);
+  --color-background-secondary: var(--color-neutral-100);
+  --color-background-inverse: var(--color-neutral-900);
+
+  --color-border-primary: var(--color-neutral-200);
+  --color-border-secondary: var(--color-neutral-300);
+
+  --color-surface-primary: var(--color-neutral-0);
+  --color-surface-secondary: var(--color-neutral-50);
+
+  --color-interactive-primary: var(--color-green-700);
+  --color-interactive-primary-hover: var(--color-green-800);
+  --color-interactive-primary-active: var(--color-green-900);
+  --color-interactive-on-primary: var(--color-neutral-0);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-outfit);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-neutral-0: var(--color-neutral-0);
+  --color-neutral-50: var(--color-neutral-50);
+  --color-neutral-100: var(--color-neutral-100);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-300: var(--color-neutral-300);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-500: var(--color-neutral-500);
+  --color-neutral-600: var(--color-neutral-600);
+  --color-neutral-700: var(--color-neutral-700);
+  --color-neutral-800: var(--color-neutral-800);
+  --color-neutral-900: var(--color-neutral-900);
+  --color-neutral-1000: var(--color-neutral-1000);
+
+  --color-green-50: var(--color-green-50);
+  --color-green-100: var(--color-green-100);
+  --color-green-200: var(--color-green-200);
+  --color-green-300: var(--color-green-300);
+  --color-green-400: var(--color-green-400);
+  --color-green-500: var(--color-green-500);
+  --color-green-600: var(--color-green-600);
+  --color-green-700: var(--color-green-700);
+  --color-green-800: var(--color-green-800);
+  --color-green-900: var(--color-green-900);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-text-disabled: var(--color-text-disabled);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-text-brand: var(--color-text-brand);
+
+  --color-background-primary: var(--color-background-primary);
+  --color-background-secondary: var(--color-background-secondary);
+  --color-background-inverse: var(--color-background-inverse);
+
+  --color-surface-primary: var(--color-surface-primary);
+  --color-surface-secondary: var(--color-surface-secondary);
+
+  --color-border-primary: var(--color-border-primary);
+  --color-border-secondary: var(--color-border-secondary);
+
+  --color-interactive-primary: var(--color-interactive-primary);
+  --color-interactive-primary-hover: var(--color-interactive-primary-hover);
+  --color-interactive-primary-active: var(--color-interactive-primary-active);
+  --color-interactive-on-primary: var(--color-interactive-on-primary);
+
+  /* Radius — tied to component type, not size (per design system) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   Motion system
+   Kept as plain CSS (not Tailwind's animate-[] arbitrary syntax) so it
+   reads and edits like normal keyframes, and degrades cleanly under
+   prefers-reduced-motion below.
+   --------------------------------------------------------------------- */
+
+.mesh-gradient {
+  background:
+    radial-gradient(at 15% 20%, var(--color-green-300) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, var(--color-green-500) 0px, transparent 50%),
+    radial-gradient(at 20% 90%, var(--color-green-700) 0px, transparent 55%),
+    radial-gradient(at 90% 85%, var(--color-green-200) 0px, transparent 50%),
+    var(--color-green-50);
+}
+@keyframes mesh-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.06); opacity: 0.85; }
+}
+.mesh-glow {
+  animation: mesh-breathe 9s ease-in-out infinite;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.float-slow {
+  animation: float-y 8s ease-in-out infinite;
+}
+
+@keyframes fade-up-blur {
+  from { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.reveal {
+  opacity: 0;
+  animation: fade-up-blur 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(34, 122, 72, 0.45); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 122, 72, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 122, 72, 0); }
+}
+.pulse-dot {
+  animation: pulse-dot 2.2s ease-out infinite;
+}
+
+@keyframes draw-line {
+  to { stroke-dashoffset: 0; }
+}
+.draw-underline {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: draw-line 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Scroll-triggered reveal — driven by the ScrollReveal component's
+   IntersectionObserver, which toggles .is-visible once an element
+   crosses the viewport. */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(4px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.9s ease-out;
+}
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Hero card — scrolls itself shut as the next section arrives.
+   Progressive enhancement: browsers without scroll-driven animations
+   (animation-timeline) just keep the card static, which is a fine default. */
+@supports (animation-timeline: view()) {
+  .scroll-close {
+    animation: hero-video-close linear both;
+    animation-timeline: view();
+    animation-range: cover 45% cover 100%;
+  }
+  @keyframes hero-video-close {
+    to {
+      transform: scale(0.94) translateY(-18px);
+      opacity: 0.35;
+      filter: saturate(0.7);
+    }
+  }
+}
+
+/* Horizontal scroll rows (mobile package cards) — hide the scrollbar but
+   keep the container natively scrollable/swipeable. */
+.scroll-snap-row {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-snap-row::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-glow,
+  .float-slow,
+  .pulse-dot {
+    animation: none !important;
+  }
+  .reveal,
+  .scroll-reveal {
+    opacity: 1;
+    animation: none !important;
+    transition: none !important;
+    filter: none;
+    transform: none;
+  }
+  .draw-underline {
+    stroke-dashoffset: 0;
+    animation: none !important;
+  }
+  .scroll-close {
+    animation: none !important;
+  }
 }
