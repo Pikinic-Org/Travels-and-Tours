@@ -23,9 +23,40 @@ const cabinClasses = ["Economy", "Premium Economy", "Business", "First"];
 const tripTypes = ["Round trip", "One way", "Multi-city"] as const;
 type TripType = (typeof tripTypes)[number];
 
-type Segment = { from: string; to: string };
+type Segment = { from: string; to: string; date: string };
 
 const MAX_SEGMENTS = 5;
+
+// Native <input type="date"> has no reliable cross-platform placeholder —
+// iOS Safari in particular renders an empty date field completely blank
+// until it's tapped, unlike desktop browsers' "mm/dd/yyyy" ghost text. This
+// overlays our own placeholder, hidden as soon as a real value is picked.
+function DateField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="relative">
+      <span className="sr-only">{label}</span>
+      <input
+        type="date"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-transparent text-base font-bold text-text-primary focus-visible:outline-none"
+      />
+      {!value && (
+        <span className="pointer-events-none absolute inset-0 flex items-center text-base font-bold text-text-tertiary">
+          mm/dd/yyyy
+        </span>
+      )}
+    </div>
+  );
+}
 
 function SwapIcon({ className }: { className?: string }) {
   return (
@@ -75,10 +106,12 @@ export function FlightSearchBar() {
 
   const [from, setFrom] = useState(cities[0]);
   const [to, setTo] = useState(cities[3]);
+  const [depart, setDepart] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
   const [segments, setSegments] = useState<Segment[]>([
-    { from: cities[0], to: cities[3] },
-    { from: cities[3], to: cities[0] },
+    { from: cities[0], to: cities[3], date: "" },
+    { from: cities[3], to: cities[0], date: "" },
   ]);
 
   function swap() {
@@ -91,7 +124,7 @@ export function FlightSearchBar() {
   }
 
   function addSegment() {
-    setSegments((prev) => [...prev, { from: cities[0], to: cities[3] }]);
+    setSegments((prev) => [...prev, { from: cities[0], to: cities[3], date: "" }]);
   }
 
   function removeSegment(index: number) {
@@ -182,22 +215,12 @@ export function FlightSearchBar() {
           </div>
 
           <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <span className="sr-only">Depart</span>
-            <input
-              type="date"
-              defaultValue=""
-              className="w-full bg-transparent text-base font-bold text-text-primary focus-visible:outline-none"
-            />
+            <DateField label="Depart" value={depart} onChange={setDepart} />
           </div>
 
           {tripType === "Round trip" && (
             <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-              <span className="sr-only">Return</span>
-              <input
-                type="date"
-                defaultValue=""
-                className="w-full bg-transparent text-base font-bold text-text-primary focus-visible:outline-none"
-              />
+              <DateField label="Return" value={returnDate} onChange={setReturnDate} />
             </div>
           )}
 
@@ -236,11 +259,10 @@ export function FlightSearchBar() {
                   />
                 </div>
                 <div className="flex flex-col justify-center border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
-                  <span className="sr-only">{`Flight ${index + 1} date`}</span>
-                  <input
-                    type="date"
-                    defaultValue=""
-                    className="w-full bg-transparent text-base font-bold text-text-primary focus-visible:outline-none"
+                  <DateField
+                    label={`Flight ${index + 1} date`}
+                    value={segment.date}
+                    onChange={(value) => updateSegment(index, "date", value)}
                   />
                 </div>
                 <div className="flex items-center justify-center px-3 py-2 sm:w-14 sm:shrink-0 sm:py-0">
