@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
 :root {
+  /* This site is light-only by design — without this, native form controls
+     (date inputs especially) follow the OS/browser dark-mode preference on
+     mobile and render their placeholder text and icons in a light color
+     that's invisible against our white inputs. */
+  color-scheme: light;
+
   /* Neutral scale */
   --color-neutral-0: #ffffff;
   --color-neutral-50: #f7f8f7;

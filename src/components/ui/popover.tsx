@@ -10,11 +10,18 @@ export function Popover({
   trigger,
   children,
   align = "left",
+  mobileAlign = "left",
   className,
 }: {
   trigger: (state: { open: boolean; toggle: () => void }) => ReactNode;
   children: (state: { close: () => void }) => ReactNode;
   align?: "left" | "right";
+  // Below sm:, the trigger's actual position can be anywhere once the
+  // layout wraps, so left/right anchoring (relative to the trigger) can
+  // push the panel off-screen. "center" instead centers the panel under
+  // the trigger, which — combined with a viewport-capped panel width —
+  // keeps it on-screen regardless of where the trigger ends up.
+  mobileAlign?: "left" | "center";
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -47,7 +54,9 @@ export function Popover({
         <div
           className={cn(
             "absolute top-full z-30 mt-2",
-            align === "right" ? "right-0" : "left-0"
+            mobileAlign === "center"
+              ? cn("left-1/2 -translate-x-1/2", align === "right" && "sm:left-auto sm:right-0 sm:translate-x-0")
+              : cn("left-0", align === "right" && "sm:left-auto sm:right-0")
           )}
         >
           {children({ close: () => setOpen(false) })}

@@ -74,6 +74,7 @@ export function PassengersSelect({
   return (
     <Popover
       align="right"
+      mobileAlign="center"
       className={className}
       trigger={({ toggle, open }) => (
         <button
@@ -99,7 +100,7 @@ export function PassengersSelect({
       )}
     >
       {({ close }) => (
-        <div className="w-72 rounded-[2px] border border-border-primary bg-surface-primary p-4 shadow-lg">
+        <div className="w-[85vw] max-w-72 rounded-[2px] border border-border-primary bg-surface-primary p-4 shadow-lg">
           <div className="divide-y divide-border-primary">
             <CounterRow
               label="Adults"
