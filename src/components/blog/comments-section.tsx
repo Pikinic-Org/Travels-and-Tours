@@ -1,51 +1,24 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { commentSchema, getFieldErrors } from "@/lib/validation";
+import { useCommentsStore, type Comment } from "@/lib/comments-store";
 import { cn } from "@/lib/utils";
-
-type Comment = {
-  id: string;
-  name: string;
-  body: string;
-  createdAt: string;
-};
-
-function storageKey(slug: string) {
-  return `pikinic-tt-comments-${slug}`;
-}
 
 function formatCommentDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
 }
 
 export function CommentsSection({ slug }: { slug: string }) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [ready, setReady] = useState(false);
+  const comments = useCommentsStore((s) => s.commentsBySlug[slug] ?? []);
+  const hasHydrated = useCommentsStore((s) => s.hasHydrated);
+  const addComment = useCommentsStore((s) => s.addComment);
+
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey(slug));
-      if (raw) setComments(JSON.parse(raw));
-    } catch {
-      // ignore malformed/unavailable storage — comments just start empty
-    }
-    setReady(true);
-  }, [slug]);
-
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      localStorage.setItem(storageKey(slug), JSON.stringify(comments));
-    } catch {
-      // storage unavailable (private mode, quota) — comments still work in-memory
-    }
-  }, [comments, ready, slug]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -61,12 +34,12 @@ export function CommentsSection({ slug }: { slug: string }) {
       body: body.trim(),
       createdAt: new Date().toISOString(),
     };
-    setComments((prev) => [...prev, comment]);
+    addComment(slug, comment);
     setName("");
     setBody("");
   }
 
-  if (!ready) return null;
+  if (!hasHydrated) return null;
 
   return (
     <div className="mt-16 border-t border-border-primary pt-10">

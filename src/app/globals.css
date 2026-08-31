@@ -119,32 +119,6 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-/* Native <input type="date"> — some mobile WebKit builds render the
-   unfilled mm/dd/yyyy segments and the calendar icon at near-zero
-   contrast until the field is focused. Force full visibility at rest so
-   the field doesn't look blank/broken before the user taps it. Desktop
-   Chrome's device emulation doesn't reproduce this — it's a real mobile
-   native-control quirk, not something visible via responsive-mode
-   inspection. */
-input[type="date"] {
-  color: var(--color-text-primary);
-  -webkit-text-fill-color: var(--color-text-primary);
-}
-input[type="date"]::-webkit-datetime-edit,
-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
-input[type="date"]::-webkit-datetime-edit-text,
-input[type="date"]::-webkit-datetime-edit-month-field,
-input[type="date"]::-webkit-datetime-edit-day-field,
-input[type="date"]::-webkit-datetime-edit-year-field {
-  color: inherit;
-  -webkit-text-fill-color: inherit;
-  opacity: 1;
-}
-input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 1;
-  filter: none;
-}
-
 /* ---------------------------------------------------------------------
    Motion system
    Kept as plain CSS (not Tailwind's animate-[] arbitrary syntax) so it

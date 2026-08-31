@@ -27,10 +27,36 @@ type Segment = { from: string; to: string; date: string };
 
 const MAX_SEGMENTS = 5;
 
-// Native <input type="date"> has no reliable cross-platform placeholder —
-// iOS Safari in particular renders an empty date field completely blank
-// until it's tapped, unlike desktop browsers' "mm/dd/yyyy" ghost text. This
-// overlays our own placeholder, hidden as soon as a real value is picked.
+function CalendarIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M8 3v4M16 3v4M3 10h18" />
+    </svg>
+  );
+}
+
+function formatDateDisplay(iso: string) {
+  const [year, month, day] = iso.split("-");
+  return `${month}/${day}/${year}`;
+}
+
+// Native <input type="date"> renders its text inconsistently across mobile
+// browsers (iOS Safari shows nothing at all until tapped; forcing its text
+// visible via CSS just doubles up with any custom overlay text, which reads
+// as blurry — two slightly misaligned text layers on top of each other).
+// So the native input is fully transparent here and only handles the tap
+// interaction (opening the OS date picker); every visible pixel — the
+// placeholder, the picked value, the calendar glyph — is our own text,
+// exactly like the From/To/Economy fields.
 function DateField({
   label,
   value,
@@ -41,19 +67,23 @@ function DateField({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="relative">
-      <span className="sr-only">{label}</span>
+    <div className="relative flex items-center justify-between gap-2">
+      <span
+        className={cn(
+          "pointer-events-none text-base font-bold",
+          value ? "text-text-primary" : "text-text-tertiary"
+        )}
+      >
+        {value ? formatDateDisplay(value) : "mm/dd/yyyy"}
+      </span>
+      <CalendarIcon className="pointer-events-none h-4 w-4 shrink-0 text-text-tertiary" />
       <input
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent text-base font-bold text-text-primary focus-visible:outline-none"
+        aria-label={label}
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       />
-      {!value && (
-        <span className="pointer-events-none absolute inset-0 flex items-center text-base font-bold text-text-tertiary">
-          mm/dd/yyyy
-        </span>
-      )}
     </div>
   );
 }
