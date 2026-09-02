@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { FlightOfferCard } from "@/components/cards/flight-offer-card";
-import { flightOffers } from "@/lib/data/flights";
+import { getFlightOffers } from "@/lib/pikinic-api";
 
-export function FlightOffers() {
+export async function FlightOffers() {
+  const flightOffers = await getFlightOffers();
+
   return (
     <section className="bg-background-secondary py-20 md:py-28">
       <Container>

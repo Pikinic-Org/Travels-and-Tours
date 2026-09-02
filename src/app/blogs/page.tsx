@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { PillFilterBar } from "@/components/ui/pill-filter-bar";
 import { BlogPostCard } from "@/components/cards/blog-post-card";
 import { Cta } from "@/components/sections/cta";
-import { blogPosts, type BlogCategory } from "@/lib/data/blog";
+import { getBlogPosts } from "@/lib/pikinic-api";
+import type { BlogCategory, BlogPost } from "@/lib/data/blog";
 
 const ALL_CATEGORIES = "All";
 const CATEGORY_FILTERS = [
@@ -18,12 +19,18 @@ const CATEGORY_FILTERS = [
 ] as const;
 
 export default function BlogsPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[] | null>(null);
   const [category, setCategory] = useState<BlogCategory | typeof ALL_CATEGORIES>(ALL_CATEGORIES);
 
+  useEffect(() => {
+    getBlogPosts().then(setBlogPosts);
+  }, []);
+
   const results = useMemo(() => {
-    if (category === ALL_CATEGORIES) return blogPosts;
-    return blogPosts.filter((post) => post.category === category);
-  }, [category]);
+    const list = blogPosts ?? [];
+    if (category === ALL_CATEGORIES) return list;
+    return list.filter((post) => post.category === category);
+  }, [category, blogPosts]);
 
   return (
     <>
@@ -44,7 +51,11 @@ export default function BlogsPage() {
         <Container>
           <PillFilterBar options={CATEGORY_FILTERS} value={category} onChange={setCategory} />
 
-          {results.length === 0 ? (
+          {blogPosts === null ? (
+            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+              Loading…
+            </div>
+          ) : results.length === 0 ? (
             <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
               No posts in this category yet — check back soon.
             </div>

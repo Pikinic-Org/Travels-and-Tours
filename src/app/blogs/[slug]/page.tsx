@@ -2,22 +2,24 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { CommentsSection } from "@/components/blog/comments-section";
-import { blogPosts, getBlogPostBySlug, formatBlogDate } from "@/lib/data/blog";
+import { formatBlogDate } from "@/lib/data/blog";
+import { getBlogPostBySlug, getBlogPosts } from "@/lib/pikinic-api";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const blogPosts = await getBlogPosts();
   return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata(props: PageProps<"/blogs/[slug]">) {
   const { slug } = await props.params;
-  const post = getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   return { title: post.title, description: post.excerpt };
 }
 
 export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
   const { slug } = await props.params;
-  const post = getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 
   return (

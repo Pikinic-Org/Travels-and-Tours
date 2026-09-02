@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { PackageCard } from "@/components/cards/package-card";
-import { packages } from "@/lib/data/packages";
+import { getPackages } from "@/lib/pikinic-api";
 
-export function Packages() {
+export async function Packages() {
+  const packages = await getPackages();
+
   return (
     <section id="packages" className="scroll-mt-24 py-20 md:py-28">
       <Container>

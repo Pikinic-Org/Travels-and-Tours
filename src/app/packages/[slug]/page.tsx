@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { BookPackageButton } from "@/components/packages/book-package-button";
-import { getPackageBySlug, packages } from "@/lib/data/packages";
+import { getPackageBySlug, getPackages } from "@/lib/pikinic-api";
 import { formatNaira } from "@/lib/utils";
 
 function CheckIcon({ className }: { className?: string }) {
@@ -37,20 +37,21 @@ function MinusIcon({ className }: { className?: string }) {
   );
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const packages = await getPackages();
   return packages.map((pkg) => ({ slug: pkg.slug }));
 }
 
 export async function generateMetadata(props: PageProps<"/packages/[slug]">) {
   const { slug } = await props.params;
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getPackageBySlug(slug);
   if (!pkg) return {};
   return { title: pkg.name, description: pkg.headline };
 }
 
 export default async function PackageDetailPage(props: PageProps<"/packages/[slug]">) {
   const { slug } = await props.params;
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getPackageBySlug(slug);
   if (!pkg) notFound();
 
   return (

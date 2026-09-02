@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { Button } from "@/components/ui/button";
 import { PillFilterBar } from "@/components/ui/pill-filter-bar";
 import { PackageCard } from "@/components/cards/package-card";
 import { CustomPackageCta } from "@/components/packages/custom-package-cta";
-import { packages, type PackageCategory } from "@/lib/data/packages";
+import { getPackages } from "@/lib/pikinic-api";
+import type { Package, PackageCategory } from "@/lib/data/packages";
 
 const ALL_CATEGORIES = "All";
 const CATEGORY_FILTERS = [
@@ -21,12 +22,18 @@ const CATEGORY_FILTERS = [
 ] as const;
 
 export default function PackagesPage() {
+  const [packages, setPackages] = useState<Package[] | null>(null);
   const [category, setCategory] = useState<PackageCategory | typeof ALL_CATEGORIES>(ALL_CATEGORIES);
 
+  useEffect(() => {
+    getPackages().then(setPackages);
+  }, []);
+
   const results = useMemo(() => {
-    if (category === ALL_CATEGORIES) return packages;
-    return packages.filter((pkg) => pkg.categories.includes(category));
-  }, [category]);
+    const list = packages ?? [];
+    if (category === ALL_CATEGORIES) return list;
+    return list.filter((pkg) => pkg.categories.includes(category));
+  }, [category, packages]);
 
   return (
     <>
@@ -47,7 +54,11 @@ export default function PackagesPage() {
         <Container>
           <PillFilterBar options={CATEGORY_FILTERS} value={category} onChange={setCategory} />
 
-          {results.length === 0 ? (
+          {packages === null ? (
+            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+              Loading…
+            </div>
+          ) : results.length === 0 ? (
             <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center">
               <p className="text-text-secondary">
                 We don&rsquo;t have a matching package right now, but we can build one for you.
