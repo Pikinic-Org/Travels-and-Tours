@@ -11,8 +11,13 @@ function formatCommentDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
 }
 
+// Stable reference so the Zustand selector below doesn't return a new array
+// on every render when a slug has no comments yet — a fresh `?? []` literal
+// there causes React's "Maximum update depth exceeded" (error #185).
+const NO_COMMENTS: Comment[] = [];
+
 export function CommentsSection({ slug }: { slug: string }) {
-  const comments = useCommentsStore((s) => s.commentsBySlug[slug] ?? []);
+  const comments = useCommentsStore((s) => s.commentsBySlug[slug] ?? NO_COMMENTS);
   const hasHydrated = useCommentsStore((s) => s.hasHydrated);
   const addComment = useCommentsStore((s) => s.addComment);
 

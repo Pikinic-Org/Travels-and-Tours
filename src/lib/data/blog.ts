@@ -12,6 +12,7 @@ export type BlogPost = {
   publishedAt: string;
   readTime: string;
   content: string[];
+  imageUrl: string;
 };
 
 export function formatBlogDate(iso: string): string {

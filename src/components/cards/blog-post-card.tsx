@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { BlogPost } from "@/lib/data/blog";
 import { formatBlogDate } from "@/lib/data/blog";
@@ -15,7 +16,17 @@ export function BlogPostCard({ post, className }: { post: BlogPost; className?: 
       )}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border-primary">
-        <div className="mesh-gradient absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105" />
+        {post.imageUrl ? (
+          <Image
+            src={post.imageUrl}
+            alt={post.title}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="mesh-gradient absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105" />
+        )}
         <span className="absolute bottom-3 left-4 rounded-sm bg-neutral-0/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-green-800">
           {post.category}
         </span>

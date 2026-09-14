@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -42,6 +43,14 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
           <p className="mt-4 text-xs uppercase tracking-widest text-text-tertiary">
             {post.author} · {formatBlogDate(post.publishedAt)} · {post.readTime}
           </p>
+        </div>
+
+        <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-[2px] border border-border-primary">
+          {post.imageUrl ? (
+            <Image src={post.imageUrl} alt={post.title} fill sizes="(min-width: 768px) 768px, 100vw" className="object-cover" priority />
+          ) : (
+            <div className="mesh-gradient absolute inset-0" />
+          )}
         </div>
 
         <div className="mt-10 space-y-5">
