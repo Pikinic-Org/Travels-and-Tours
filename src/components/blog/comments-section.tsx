@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { commentSchema, getFieldErrors } from "@/lib/validation";
 import { useCommentsStore, type Comment } from "@/lib/comments-store";
+import { featureFlags } from "@/lib/feature-flags";
 import { cn } from "@/lib/utils";
 
 function formatCommentDate(iso: string) {
@@ -52,39 +53,45 @@ export function CommentsSection({ slug }: { slug: string }) {
         Comments{comments.length > 0 ? ` (${comments.length})` : ""}
       </h2>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <TextField
-          label="Name"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
-          error={errors.name}
-        />
-        <div>
-          <label
-            htmlFor="comment-body"
-            className="text-xs font-semibold uppercase tracking-widest text-text-tertiary"
-          >
-            Comment
-          </label>
-          <textarea
-            id="comment-body"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={4}
-            placeholder="Share your thoughts…"
-            className={cn(
-              "mt-2 w-full rounded-[2px] border bg-transparent px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
-              errors.body ? "border-red-500" : "border-border-primary"
-            )}
+      {featureFlags.comments ? (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <TextField
+            label="Name"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+            error={errors.name}
           />
-          {errors.body && <p className="mt-1.5 text-xs text-red-600">{errors.body}</p>}
-        </div>
-        <Button type="submit" size="md" variant="primary">
-          Post Comment
-        </Button>
-      </form>
+          <div>
+            <label
+              htmlFor="comment-body"
+              className="text-xs font-semibold uppercase tracking-widest text-text-tertiary"
+            >
+              Comment
+            </label>
+            <textarea
+              id="comment-body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={4}
+              placeholder="Share your thoughts…"
+              className={cn(
+                "mt-2 w-full rounded-[2px] border bg-transparent px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
+                errors.body ? "border-red-500" : "border-border-primary"
+              )}
+            />
+            {errors.body && <p className="mt-1.5 text-xs text-red-600">{errors.body}</p>}
+          </div>
+          <Button type="submit" size="md" variant="primary">
+            Post Comment
+          </Button>
+        </form>
+      ) : (
+        <p className="mt-6 rounded-[2px] border border-border-primary bg-surface-primary p-6 text-sm text-text-secondary">
+          Comments are temporarily turned off — check back soon.
+        </p>
+      )}
 
       {comments.length > 0 && (
         <div className="mt-10 divide-y divide-border-primary">

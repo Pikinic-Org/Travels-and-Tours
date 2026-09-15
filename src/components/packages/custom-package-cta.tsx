@@ -7,6 +7,7 @@ import { Modal } from "@/components/ui/modal";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { TextField } from "@/components/ui/text-field";
 import { customPackageSchema, getFieldErrors, type CustomPackageValues } from "@/lib/validation";
+import { featureFlags } from "@/lib/feature-flags";
 import { cn } from "@/lib/utils";
 
 const initialForm: CustomPackageValues = { fullName: "", email: "", destination: "" };
@@ -77,7 +78,19 @@ export function CustomPackageCta() {
       </Container>
 
       <Modal open={open} onClose={handleClose}>
-        {submitted ? (
+        {!featureFlags.customPackageRequest ? (
+          <div className="text-center">
+            <h3 className="text-lg font-bold uppercase tracking-tight text-text-primary">
+              Temporarily Unavailable
+            </h3>
+            <p className="mt-3 text-sm text-text-secondary">
+              Custom package requests are paused right now — check back soon.
+            </p>
+            <Button type="button" onClick={handleClose} size="md" variant="secondary" className="mt-6">
+              Close
+            </Button>
+          </div>
+        ) : submitted ? (
           <div className="text-center">
             <h3 className="text-lg font-bold uppercase tracking-tight text-text-primary">
               Request Received.
