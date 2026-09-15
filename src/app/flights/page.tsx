@@ -1,44 +1,12 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 import { Cta } from "@/components/sections/cta";
-import { FlightOfferCard } from "@/components/cards/flight-offer-card";
-import {
-  FlightFilters,
-  defaultFlightFilters,
-  ALL_DESTINATIONS,
-  type FlightFilterState,
-} from "@/components/flights/flight-filters";
+import { FlightsResults } from "@/components/flights/flights-results";
 import { getFlightOffers } from "@/lib/pikinic-api";
-import type { FlightOffer } from "@/lib/data/flights";
 
-export default function FlightsPage() {
-  const [flightOffers, setFlightOffers] = useState<FlightOffer[] | null>(null);
-  const [filters, setFilters] = useState<FlightFilterState>(defaultFlightFilters);
-
-  useEffect(() => {
-    getFlightOffers().then(setFlightOffers);
-  }, []);
-
-  const destinations = useMemo(
-    () => Array.from(new Set((flightOffers ?? []).map((offer) => offer.to))),
-    [flightOffers]
-  );
-
-  const results = useMemo(() => {
-    const filtered = (flightOffers ?? []).filter((offer) => {
-      if (filters.destination !== ALL_DESTINATIONS && offer.to !== filters.destination) return false;
-      if (filters.stops === "nonstop" && offer.stops !== 0) return false;
-      if (filters.stops === "1-stop" && offer.stops !== 1) return false;
-      return true;
-    });
-    return [...filtered].sort((a, b) =>
-      filters.sort === "price-asc" ? a.price - b.price : b.price - a.price
-    );
-  }, [filters, flightOffers]);
+export default async function FlightsPage() {
+  const flightOffers = await getFlightOffers();
 
   return (
     <>
@@ -60,30 +28,7 @@ export default function FlightsPage() {
 
       <section className="pb-20 md:pb-28">
         <Container>
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-primary pb-6">
-            <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-              {flightOffers === null
-                ? "Loading…"
-                : `${results.length} ${results.length === 1 ? "Flight" : "Flights"} Found`}
-            </p>
-            <FlightFilters destinations={destinations} value={filters} onChange={setFilters} />
-          </div>
-
-          {flightOffers === null ? (
-            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-              Loading…
-            </div>
-          ) : results.length === 0 ? (
-            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-              No flights match those filters. Try widening your search.
-            </div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 border-l border-t border-border-primary bg-surface-primary sm:grid-cols-2">
-              {results.map((offer) => (
-                <FlightOfferCard key={offer.id} offer={offer} />
-              ))}
-            </div>
-          )}
+          <FlightsResults offers={flightOffers} />
         </Container>
       </section>
 

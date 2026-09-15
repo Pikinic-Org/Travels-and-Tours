@@ -1,39 +1,11 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
-import { Button } from "@/components/ui/button";
-import { PillFilterBar } from "@/components/ui/pill-filter-bar";
-import { PackageCard } from "@/components/cards/package-card";
 import { CustomPackageCta } from "@/components/packages/custom-package-cta";
+import { PackagesResults } from "@/components/packages/packages-results";
 import { getPackages } from "@/lib/pikinic-api";
-import type { Package, PackageCategory } from "@/lib/data/packages";
 
-const ALL_CATEGORIES = "All";
-const CATEGORY_FILTERS = [
-  ALL_CATEGORIES,
-  "Domestic",
-  "International",
-  "Beach",
-  "City Break",
-  "Family",
-  "Business",
-] as const;
-
-export default function PackagesPage() {
-  const [packages, setPackages] = useState<Package[] | null>(null);
-  const [category, setCategory] = useState<PackageCategory | typeof ALL_CATEGORIES>(ALL_CATEGORIES);
-
-  useEffect(() => {
-    getPackages().then(setPackages);
-  }, []);
-
-  const results = useMemo(() => {
-    const list = packages ?? [];
-    if (category === ALL_CATEGORIES) return list;
-    return list.filter((pkg) => pkg.categories.includes(category));
-  }, [category, packages]);
+export default async function PackagesPage() {
+  const packages = await getPackages();
 
   return (
     <>
@@ -52,34 +24,7 @@ export default function PackagesPage() {
 
       <section className="pb-20 md:pb-28">
         <Container>
-          <PillFilterBar options={CATEGORY_FILTERS} value={category} onChange={setCategory} />
-
-          {packages === null ? (
-            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-              Loading…
-            </div>
-          ) : results.length === 0 ? (
-            <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center">
-              <p className="text-text-secondary">
-                We don&rsquo;t have a matching package right now, but we can build one for you.
-                Tell us where you want to go and we&rsquo;ll put something together.
-              </p>
-              <Button
-                href="#request-custom-package"
-                variant="secondary"
-                size="md"
-                className="mt-6"
-              >
-                Request a Custom Package
-              </Button>
-            </div>
-          ) : (
-            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {results.map((pkg) => (
-                <PackageCard key={pkg.slug} pkg={pkg} />
-              ))}
-            </div>
-          )}
+          <PackagesResults packages={packages} />
         </Container>
       </section>
 
