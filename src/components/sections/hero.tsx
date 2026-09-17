@@ -1,12 +1,14 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
-import { PathwayMark } from "@/components/ui/pathway-mark";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden text-text-primary">
       <Container className="relative flex flex-col items-center pb-28 pt-16 text-center md:pb-36 md:pt-24">
-        <PathwayMark className="float-slow pointer-events-none absolute left-1/2 top-0 z-0 h-[620px] w-[620px] -translate-x-1/2 text-green-600/[0.08]" />
+        <div className="pointer-events-none absolute left-1/2 top-0 bottom-0 z-0 w-[95%] -translate-x-1/2 overflow-hidden rounded-[2px]">
+          <Image src="/hero-sky.png" alt="" fill priority className="object-cover object-top" />
+        </div>
 
         <svg
           className="pointer-events-none absolute left-1/2 top-0 z-0 w-[90%] -translate-x-1/2 text-neutral-300/60"
@@ -22,10 +24,10 @@ export function Hero() {
         </svg>
 
         <h1 className="relative z-10 w-full max-w-none text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          <span className="reveal block" style={{ animationDelay: "0.1s" }}>
+          <span className="reveal block text-neutral-0" style={{ animationDelay: "0.1s" }}>
             Fly Further.
           </span>
-          <span className="reveal block" style={{ animationDelay: "0.25s" }}>
+          <span className="reveal block text-neutral-0" style={{ animationDelay: "0.25s" }}>
             <span className="relative inline-block text-green-700">
               Travel Smarter.
               <svg
@@ -50,7 +52,7 @@ export function Hero() {
         </h1>
 
         <p
-          className="reveal mt-6 max-w-2xl text-base text-text-secondary sm:text-lg"
+          className="reveal relative z-10 mt-6 max-w-2xl text-base text-neutral-0 sm:text-lg"
           style={{ animationDelay: "0.4s" }}
         >
           Flights, vacation packages, and travel planning for Nigerians going
