@@ -439,7 +439,7 @@ export const FlightResultCard = ({
             <p className="text-2xl font-bold text-green-700">{formatNaira(flight.price)}</p>
           </div>
           <Button type="button" onClick={onSelect} size="md" variant="primary">
-            Select
+            Book Now
           </Button>
         </div>
       </div>

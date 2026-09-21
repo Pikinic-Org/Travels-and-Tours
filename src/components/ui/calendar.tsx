@@ -1,30 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { DayPicker, type Matcher } from "react-day-picker";
-
-// Two months side by side from the small breakpoint up, one month below it.
-const WIDE_QUERY = "(min-width: 640px)";
-
-const subscribeToWidth = (onChange: () => void) => {
-  const query = window.matchMedia(WIDE_QUERY);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-};
-
-const useMonthCount = () =>
-  useSyncExternalStore(
-    subscribeToWidth,
-    () => (window.matchMedia(WIDE_QUERY).matches ? 2 : 1),
-    () => 1
-  );
 
 // react-day-picker's own stylesheet isn't used: it's unlayered CSS, so it would
 // beat Tailwind utilities. Every part is styled here with the site's tokens
 // instead — sharp 2px corners, green-700 for the chosen days.
 const classNames = {
   root: "relative",
-  months: "relative flex flex-col gap-8 sm:flex-row",
+  months: "relative flex flex-col",
   month: "flex flex-col gap-3",
   month_caption: "flex h-8 items-center justify-center",
   caption_label: "text-sm font-bold uppercase tracking-widest text-text-primary",
@@ -63,8 +46,6 @@ export const Calendar = ({
   modifiers?: Record<string, Matcher | Matcher[]>;
   modifiersClassNames?: Record<string, string>;
 }) => {
-  const numberOfMonths = useMonthCount();
-
   return (
     <DayPicker
       mode="single"
@@ -72,7 +53,7 @@ export const Calendar = ({
       selected={selected}
       onSelect={onSelect}
       disabled={disabled}
-      numberOfMonths={numberOfMonths}
+      numberOfMonths={1}
       defaultMonth={defaultMonth ?? selected}
       weekStartsOn={0}
       showOutsideDays={false}

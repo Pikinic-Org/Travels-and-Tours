@@ -1,11 +1,12 @@
+import { Suspense } from "react";
 import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 import { Cta } from "@/components/sections/cta";
-import { LiveFlightResults } from "@/components/flights/live-flight-results";
+import { FlightResultsSection } from "@/components/flights/flight-results-section";
+import { ResultsSkeleton } from "@/components/flights/results-skeleton";
 import { airportLabel, getAirportByCode } from "@/server/modules/airports/airports.service";
-import { searchFlights } from "@/server/modules/flights/flights.service";
-import type { FlightSearchParams, FlightSearchResult } from "@/types";
+import type { FlightSearchParams } from "@/types";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -74,19 +75,6 @@ export default async function FlightsPage({ searchParams }: { searchParams: Prom
   const query = await searchParams;
   const params = toSearchParams(query);
 
-  let liveResults: FlightSearchResult[] | null = null;
-  let liveSearchError = false;
-
-  if (params) {
-    try {
-      const { flights } = await searchFlights(params);
-      liveResults = flights;
-    } catch (error) {
-      console.error("[flights] live search failed:", error);
-      liveSearchError = true;
-    }
-  }
-
   return (
     <>
       {/* z-20 keeps the search dropdowns above the results below; overflow is
@@ -117,13 +105,11 @@ export default async function FlightsPage({ searchParams }: { searchParams: Prom
       {params && (
         <section className="pb-20 md:pb-28">
           <Container>
-            {liveSearchError ? (
-              <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-                Something went wrong searching those flights. Try again in a moment.
-              </div>
-            ) : (
-              <LiveFlightResults results={liveResults ?? []} searchParams={params} />
-            )}
+            {/* The key restarts the placeholder for every new search; without it
+                React would keep showing the old results while the new ones load. */}
+            <Suspense key={JSON.stringify(query)} fallback={<ResultsSkeleton />}>
+              <FlightResultsSection params={params} />
+            </Suspense>
           </Container>
         </section>
       )}
