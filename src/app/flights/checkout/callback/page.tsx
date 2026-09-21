@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { formatNaira } from "@/lib/utils";
-import { confirmBooking, getBooking } from "@/services/bookings.service";
+import { confirmBooking, getBooking } from "@/server/modules/bookings/bookings.service";
 import type { FlightBooking } from "@/types";
 import { ClearSelectedFlight } from "@/components/flights/clear-selected-flight";
 

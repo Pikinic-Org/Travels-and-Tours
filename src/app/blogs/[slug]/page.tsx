@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { CommentsSection } from "@/components/blog/comments-section";
 import { formatBlogDate } from "@/lib/data/blog";
-import { getBlogPostBySlug, getBlogPosts } from "@/services/content.service";
+import { getBlogPostBySlug, getBlogPosts } from "@/server/modules/content/content.service";
 
 export async function generateStaticParams() {
   const blogPosts = await getBlogPosts();

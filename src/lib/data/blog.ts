@@ -1,5 +1,5 @@
 // Blog post data now comes from pikinic-site's admin-managed API — see
-// @/services/content.service. This file only keeps the shared type and the pure
+// @/server/modules/content/content.service. This file only keeps the shared type and the pure
 // date formatter, since those are used regardless of data source.
 export type BlogCategory = "Travel Tips" | "Visa & Documentation" | "Money & Fares" | "Destination Guides";
 

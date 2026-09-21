@@ -1,7 +1,7 @@
 import type { FlightSearchResult, FlightSegment } from "@/types";
 
 export type FlightLeg = FlightSegment[];
-export type DepartureWindow = "morning" | "afternoon" | "evening";
+export type DepartureWindow = "early_morning" | "morning" | "afternoon" | "evening";
 
 // "06:45 am" / "1:35 PM" / "18:20" → minutes after midnight.
 export const parseClock = (time: string | undefined): number | null => {
@@ -30,6 +30,16 @@ export const parseDurationMinutes = (duration: string | undefined): number | nul
   const minutes = duration.match(/(\d+)\s*m/i);
   if (!hours && !minutes) return null;
   return (hours ? Number(hours[1]) * 60 : 0) + (minutes ? Number(minutes[1]) : 0);
+};
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// "24-09-2026" (dd-mm-yyyy) → "24 Sep 2026". Null when SkyLink gave no date.
+export const formatFlightDate = (date: string | undefined): string | null => {
+  const match = date?.trim().match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (!match) return null;
+  const month = MONTHS[Number(match[2]) - 1];
+  return month ? `${Number(match[1])} ${month} ${match[3]}` : null;
 };
 
 export const formatDuration = (totalMinutes: number): string => {
@@ -77,9 +87,18 @@ export const arrivalDayOffset = (leg: FlightLeg): number => {
 export const departureWindow = (leg: FlightLeg): DepartureWindow | null => {
   const minutes = parseClock(leg[0]?.departure_time);
   if (minutes === null) return null;
+  if (minutes < 6 * 60) return "early_morning";
   if (minutes < 12 * 60) return "morning";
   if (minutes < 18 * 60) return "afternoon";
   return "evening";
+};
+
+// True when any segment's flight number contains the search text, ignoring
+// case and spaces — "tk 626", "TK626" and "626" all match TK626.
+export const matchesFlightNumber = (flight: FlightSearchResult, search: string): boolean => {
+  const needle = search.replace(/\s+/g, "").toLowerCase();
+  if (!needle) return true;
+  return flight.segments.flat().some((segment) => segment.flight_no.replace(/\s+/g, "").toLowerCase().includes(needle));
 };
 
 export const earliestDepartureMinutes = (flight: FlightSearchResult): number =>

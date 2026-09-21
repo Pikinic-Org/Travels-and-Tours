@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AirportPicker } from "@/components/ui/airport-picker";
 import { Button } from "@/components/ui/button";
+import { DatePickerField, DateRangePickerField } from "@/components/ui/date-picker";
 import { ListSelect } from "@/components/ui/list-select";
 import { PassengersSelect, type PassengerCounts } from "@/components/ui/passengers-select";
+import { PlaneIcon, SeatIcon, TripTypeIcon, UsersIcon } from "@/components/ui/search-icons";
 import { extractAirportCode } from "@/lib/airport-label";
 import { cn } from "@/lib/utils";
 import type { FlightSearchParams } from "@/types";
@@ -35,72 +37,20 @@ type Segment = { from: string; to: string; date: string };
 
 const MAX_SEGMENTS = 5;
 
+// Small caption shown above the trip type, class and passengers controls.
+const controlLabelClass =
+  "mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary";
+
+// Icon before the text in the From / To fields: a plane taking off, and one
+// pointing down for landing.
+const takeoffIcon = <PlaneIcon className="h-4 w-4" />;
+const landingIcon = <PlaneIcon className="h-4 w-4 rotate-90" />;
+
 const tripTypeFromFlightType = (flightType: string): TripType =>
   tripTypes.find((type) => flightTypeValues[type] === flightType) ?? "Round trip";
 
 const cabinClassFromValue = (value: string | undefined): string =>
   cabinClasses.find((label) => cabinClassValues[label] === value) ?? cabinClasses[0];
-
-function CalendarIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M8 3v4M16 3v4M3 10h18" />
-    </svg>
-  );
-}
-
-function formatDateDisplay(iso: string) {
-  const [year, month, day] = iso.split("-");
-  return `${month}/${day}/${year}`;
-}
-
-// Native <input type="date"> renders its text inconsistently across mobile
-// browsers (iOS Safari shows nothing at all until tapped; forcing its text
-// visible via CSS just doubles up with any custom overlay text, which reads
-// as blurry — two slightly misaligned text layers on top of each other).
-// So the native input is fully transparent here and only handles the tap
-// interaction (opening the OS date picker); every visible pixel — the
-// placeholder, the picked value, the calendar glyph — is our own text,
-// exactly like the From/To/Economy fields.
-function DateField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="relative flex items-center justify-between gap-2">
-      <span
-        className={cn(
-          "pointer-events-none text-base font-bold",
-          value ? "text-text-primary" : "text-text-tertiary"
-        )}
-      >
-        {value ? formatDateDisplay(value) : "mm/dd/yyyy"}
-      </span>
-      <CalendarIcon className="pointer-events-none h-4 w-4 shrink-0 text-text-tertiary" />
-      <input
-        type="date"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-label={label}
-        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-      />
-    </div>
-  );
-}
 
 function SwapIcon({ className }: { className?: string }) {
   return (
@@ -199,6 +149,13 @@ export function FlightSearchBar({
     setSegments((prev) => prev.filter((_, i) => i !== index));
   }
 
+  // Clearing an airport field leaves it empty, so both ends must be chosen
+  // again before a search makes sense.
+  const airportsChosen =
+    tripType === "Multi-city"
+      ? segments.every((s) => extractAirportCode(s.from) !== "" && extractAirportCode(s.to) !== "")
+      : extractAirportCode(from) !== "" && extractAirportCode(to) !== "";
+
   function handleSearch() {
     const params = new URLSearchParams();
     params.set("flight_type", flightTypeValues[tripType]);
@@ -231,37 +188,55 @@ export function FlightSearchBar({
   return (
     <>
     <div className="relative z-10 w-full rounded-[2px] border border-border-primary bg-surface-primary text-left shadow-xl shadow-neutral-900/5">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-primary px-5 py-4 sm:px-6">
-        <div className="flex items-center gap-1 rounded-[2px] border border-border-primary p-1">
-          {tripTypes.map((type) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => setTripType(type)}
-              className={cn(
-                "rounded-sm px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                tripType === type
-                  ? "bg-green-700 text-neutral-0"
-                  : "text-text-secondary hover:bg-neutral-900/[0.06]"
-              )}
-            >
-              {type}
-            </button>
-          ))}
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border-primary px-5 py-4 sm:px-6">
+        <div>
+          <span className={controlLabelClass}>
+            <TripTypeIcon className="h-3.5 w-3.5" />
+            Flight Type
+          </span>
+          <div className="flex items-center gap-1 rounded-[2px] border border-border-primary p-1">
+            {tripTypes.map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setTripType(type)}
+                className={cn(
+                  "rounded-sm px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                  tripType === type
+                    ? "bg-green-700 text-neutral-0"
+                    : "text-text-secondary hover:bg-neutral-900/[0.06]"
+                )}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <ListSelect
-            label="Cabin class"
-            options={cabinClasses}
-            value={cabinClass}
-            onChange={setCabinClass}
-            align="right"
-            wrapperClassName="w-auto"
-            panelClassName="w-48"
-            triggerClassName="w-auto rounded-sm border border-border-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-primary hover:bg-neutral-900/[0.06]"
-          />
-          <PassengersSelect value={passengers} onChange={setPassengers} />
+        <div className="flex flex-wrap items-end gap-3">
+          <div>
+            <span className={controlLabelClass}>
+              <SeatIcon className="h-3.5 w-3.5" />
+              Class
+            </span>
+            <ListSelect
+              label="Cabin class"
+              options={cabinClasses}
+              value={cabinClass}
+              onChange={setCabinClass}
+              align="right"
+              wrapperClassName="w-auto"
+              panelClassName="w-48"
+              triggerClassName="w-auto rounded-sm border border-border-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-primary hover:bg-neutral-900/[0.06]"
+            />
+          </div>
+          <div>
+            <span className={controlLabelClass}>
+              <UsersIcon className="h-3.5 w-3.5" />
+              Passengers
+            </span>
+            <PassengersSelect value={passengers} onChange={setPassengers} />
+          </div>
         </div>
       </div>
 
@@ -275,9 +250,10 @@ export function FlightSearchBar({
           <div className="relative flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
             <AirportPicker
               label="From"
+              icon={takeoffIcon}
               value={from}
               onChange={setFrom}
-              triggerClassName="text-base font-bold text-text-primary"
+              inputClassName="text-base font-bold text-text-primary"
             />
             <button
               type="button"
@@ -292,27 +268,38 @@ export function FlightSearchBar({
           <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
             <AirportPicker
               label="To"
+              icon={landingIcon}
               value={to}
               onChange={setTo}
-              triggerClassName="text-base font-bold text-text-primary"
+              inputClassName="text-base font-bold text-text-primary"
             />
           </div>
 
-          <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <DateField label="Depart" value={depart} onChange={setDepart} />
-          </div>
-
-          {tripType === "Round trip" && (
+          {tripType === "Round trip" ? (
+            <DateRangePickerField
+              depart={depart}
+              returnDate={returnDate}
+              onChange={(range) => {
+                setDepart(range.depart);
+                setReturnDate(range.return);
+              }}
+            />
+          ) : (
             <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-              <DateField label="Return" value={returnDate} onChange={setReturnDate} />
+              <DatePickerField label="Depart" value={depart} onChange={setDepart} />
             </div>
           )}
 
-          <div className="flex items-center border-b border-r border-border-primary p-3">
+          <div
+            className={cn(
+              "flex items-center border-b border-r border-border-primary p-3",
+              tripType === "Round trip" && "sm:col-span-2 lg:col-span-1"
+            )}
+          >
             <Button
               type="button"
               onClick={handleSearch}
-              disabled={isPending}
+              disabled={isPending || !airportsChosen}
               size="lg"
               variant="primary"
               className="w-full"
@@ -332,23 +319,26 @@ export function FlightSearchBar({
                 <div className="border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
                   <AirportPicker
                     label={`Flight ${index + 1} from`}
+                    icon={takeoffIcon}
                     value={segment.from}
                     onChange={(value) => updateSegment(index, "from", value)}
-                    triggerClassName="text-base font-bold text-text-primary"
+                    inputClassName="text-base font-bold text-text-primary"
                   />
                 </div>
                 <div className="border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
                   <AirportPicker
                     label={`Flight ${index + 1} to`}
+                    icon={landingIcon}
                     value={segment.to}
                     onChange={(value) => updateSegment(index, "to", value)}
-                    triggerClassName="text-base font-bold text-text-primary"
+                    inputClassName="text-base font-bold text-text-primary"
                   />
                 </div>
                 <div className="flex flex-col justify-center border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
-                  <DateField
+                  <DatePickerField
                     label={`Flight ${index + 1} date`}
                     value={segment.date}
+                    min={index > 0 ? segments[index - 1].date : undefined}
                     onChange={(value) => updateSegment(index, "date", value)}
                   />
                 </div>
@@ -385,7 +375,7 @@ export function FlightSearchBar({
             <Button
               type="button"
               onClick={handleSearch}
-              disabled={isPending}
+              disabled={isPending || !airportsChosen}
               size="lg"
               variant="primary"
               className="w-full sm:w-auto"

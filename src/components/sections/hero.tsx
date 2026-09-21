@@ -4,7 +4,10 @@ import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden text-text-primary">
+    // No overflow-hidden and z-20 on purpose: the airport suggestion lists
+    // hang below the search bar and must sit on top of the hero image and the
+    // section underneath. The image below clips itself in its own wrapper.
+    <section className="relative isolate z-20 text-text-primary">
       <Container className="relative flex flex-col items-center pb-28 pt-16 text-center md:pb-36 md:pt-24">
         <div className="pointer-events-none absolute left-1/2 top-0 bottom-0 z-0 w-[95%] -translate-x-1/2 overflow-hidden rounded-[2px]">
           <Image src="/hero-sky.png" alt="" fill priority className="object-cover object-top" />

@@ -1,4 +1,4 @@
-import { getAuthenticatedJson, postJson } from "@/services/http";
+import { getAuthenticatedJson, postJson } from "@/server/lib/pikinic-client";
 import type { FlightBooking, StartCheckoutParams, StartCheckoutResult } from "@/types";
 
 export const startCheckout = (params: StartCheckoutParams) =>

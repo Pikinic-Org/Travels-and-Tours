@@ -3,8 +3,8 @@ import { PathwayMark } from "@/components/ui/pathway-mark";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 import { Cta } from "@/components/sections/cta";
 import { LiveFlightResults } from "@/components/flights/live-flight-results";
-import { airportLabel, getAirportByCode } from "@/lib/airports";
-import { searchFlights } from "@/services/flights.service";
+import { airportLabel, getAirportByCode } from "@/server/modules/airports/airports.service";
+import { searchFlights } from "@/server/modules/flights/flights.service";
 import type { FlightSearchParams, FlightSearchResult } from "@/types";
 
 type SearchParams = { [key: string]: string | string[] | undefined };

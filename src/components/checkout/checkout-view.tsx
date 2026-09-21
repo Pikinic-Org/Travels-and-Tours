@@ -5,7 +5,7 @@ import { FlightSummary } from "@/components/checkout/flight-summary";
 import { TravellerFields } from "@/components/checkout/traveller-fields";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { useCheckoutForm } from "@/controllers/use-checkout-form";
+import { useCheckoutForm } from "@/hooks/use-checkout-form";
 import { emptyTraveller } from "@/lib/checkout-form";
 import { formatNaira } from "@/lib/utils";
 

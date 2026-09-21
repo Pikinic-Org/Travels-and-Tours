@@ -1,5 +1,5 @@
 // Flight offer data now comes from pikinic-site's admin-managed API —
-// see @/services/content.service. This file only keeps the shared type and the pure
+// see @/server/modules/content/content.service. This file only keeps the shared type and the pure
 // cart-item mapper, since those are used regardless of data source.
 export type FlightOffer = {
   id: string;

@@ -1,4 +1,4 @@
-import { postJson } from "@/services/http";
+import { postJson } from "@/server/lib/pikinic-client";
 import type {
   FlightPricingParams,
   FlightPricingResult,

@@ -10,6 +10,7 @@ import {
   fareName,
   flightAirlines,
   formatDuration,
+  formatFlightDate,
   hasCheckedBag,
   isRefundable,
   layoverMinutes,
@@ -106,6 +107,14 @@ const uniqueAmenities = (amenities: FlightAmenity[] | undefined): FlightAmenity[
   });
 };
 
+// "Economy (O)" — the cabin plus the airline's booking-class letter(s).
+const cabinLabel = (leg: FlightLeg): string | null => {
+  const cabin = leg[0]?.class;
+  if (!cabin) return null;
+  const letters = Array.from(new Set(leg.map((segment) => segment.class_letter).filter(Boolean)));
+  return letters.length > 0 ? `${cabin} (${letters.join("/")})` : cabin;
+};
+
 const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) => {
   const first = leg[0];
   const last = leg[leg.length - 1];
@@ -132,12 +141,21 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
         <div className="flex flex-1 items-center gap-4">
           <div>
             <p className="text-xl font-bold leading-none text-text-primary">{clock(first.departure_time)}</p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-primary">
               {first.departure_code}
             </p>
+            <p className="text-[11px] uppercase tracking-wide text-text-tertiary">{first.departure_city}</p>
+            {formatFlightDate(first.departure_date) && (
+              <p className="text-[11px] text-text-tertiary">{formatFlightDate(first.departure_date)}</p>
+            )}
           </div>
 
           <div className="min-w-0 flex-1 text-center">
+            {cabinLabel(leg) && (
+              <span className="mb-1 inline-block rounded-sm bg-green-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-green-800">
+                {cabinLabel(leg)}
+              </span>
+            )}
             <p className="text-xs text-text-tertiary">{duration !== null ? formatDuration(duration) : first.duration_time}</p>
             <div className="relative my-1.5 h-px bg-border-secondary">
               {Array.from({ length: stops }, (_, index) => (
@@ -158,9 +176,13 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
               {clock(last.arrival_time)}
               {dayOffset > 0 && <sup className="ml-0.5 text-[10px] font-semibold text-text-tertiary">+{dayOffset}</sup>}
             </p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-primary">
               {last.arrival_code}
             </p>
+            <p className="text-[11px] uppercase tracking-wide text-text-tertiary">{last.arrival_city}</p>
+            {formatFlightDate(last.arrival_date) && (
+              <p className="text-[11px] text-text-tertiary">{formatFlightDate(last.arrival_date)}</p>
+            )}
           </div>
         </div>
       </div>

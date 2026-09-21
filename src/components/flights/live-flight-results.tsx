@@ -21,6 +21,7 @@ import {
   formatDuration,
   hasCheckedBag,
   isRefundable,
+  matchesFlightNumber,
   maxStops,
 } from "@/lib/flight-format";
 import { useSelectedFlightStore } from "@/lib/selected-flight-store";
@@ -62,7 +63,7 @@ const stopBucket = (flight: FlightSearchResult): StopsBucket => Math.min(maxStop
 const buildFacets = (results: FlightSearchResult[]): FlightFacets => {
   const airlines = new Map<string, AirlineFacet>();
   const stopCounts: Record<StopsBucket, number> = { 0: 0, 1: 0, 2: 0 };
-  const windowCounts = { morning: 0, afternoon: 0, evening: 0 };
+  const windowCounts = { early_morning: 0, morning: 0, afternoon: 0, evening: 0 };
 
   for (const flight of results) {
     stopCounts[stopBucket(flight)]++;
@@ -109,6 +110,7 @@ const matchesFilters = (
     return false;
   }
   if (flight.price < priceLow || flight.price > priceHigh) return false;
+  if (!matchesFlightNumber(flight, filters.flightNumber)) return false;
 
   if (filters.windows.length > 0) {
     const window = departureWindow(flight.segments[0]);

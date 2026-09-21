@@ -1,4 +1,4 @@
-import airportData from "@/lib/data/airports.json";
+import airportData from "@/server/modules/airports/airports.data.json";
 import { airportLabel, type Airport } from "@/lib/airport-label";
 
 export { airportLabel, type Airport };
@@ -37,16 +37,21 @@ const byCode = new Map(searchable.map((entry) => [entry.airport.code, entry.airp
 const startsWithWord = (text: string, query: string): boolean =>
   text.startsWith(query) || text.includes(` ${query}`);
 
+// Within a tier, a shorter field is a closer match: typing "lon" should put
+// "London" ahead of "Long Beach". Capped at 50 so it never crosses a tier
+// (tiers are 100 apart).
+const closeness = (field: string, query: string): number => Math.min(field.length - query.length, 50);
+
 // Higher = better match. Exact code beats everything so typing "LOS" or "LHR"
 // always puts that airport first; then city, airport name, and country.
 const scoreMatch = (entry: SearchableAirport, query: string): number => {
   if (entry.code === query) return 1000;
   if (entry.code.startsWith(query)) return 800;
   if (entry.city === query) return 700;
-  if (entry.city.startsWith(query)) return 600;
-  if (startsWithWord(entry.city, query)) return 500;
-  if (startsWithWord(entry.name, query)) return 400;
-  if (entry.city.includes(query) || entry.name.includes(query)) return 300;
+  if (entry.city.startsWith(query)) return 600 - closeness(entry.city, query);
+  if (startsWithWord(entry.city, query)) return 500 - closeness(entry.city, query);
+  if (startsWithWord(entry.name, query)) return 400 - closeness(entry.name, query);
+  if (entry.city.includes(query) || entry.name.includes(query)) return 300 - closeness(entry.city, query);
   if (entry.country.startsWith(query)) return 200;
   return 0;
 };

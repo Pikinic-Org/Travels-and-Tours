@@ -2,7 +2,7 @@ import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { CustomPackageCta } from "@/components/packages/custom-package-cta";
 import { PackagesResults } from "@/components/packages/packages-results";
-import { getPackages } from "@/services/content.service";
+import { getPackages } from "@/server/modules/content/content.service";
 
 export default async function PackagesPage() {
   const packages = await getPackages();

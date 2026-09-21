@@ -64,6 +64,7 @@ export type FlightSegment = {
   arrival_time: string;
   duration_time: string;
   seats_left: number;
+  class_letter?: string; // booking class, e.g. "O" or "S"
   // Optional detail SkyLink returns for most fares; every field is treated
   // as possibly missing because suppliers don't all supply everything.
   departure_airport?: string;

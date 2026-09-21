@@ -1,4 +1,4 @@
-import { getJson } from "@/services/http";
+import { getJson } from "@/server/lib/pikinic-client";
 import type { BlogPost, FlightOffer, Package, RemoteBlogContentBlock, RemoteBlogPost } from "@/types";
 
 const flattenBlogContent = (blocks: RemoteBlogContentBlock[]): string[] =>

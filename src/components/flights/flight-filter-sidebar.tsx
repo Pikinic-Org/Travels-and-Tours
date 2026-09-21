@@ -16,6 +16,7 @@ export type FlightFilterState = {
   airlines: string[]; // empty = all airlines
   priceRange: [number, number] | null; // null = full range of the current results
   windows: DepartureWindow[]; // empty = any time of day
+  flightNumber: string; // "" = any flight
   checkedBagOnly: boolean;
   refundableOnly: boolean;
   sort: SortOrder;
@@ -26,6 +27,7 @@ export const defaultFlightFilters: FlightFilterState = {
   airlines: [],
   priceRange: null,
   windows: [],
+  flightNumber: "",
   checkedBagOnly: false,
   refundableOnly: false,
   sort: "cheapest",
@@ -35,6 +37,7 @@ export const activeFilterCount = (filters: FlightFilterState): number =>
   filters.stops.length +
   filters.airlines.length +
   filters.windows.length +
+  (filters.flightNumber.trim() ? 1 : 0) +
   (filters.priceRange ? 1 : 0) +
   (filters.checkedBagOnly ? 1 : 0) +
   (filters.refundableOnly ? 1 : 0);
@@ -54,9 +57,10 @@ export type FlightFacets = {
 const stopLabels: Record<StopsBucket, string> = { 0: "Nonstop", 1: "1 stop", 2: "2+ stops" };
 
 const windowLabels: Record<DepartureWindow, string> = {
-  morning: "Morning · before 12:00",
+  early_morning: "Early morning · 00:00–06:00",
+  morning: "Morning · 06:00–12:00",
   afternoon: "Afternoon · 12:00–18:00",
-  evening: "Evening · after 18:00",
+  evening: "Evening · 18:00–24:00",
 };
 
 const toggle = <T,>(list: T[], item: T): T[] =>
@@ -134,6 +138,19 @@ export const FlightFilterSidebar = ({
           </button>
         )}
       </div>
+
+      <Section title="Flight number">
+        <input
+          type="text"
+          value={value.flightNumber}
+          onChange={(event) => update({ flightNumber: event.target.value })}
+          placeholder="e.g. TK626"
+          autoComplete="off"
+          spellCheck={false}
+          aria-label="Search by flight number"
+          className="w-full rounded-[2px] border border-border-primary bg-surface-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-green-700 focus:outline-none"
+        />
+      </Section>
 
       <Section title="Stops">
         {([0, 1, 2] as StopsBucket[]).map((bucket) => (

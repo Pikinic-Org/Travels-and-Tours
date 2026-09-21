@@ -1,4 +1,4 @@
-// Builds src/lib/data/airports.json from the open OurAirports dataset
+// Builds src/server/modules/airports/airports.data.json from the open OurAirports dataset
 // (https://ourairports.com/data/ — public domain).
 //
 // Run with: node scripts/build-airports.mjs
@@ -10,7 +10,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const BASE = "https://davidmegginson.github.io/ourairports-data";
-const OUTPUT = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "lib", "data", "airports.json");
+const OUTPUT = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "server", "modules", "airports", "airports.data.json");
 
 const KEPT_TYPES = new Set(["large_airport", "medium_airport", "small_airport"]);
 const TYPE_RANK = { large_airport: 3, medium_airport: 2, small_airport: 1 };

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { priceSelectedFlight, submitCheckout } from "@/controllers/checkout.controller";
+import { priceSelectedFlight, submitCheckout } from "@/server/modules/checkout/checkout.controller";
 import { buildCheckoutParams, buildPassengerSlots, emptyTraveller, secondsUntil } from "@/lib/checkout-form";
 import { useSelectedFlightStore } from "@/lib/selected-flight-store";
 import type { ContactFormState, FlightPricingResult, TravellerFormState } from "@/types";
