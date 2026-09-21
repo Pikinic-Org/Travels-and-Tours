@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ListSelect } from "@/components/ui/list-select";
 import { PassengersSelect, type PassengerCounts } from "@/components/ui/passengers-select";
 import { cn } from "@/lib/utils";
+import type { FlightSearchParams } from "@/lib/pikinic-api";
 
 const cities = [
   "Lagos (LOS)",
@@ -42,6 +43,17 @@ function extractCode(cityLabel: string): string {
 type Segment = { from: string; to: string; date: string };
 
 const MAX_SEGMENTS = 5;
+
+// Reverse of extractCode: the picker stores full "City (CODE)" labels, so a
+// code coming back from the URL has to be mapped to its label again.
+const cityFromCode = (code: string, fallback: string): string =>
+  cities.find((city) => extractCode(city) === code) ?? fallback;
+
+const tripTypeFromFlightType = (flightType: string): TripType =>
+  tripTypes.find((type) => flightTypeValues[type] === flightType) ?? "Round trip";
+
+const cabinClassFromValue = (value: string | undefined): string =>
+  cabinClasses.find((label) => cabinClassValues[label] === value) ?? cabinClasses[0];
 
 function CalendarIcon({ className }: { className?: string }) {
   return (
@@ -137,27 +149,42 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
-export function FlightSearchBar() {
+// `initialSearch` is the search already in the URL (on /flights), so the bar
+// shows what was actually searched instead of resetting to its defaults.
+export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearchParams | null }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [tripType, setTripType] = useState<TripType>("Round trip");
-  const [cabinClass, setCabinClass] = useState(cabinClasses[0]);
+  const [tripType, setTripType] = useState<TripType>(
+    initialSearch ? tripTypeFromFlightType(initialSearch.flight_type) : "Round trip"
+  );
+  const [cabinClass, setCabinClass] = useState(cabinClassFromValue(initialSearch?.class));
   const [passengers, setPassengers] = useState<PassengerCounts>({
-    adults: 1,
-    children: 0,
-    infants: 0,
+    adults: initialSearch?.adults ?? 1,
+    children: initialSearch?.children ?? 0,
+    infants: initialSearch?.infants ?? 0,
   });
 
-  const [from, setFrom] = useState(cities[0]);
-  const [to, setTo] = useState(cities[3]);
-  const [depart, setDepart] = useState("");
-  const [returnDate, setReturnDate] = useState("");
+  const singleTrip = initialSearch && initialSearch.flight_type !== "multicity" ? initialSearch : null;
+  const [from, setFrom] = useState(singleTrip ? cityFromCode(singleTrip.from, cities[0]) : cities[0]);
+  const [to, setTo] = useState(singleTrip ? cityFromCode(singleTrip.to, cities[3]) : cities[3]);
+  const [depart, setDepart] = useState(singleTrip?.flights_departure_date ?? "");
+  const [returnDate, setReturnDate] = useState(
+    singleTrip?.flight_type === "roundtrip" ? singleTrip.flights_return_date : ""
+  );
 
-  const [segments, setSegments] = useState<Segment[]>([
-    { from: cities[0], to: cities[3], date: "" },
-    { from: cities[3], to: cities[0], date: "" },
-  ]);
+  const [segments, setSegments] = useState<Segment[]>(
+    initialSearch?.flight_type === "multicity"
+      ? initialSearch.routes.map((route) => ({
+          from: cityFromCode(route.from, cities[0]),
+          to: cityFromCode(route.to, cities[3]),
+          date: route.date,
+        }))
+      : [
+          { from: cities[0], to: cities[3], date: "" },
+          { from: cities[3], to: cities[0], date: "" },
+        ]
+  );
 
   function swap() {
     setFrom(to);

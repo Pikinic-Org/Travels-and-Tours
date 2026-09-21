@@ -82,7 +82,7 @@ export default async function FlightsPage({ searchParams }: { searchParams: Prom
             the price is right.
           </p>
           <div className="relative z-10 mt-12 w-full max-w-5xl">
-            <FlightSearchBar />
+            <FlightSearchBar key={JSON.stringify(query)} initialSearch={params} />
           </div>
         </Container>
       </section>
