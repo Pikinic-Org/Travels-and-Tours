@@ -10,7 +10,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://res.cloudinary.com;
+  img-src 'self' blob: data: https://res.cloudinary.com https://images.kiwi.com;
   font-src 'self';
   connect-src 'self';
   object-src 'none';
@@ -31,7 +31,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "images.kiwi.com" },
+    ],
   },
   async headers() {
     return [

@@ -4,22 +4,23 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ListSelect } from "@/components/ui/list-select";
 import { Modal } from "@/components/ui/modal";
+import { PriceRangeSlider } from "@/components/ui/price-range-slider";
 import { cn } from "@/lib/utils";
 
 export type SortOrder = "price-asc" | "price-desc";
 export type StopsFilter = "any" | "nonstop" | "1-stop";
 
-export type FlightFilterState = {
-  destination: string;
+export type LiveFlightFilterState = {
   stops: StopsFilter;
+  airlines: string[]; // empty = all airlines
+  priceRange: [number, number] | null; // null = full range of current results
   sort: SortOrder;
 };
 
-export const ALL_DESTINATIONS = "All Destinations";
-
-export const defaultFlightFilters: FlightFilterState = {
-  destination: ALL_DESTINATIONS,
+export const defaultLiveFlightFilters: LiveFlightFilterState = {
   stops: "any",
+  airlines: [],
+  priceRange: null,
   sort: "price-asc",
 };
 
@@ -50,20 +51,24 @@ function FilterIcon({ className }: { className?: string }) {
   );
 }
 
-export function FlightFilters({
-  destinations,
+export function LiveFlightFilters({
+  airlines,
+  minPrice,
+  maxPrice,
   value,
   onChange,
 }: {
-  destinations: string[];
-  value: FlightFilterState;
-  onChange: (value: FlightFilterState) => void;
+  airlines: string[];
+  minPrice: number;
+  maxPrice: number;
+  value: LiveFlightFilterState;
+  onChange: (value: LiveFlightFilterState) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(value);
 
   const isActive =
-    value.destination !== defaultFlightFilters.destination || value.stops !== defaultFlightFilters.stops;
+    value.stops !== defaultLiveFlightFilters.stops || value.airlines.length > 0 || value.priceRange !== null;
 
   function openModal() {
     setDraft(value);
@@ -76,7 +81,16 @@ export function FlightFilters({
   }
 
   function clear() {
-    setDraft(defaultFlightFilters);
+    setDraft(defaultLiveFlightFilters);
+  }
+
+  function toggleAirline(airline: string) {
+    setDraft((d) => ({
+      ...d,
+      airlines: d.airlines.includes(airline)
+        ? d.airlines.filter((a) => a !== airline)
+        : [...d.airlines, airline],
+    }));
   }
 
   return (
@@ -98,19 +112,6 @@ export function FlightFilters({
 
         <div className="mt-6 space-y-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">Destination</p>
-            <ListSelect
-              label="Destination"
-              options={[ALL_DESTINATIONS, ...destinations]}
-              value={draft.destination}
-              onChange={(destination) => setDraft((d) => ({ ...d, destination }))}
-              wrapperClassName="mt-2 w-full"
-              triggerClassName="w-full rounded-sm border border-border-primary px-3 py-2 text-sm font-semibold text-text-primary"
-              panelClassName="w-full"
-            />
-          </div>
-
-          <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">Stops</p>
             <div className="mt-2 flex gap-2">
               {stopsOptions.map((opt) => (
@@ -128,6 +129,41 @@ export function FlightFilters({
                   {opt.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {airlines.length > 1 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">Airline</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {airlines.map((airline) => (
+                  <button
+                    key={airline}
+                    type="button"
+                    onClick={() => toggleAirline(airline)}
+                    className={cn(
+                      "rounded-sm border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                      draft.airlines.includes(airline)
+                        ? "border-green-700 bg-green-700 text-neutral-0"
+                        : "border-border-primary text-text-secondary hover:bg-neutral-900/[0.06]"
+                    )}
+                  >
+                    {airline}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">Price Range</p>
+            <div className="mt-2">
+              <PriceRangeSlider
+                min={minPrice}
+                max={maxPrice}
+                value={draft.priceRange ?? [minPrice, maxPrice]}
+                onChange={(priceRange) => setDraft((d) => ({ ...d, priceRange }))}
+              />
             </div>
           </div>
 

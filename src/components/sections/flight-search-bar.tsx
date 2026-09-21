@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ListSelect } from "@/components/ui/list-select";
-import { Modal } from "@/components/ui/modal";
 import { PassengersSelect, type PassengerCounts } from "@/components/ui/passengers-select";
 import { cn } from "@/lib/utils";
 
@@ -19,9 +18,26 @@ const cities = [
 ];
 
 const cabinClasses = ["Economy", "Premium Economy", "Business", "First"];
+const cabinClassValues: Record<string, string> = {
+  Economy: "economy",
+  "Premium Economy": "premium_economy",
+  Business: "business",
+  First: "first",
+};
 
 const tripTypes = ["Round trip", "One way", "Multi-city"] as const;
 type TripType = (typeof tripTypes)[number];
+const flightTypeValues: Record<TripType, string> = {
+  "Round trip": "roundtrip",
+  "One way": "oneway",
+  "Multi-city": "multicity",
+};
+
+// City options are labeled "City (CODE)" for the picker; only the IATA
+// code is meaningful to the search API.
+function extractCode(cityLabel: string): string {
+  return cityLabel.match(/\(([^)]+)\)/)?.[1] ?? cityLabel;
+}
 
 type Segment = { from: string; to: string; date: string };
 
@@ -123,8 +139,7 @@ function CloseIcon({ className }: { className?: string }) {
 
 export function FlightSearchBar() {
   const router = useRouter();
-  const pathname = usePathname();
-  const [searching, setSearching] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const [tripType, setTripType] = useState<TripType>("Round trip");
   const [cabinClass, setCabinClass] = useState(cabinClasses[0]);
@@ -161,13 +176,31 @@ export function FlightSearchBar() {
     setSegments((prev) => prev.filter((_, i) => i !== index));
   }
 
-  async function handleSearch() {
-    setSearching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1100));
-    setSearching(false);
-    if (pathname !== "/flights") {
-      router.push("/flights");
+  function handleSearch() {
+    const params = new URLSearchParams();
+    params.set("flight_type", flightTypeValues[tripType]);
+    params.set("class", cabinClassValues[cabinClass]);
+    params.set("adults", String(passengers.adults));
+    params.set("children", String(passengers.children));
+    params.set("infants", String(passengers.infants));
+
+    if (tripType === "Multi-city") {
+      params.set(
+        "routes",
+        JSON.stringify(segments.map((s) => ({ from: extractCode(s.from), to: extractCode(s.to), date: s.date })))
+      );
+    } else {
+      params.set("from", extractCode(from));
+      params.set("to", extractCode(to));
+      params.set("flights_departure_date", depart);
+      if (tripType === "Round trip") {
+        params.set("flights_return_date", returnDate);
+      }
     }
+
+    startTransition(() => {
+      router.push(`/flights?${params.toString()}`);
+    });
   }
 
   return (
@@ -255,8 +288,15 @@ export function FlightSearchBar() {
           )}
 
           <div className="flex items-center border-b border-r border-border-primary p-3">
-            <Button type="button" onClick={handleSearch} size="lg" variant="primary" className="w-full">
-              Search
+            <Button
+              type="button"
+              onClick={handleSearch}
+              disabled={isPending}
+              size="lg"
+              variant="primary"
+              className="w-full"
+            >
+              {isPending ? "Searching…" : "Search"}
             </Button>
           </div>
         </div>
@@ -325,27 +365,20 @@ export function FlightSearchBar() {
             ) : (
               <span />
             )}
-            <Button type="button" onClick={handleSearch} size="lg" variant="primary" className="w-full sm:w-auto">
-              Search
+            <Button
+              type="button"
+              onClick={handleSearch}
+              disabled={isPending}
+              size="lg"
+              variant="primary"
+              className="w-full sm:w-auto"
+            >
+              {isPending ? "Searching…" : "Search"}
             </Button>
           </div>
         </div>
       )}
     </div>
-
-    <Modal open={searching} onClose={() => setSearching(false)} dismissible={false}>
-      <div className="flex flex-col items-center gap-4 py-4 text-center">
-        <span className="h-10 w-10 animate-spin rounded-full border-2 border-border-primary border-t-green-700" />
-        <div>
-          <p className="text-lg font-bold uppercase tracking-tight text-text-primary">
-            Searching Flights…
-          </p>
-          <p className="mt-1 text-sm text-text-secondary">
-            Checking fares across our partner airlines.
-          </p>
-        </div>
-      </div>
-    </Modal>
     </>
   );
 }
