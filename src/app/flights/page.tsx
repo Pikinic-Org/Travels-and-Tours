@@ -63,7 +63,8 @@ export default async function FlightsPage({ searchParams }: { searchParams: Prom
     try {
       const { flights } = await searchFlights(params);
       liveResults = flights;
-    } catch {
+    } catch (error) {
+      console.error("[flights] live search failed:", error);
       liveSearchError = true;
     }
   }
