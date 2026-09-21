@@ -117,7 +117,17 @@ export default async function CheckoutCallbackPage({
   searchParams: Promise<SearchParams>;
 }) {
   const query = await searchParams;
-  const bookingId = typeof query.bookingId === "string" ? query.bookingId : null;
+  // Monnify appends its own "?paymentReference=…" to the redirect URL even when
+  // one query string already exists, so a value can arrive as
+  // "<id>?paymentReference=<id>". The booking id is also Monnify's
+  // paymentReference, so use either one and drop anything after a stray "?".
+  const rawBookingId =
+    typeof query.bookingId === "string"
+      ? query.bookingId
+      : typeof query.paymentReference === "string"
+        ? query.paymentReference
+        : null;
+  const bookingId = rawBookingId ? rawBookingId.split("?")[0] : null;
 
   const booking = bookingId ? await resolveBooking(bookingId) : null;
 

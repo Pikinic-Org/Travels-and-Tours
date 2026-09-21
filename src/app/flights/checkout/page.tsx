@@ -57,6 +57,26 @@ function buildPassengerSlots(passengers: { adults: number; children: number; inf
   return slots;
 }
 
+// Stored as digits only (no "+") — that's the shape the booking API receives.
+const countryCodes = [
+  { code: "234", label: "Nigeria (+234)" },
+  { code: "233", label: "Ghana (+233)" },
+  { code: "44", label: "United Kingdom (+44)" },
+  { code: "1", label: "United States / Canada (+1)" },
+  { code: "971", label: "United Arab Emirates (+971)" },
+  { code: "27", label: "South Africa (+27)" },
+  { code: "254", label: "Kenya (+254)" },
+  { code: "91", label: "India (+91)" },
+  { code: "49", label: "Germany (+49)" },
+  { code: "33", label: "France (+33)" },
+];
+
+const digitsOnly = (input: string) => input.replace(/\D/g, "");
+
+// Passport numbers are letters + digits only (max 9 characters on the
+// machine-readable line), always written in capitals.
+const alphanumericUpper = (input: string) => input.replace(/[^a-z0-9]/gi, "").toUpperCase();
+
 const inputClass =
   "w-full rounded-[2px] border border-border-primary bg-surface-primary px-3 py-2.5 text-sm text-text-primary focus:border-green-700 focus:outline-none";
 
@@ -117,12 +137,18 @@ function TravellerFields({
         />
       </Field>
       <Field label="Phone Country Code">
-        <input
+        <select
           required
           value={value.country_code}
           onChange={(e) => onChange("country_code", e.target.value)}
           className={inputClass}
-        />
+        >
+          {countryCodes.map((country) => (
+            <option key={country.code} value={country.code}>
+              {country.label}
+            </option>
+          ))}
+        </select>
       </Field>
       <Field label="Date of Birth">
         <input
@@ -146,7 +172,10 @@ function TravellerFields({
         <input
           required
           value={value.passport_number}
-          onChange={(e) => onChange("passport_number", e.target.value)}
+          onChange={(e) => onChange("passport_number", alphanumericUpper(e.target.value))}
+          minLength={6}
+          maxLength={9}
+          autoCapitalize="characters"
           className={inputClass}
         />
       </Field>
@@ -322,8 +351,11 @@ export default function CheckoutPage() {
                     <Field label="Phone">
                       <input
                         required
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={15}
                         value={contact.phone}
-                        onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
+                        onChange={(e) => setContact((c) => ({ ...c, phone: digitsOnly(e.target.value) }))}
                         className={inputClass}
                       />
                     </Field>
