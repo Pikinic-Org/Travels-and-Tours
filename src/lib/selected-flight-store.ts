@@ -1,16 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { FlightSearchResult } from "@/lib/pikinic-api";
-
-export type SelectedFlight = {
-  flight: FlightSearchResult;
-  tripType: "oneway" | "roundtrip" | "multicity";
-  fromCode: string;
-  toCode: string;
-  departureDate: string;
-  returnDate?: string;
-  passengers: { adults: number; children: number; infants: number };
-};
+import type { SelectedFlight } from "@/types";
 
 type SelectedFlightState = {
   selected: SelectedFlight | null;

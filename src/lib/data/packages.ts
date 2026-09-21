@@ -1,5 +1,5 @@
 // Package data now comes from pikinic-site's admin-managed API — see
-// @/lib/pikinic-api. This file only keeps the shared types and the pure
+// @/services/content.service. This file only keeps the shared types and the pure
 // cart-item mapper, since those are used regardless of data source.
 export type PackageCategory =
   | "Domestic"

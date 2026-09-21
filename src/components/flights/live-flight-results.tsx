@@ -1,35 +1,35 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { useSelectedFlightStore } from "@/lib/selected-flight-store";
-import { formatNaira } from "@/lib/utils";
+import { FlightResultCard } from "@/components/flights/flight-result-card";
 import {
-  LiveFlightFilters,
-  defaultLiveFlightFilters,
-  type LiveFlightFilterState,
-} from "@/components/flights/live-flight-filters";
-import type { FlightSearchParams, FlightSearchResult } from "@/lib/pikinic-api";
-
-// A flight's first leg (index 0 covers oneway/roundtrip's outbound; results
-// display one leg per card today, matching what search currently renders).
-function leg(flight: FlightSearchResult) {
-  return flight.segments[0];
-}
-
-function stopsCount(flight: FlightSearchResult): number {
-  return leg(flight).length - 1;
-}
-
-function airlineNames(flight: FlightSearchResult): string[] {
-  return Array.from(new Set(leg(flight).map((s) => s.airline)));
-}
+  FlightFilterSidebar,
+  activeFilterCount,
+  defaultFlightFilters,
+  type AirlineFacet,
+  type FlightFacets,
+  type FlightFilterState,
+  type SortOrder,
+  type StopsBucket,
+} from "@/components/flights/flight-filter-sidebar";
+import {
+  departureWindow,
+  earliestDepartureMinutes,
+  flightAirlines,
+  flightDurationMinutes,
+  formatDuration,
+  hasCheckedBag,
+  isRefundable,
+  maxStops,
+} from "@/lib/flight-format";
+import { useSelectedFlightStore } from "@/lib/selected-flight-store";
+import type { FlightSearchParams, FlightSearchResult } from "@/types";
+import { cn, formatNaira } from "@/lib/utils";
 
 // The route/date/passenger context search was run with — not part of a
 // FlightSearchResult itself, needed again at checkout to re-price correctly.
-function routeContext(searchParams: FlightSearchParams) {
+const routeContext = (searchParams: FlightSearchParams) => {
   const passengers = {
     adults: searchParams.adults,
     children: searchParams.children ?? 0,
@@ -55,170 +55,225 @@ function routeContext(searchParams: FlightSearchParams) {
     returnDate: searchParams.flight_type === "roundtrip" ? searchParams.flights_return_date : undefined,
     passengers,
   };
-}
+};
 
-// SkyLink doesn't provide a logo, only a 2-letter carrier code — looked up
-// against Kiwi.com's public airline-logo CDN instead. Not every carrier is
-// guaranteed to be in their database, so a failed load just hides the image
-// rather than showing a broken-image icon.
-function AirlineLogo({ code, name }: { code: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return null;
+const stopBucket = (flight: FlightSearchResult): StopsBucket => Math.min(maxStops(flight), 2) as StopsBucket;
 
-  return (
-    <Image
-      src={`https://images.kiwi.com/airlines/64x64/${code}.png`}
-      alt={name}
-      width={18}
-      height={18}
-      className="h-[18px] w-[18px] shrink-0 rounded-sm object-contain"
-      onError={() => setFailed(true)}
-    />
-  );
-}
+const buildFacets = (results: FlightSearchResult[]): FlightFacets => {
+  const airlines = new Map<string, AirlineFacet>();
+  const stopCounts: Record<StopsBucket, number> = { 0: 0, 1: 0, 2: 0 };
+  const windowCounts = { morning: 0, afternoon: 0, evening: 0 };
 
-function LiveFlightResultCard({
-  flight,
-  searchParams,
-}: {
-  flight: FlightSearchResult;
-  searchParams: FlightSearchParams;
-}) {
-  const select = useSelectedFlightStore((s) => s.select);
-  const router = useRouter();
+  for (const flight of results) {
+    stopCounts[stopBucket(flight)]++;
 
-  const segments = leg(flight);
-  const first = segments[0];
-  const last = segments[segments.length - 1];
-  const stops = stopsCount(flight);
+    const window = departureWindow(flight.segments[0]);
+    if (window) windowCounts[window]++;
 
-  function handleSelect() {
-    select({ flight, ...routeContext(searchParams) });
-    router.push("/flights/checkout");
+    const segments = flight.segments.flat();
+    for (const name of flightAirlines(flight)) {
+      const existing = airlines.get(name);
+      if (existing) {
+        existing.count++;
+        existing.minPrice = Math.min(existing.minPrice, flight.price);
+      } else {
+        airlines.set(name, {
+          name,
+          code: segments.find((segment) => segment.airline === name)?.img ?? "",
+          count: 1,
+          minPrice: flight.price,
+        });
+      }
+    }
   }
 
-  return (
-    <div className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-r border-border-primary p-5 transition-colors hover:bg-neutral-900/[0.03] sm:grid-cols-[1fr_auto_auto]">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="text-sm font-bold uppercase tracking-widest text-text-primary">
-          {first.departure_city} ({first.departure_code})
-        </span>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4 shrink-0 text-green-700"
-        >
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
-        <span className="text-sm font-bold uppercase tracking-widest text-text-primary">
-          {last.arrival_city} ({last.arrival_code})
-        </span>
-        <span className="hidden items-center gap-1.5 text-xs uppercase tracking-widest text-text-tertiary sm:flex">
-          <AirlineLogo code={first.img} name={first.airline} />
-          {airlineNames(flight).join(", ")} · {first.flight_no}
-        </span>
-        <span className="rounded-sm bg-neutral-900/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
-          {first.departure_time} – {last.arrival_time} · {first.duration_time}
-        </span>
-        <span className="rounded-sm bg-neutral-900/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
-          {stops === 0 ? "Nonstop" : `${stops} Stop`}
-        </span>
-        {flight.deal && (
-          <span className="rounded-sm bg-green-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-green-800">
-            {flight.deal.label ?? `${flight.deal.discountPercent}% Off`}
-          </span>
-        )}
-      </div>
+  const prices = results.map((flight) => flight.price);
+  return {
+    airlines: [...airlines.values()].sort((a, b) => a.minPrice - b.minPrice),
+    stopCounts,
+    windowCounts,
+    minPrice: Math.min(...prices),
+    maxPrice: Math.max(...prices),
+    bagKnown: results.some((flight) => hasCheckedBag(flight) !== null),
+    refundKnown: results.some((flight) => isRefundable(flight) !== null),
+  };
+};
 
-      <div className="text-right sm:text-left">
-        <p className="text-xs uppercase tracking-widest text-text-tertiary">From</p>
-        <p className="text-lg font-bold text-green-700">{formatNaira(flight.price)}</p>
-      </div>
+const matchesFilters = (
+  flight: FlightSearchResult,
+  filters: FlightFilterState,
+  [priceLow, priceHigh]: [number, number]
+): boolean => {
+  if (filters.stops.length > 0 && !filters.stops.includes(stopBucket(flight))) return false;
+  if (filters.airlines.length > 0 && !flightAirlines(flight).some((name) => filters.airlines.includes(name))) {
+    return false;
+  }
+  if (flight.price < priceLow || flight.price > priceHigh) return false;
 
-      <Button
-        type="button"
-        onClick={handleSelect}
-        size="md"
-        variant="secondary"
-        className="col-span-2 sm:col-span-1"
-      >
-        Select Flight
-      </Button>
-    </div>
-  );
-}
+  if (filters.windows.length > 0) {
+    const window = departureWindow(flight.segments[0]);
+    if (!window || !filters.windows.includes(window)) return false;
+  }
+  if (filters.checkedBagOnly && hasCheckedBag(flight) !== true) return false;
+  if (filters.refundableOnly && isRefundable(flight) !== true) return false;
+  return true;
+};
 
-export function LiveFlightResults({
+const sorters: Record<SortOrder, (a: FlightSearchResult, b: FlightSearchResult) => number> = {
+  cheapest: (a, b) => a.price - b.price,
+  fastest: (a, b) => flightDurationMinutes(a) - flightDurationMinutes(b) || a.price - b.price,
+  earliest: (a, b) => earliestDepartureMinutes(a) - earliestDepartureMinutes(b) || a.price - b.price,
+};
+
+const FilterIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M4 6h16M7 12h10M10 18h4" />
+  </svg>
+);
+
+export const LiveFlightResults = ({
   results,
   searchParams,
 }: {
   results: FlightSearchResult[];
   searchParams: FlightSearchParams;
-}) {
-  const [filters, setFilters] = useState<LiveFlightFilterState>(defaultLiveFlightFilters);
+}) => {
+  const router = useRouter();
+  const select = useSelectedFlightStore((state) => state.select);
+  const [filters, setFilters] = useState<FlightFilterState>(defaultFlightFilters);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const airlines = useMemo(
-    () => Array.from(new Set(results.flatMap(airlineNames))).sort(),
-    [results]
-  );
-
-  const [minPrice, maxPrice] = useMemo(() => {
-    if (results.length === 0) return [0, 0];
-    const prices = results.map((f) => f.price);
-    return [Math.min(...prices), Math.max(...prices)];
-  }, [results]);
+  const facets = useMemo(() => (results.length > 0 ? buildFacets(results) : null), [results]);
 
   const filtered = useMemo(() => {
-    const [rangeLo, rangeHi] = filters.priceRange ?? [minPrice, maxPrice];
-    const matches = results.filter((flight) => {
-      const stops = stopsCount(flight);
-      if (filters.stops === "nonstop" && stops !== 0) return false;
-      if (filters.stops === "1-stop" && stops !== 1) return false;
-      if (filters.airlines.length > 0 && !airlineNames(flight).some((a) => filters.airlines.includes(a))) {
-        return false;
-      }
-      if (flight.price < rangeLo || flight.price > rangeHi) return false;
-      return true;
-    });
-    return [...matches].sort((a, b) =>
-      filters.sort === "price-asc" ? a.price - b.price : b.price - a.price
+    if (!facets) return [];
+    const range = filters.priceRange ?? [facets.minPrice, facets.maxPrice];
+    return results.filter((flight) => matchesFilters(flight, filters, range)).sort(sorters[filters.sort]);
+  }, [results, facets, filters]);
+
+  // Headline value shown under each sort tab, computed from what's currently
+  // visible so it always matches the list below.
+  const sortTabs = useMemo(() => {
+    const cheapest = filtered.length ? Math.min(...filtered.map((flight) => flight.price)) : null;
+    const fastestMinutes = filtered.length ? Math.min(...filtered.map(flightDurationMinutes)) : null;
+    const earliestMinutes = filtered.length ? Math.min(...filtered.map(earliestDepartureMinutes)) : null;
+    const earliestFlight = filtered.find((flight) => earliestDepartureMinutes(flight) === earliestMinutes);
+
+    return [
+      { key: "cheapest" as const, label: "Cheapest", detail: cheapest !== null ? formatNaira(cheapest) : "—" },
+      {
+        key: "fastest" as const,
+        label: "Fastest",
+        detail:
+          fastestMinutes !== null && fastestMinutes !== Number.MAX_SAFE_INTEGER ? formatDuration(fastestMinutes) : "—",
+      },
+      {
+        key: "earliest" as const,
+        label: "Earliest",
+        detail: earliestFlight?.segments[0]?.[0]?.departure_time.toUpperCase() ?? "—",
+      },
+    ];
+  }, [filtered]);
+
+  if (!facets) {
+    return (
+      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+        No flights found for that search. Try a different date or route.
+      </div>
     );
-  }, [filters, results, minPrice, maxPrice]);
+  }
+
+  const activeCount = activeFilterCount(filters);
+
+  const handleSelect = (flight: FlightSearchResult) => {
+    select({ flight, ...routeContext(searchParams) });
+    router.push("/flights/checkout");
+  };
 
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-primary pb-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-          {filtered.length} {filtered.length === 1 ? "Flight" : "Flights"} Found
-        </p>
-        {results.length > 0 && (
-          <LiveFlightFilters
-            airlines={airlines}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            value={filters}
-            onChange={setFilters}
-          />
-        )}
-      </div>
+    <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start">
+      <FlightFilterSidebar
+        facets={facets}
+        value={filters}
+        onChange={setFilters}
+        className={cn(filtersOpen ? "block" : "hidden", "lg:block")}
+      />
 
-      {filtered.length === 0 ? (
-        <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-          {results.length === 0
-            ? "No flights found for that search. Try a different date or route."
-            : "No flights match those filters. Try widening your search."}
+      <div className="min-w-0">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+            {filtered.length} {filtered.length === 1 ? "Flight" : "Flights"} Found
+          </p>
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((open) => !open)}
+            aria-expanded={filtersOpen}
+            className="relative flex items-center gap-2 rounded-[2px] border border-border-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-text-primary transition-colors hover:bg-neutral-900/[0.06] lg:hidden"
+          >
+            <FilterIcon className="h-4 w-4" />
+            {filtersOpen ? "Hide filters" : "Filters"}
+            {activeCount > 0 && (
+              <span className="rounded-full bg-green-700 px-1.5 text-[10px] font-bold text-neutral-0">{activeCount}</span>
+            )}
+          </button>
         </div>
-      ) : (
-        <div className="mt-6 grid grid-cols-1 border-l border-t border-border-primary bg-surface-primary sm:grid-cols-2">
-          {filtered.map((flight) => (
-            <LiveFlightResultCard key={flight.booking_token} flight={flight} searchParams={searchParams} />
+
+        <div role="tablist" aria-label="Sort flights" className="mb-5 grid grid-cols-3 border border-border-primary">
+          {sortTabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={filters.sort === tab.key}
+              onClick={() => setFilters((current) => ({ ...current, sort: tab.key }))}
+              className={cn(
+                "border-b-2 px-3 py-3 text-left transition-colors sm:px-5",
+                "border-r border-r-border-primary last:border-r-0",
+                filters.sort === tab.key
+                  ? "border-b-green-700 bg-green-50"
+                  : "border-b-transparent hover:bg-neutral-900/[0.03]"
+              )}
+            >
+              <span className="block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+                {tab.label}
+              </span>
+              <span
+                className={cn(
+                  "mt-0.5 block truncate text-sm font-bold sm:text-base",
+                  filters.sort === tab.key ? "text-green-700" : "text-text-primary"
+                )}
+              >
+                {tab.detail}
+              </span>
+            </button>
           ))}
         </div>
-      )}
-    </>
+
+        {filtered.length === 0 ? (
+          <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+            No flights match those filters. Try widening your search.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filtered.map((flight) => (
+              <FlightResultCard
+                key={flight.booking_token}
+                flight={flight}
+                tripType={searchParams.flight_type}
+                onSelect={() => handleSelect(flight)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
-}
+};

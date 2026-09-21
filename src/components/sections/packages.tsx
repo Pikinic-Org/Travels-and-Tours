@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { PackageCard } from "@/components/cards/package-card";
-import { getPackages } from "@/lib/pikinic-api";
+import { getPackages } from "@/services/content.service";
 
 export async function Packages() {
   const packages = await getPackages();

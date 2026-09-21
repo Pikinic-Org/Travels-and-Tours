@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { FlightOfferCard } from "@/components/cards/flight-offer-card";
-import { getFlightOffers } from "@/lib/pikinic-api";
+import { getFlightOffers } from "@/services/content.service";
 
 export async function FlightOffers() {
   const flightOffers = await getFlightOffers();

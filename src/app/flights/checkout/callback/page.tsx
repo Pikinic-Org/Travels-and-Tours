@@ -1,7 +1,8 @@
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { formatNaira } from "@/lib/utils";
-import { confirmBooking, getBooking, type FlightBooking } from "@/lib/pikinic-api";
+import { confirmBooking, getBooking } from "@/services/bookings.service";
+import type { FlightBooking } from "@/types";
 import { ClearSelectedFlight } from "@/components/flights/clear-selected-flight";
 
 type SearchParams = { [key: string]: string | string[] | undefined };

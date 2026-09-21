@@ -3,9 +3,27 @@ import { PathwayMark } from "@/components/ui/pathway-mark";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 import { Cta } from "@/components/sections/cta";
 import { LiveFlightResults } from "@/components/flights/live-flight-results";
-import { searchFlights, type FlightSearchParams, type FlightSearchResult } from "@/lib/pikinic-api";
+import { airportLabel, getAirportByCode } from "@/lib/airports";
+import { searchFlights } from "@/services/flights.service";
+import type { FlightSearchParams, FlightSearchResult } from "@/types";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
+
+// The search bar stores "City (CODE)" labels; the URL only has codes. Resolve
+// them here, on the server, so the ~9k-airport dataset never ships to the browser.
+const resolveAirportLabels = (params: FlightSearchParams | null): Record<string, string> => {
+  if (!params) return {};
+
+  const codes =
+    params.flight_type === "multicity" ? params.routes.flatMap((route) => [route.from, route.to]) : [params.from, params.to];
+
+  return Object.fromEntries(
+    codes.flatMap((code) => {
+      const airport = getAirportByCode(code);
+      return airport ? [[code, airportLabel(airport)]] : [];
+    })
+  );
+};
 
 function toSearchParams(query: SearchParams): FlightSearchParams | null {
   const flightType = query.flight_type;
@@ -87,7 +105,11 @@ export default async function FlightsPage({ searchParams }: { searchParams: Prom
             the price is right.
           </p>
           <div className="relative z-10 mt-12 w-full max-w-5xl">
-            <FlightSearchBar key={JSON.stringify(query)} initialSearch={params} />
+            <FlightSearchBar
+              key={JSON.stringify(query)}
+              initialSearch={params}
+              airportLabels={resolveAirportLabels(params)}
+            />
           </div>
         </Container>
       </section>

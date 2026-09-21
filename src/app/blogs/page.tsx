@@ -2,7 +2,7 @@ import { Container } from "@/components/ui/container";
 import { PathwayMark } from "@/components/ui/pathway-mark";
 import { Cta } from "@/components/sections/cta";
 import { BlogsResults } from "@/components/blog/blogs-results";
-import { getBlogPosts } from "@/lib/pikinic-api";
+import { getBlogPosts } from "@/services/content.service";
 
 export default async function BlogsPage() {
   const blogPosts = await getBlogPosts();

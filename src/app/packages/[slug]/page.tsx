@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { BookPackageButton } from "@/components/packages/book-package-button";
-import { getPackageBySlug, getPackages } from "@/lib/pikinic-api";
+import { getPackageBySlug, getPackages } from "@/services/content.service";
 import { formatNaira } from "@/lib/utils";
 
 function CheckIcon({ className }: { className?: string }) {

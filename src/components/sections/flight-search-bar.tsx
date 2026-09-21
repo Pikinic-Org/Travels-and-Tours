@@ -2,21 +2,18 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { AirportPicker } from "@/components/ui/airport-picker";
 import { Button } from "@/components/ui/button";
 import { ListSelect } from "@/components/ui/list-select";
 import { PassengersSelect, type PassengerCounts } from "@/components/ui/passengers-select";
+import { extractAirportCode } from "@/lib/airport-label";
 import { cn } from "@/lib/utils";
-import type { FlightSearchParams } from "@/lib/pikinic-api";
+import type { FlightSearchParams } from "@/types";
 
-const cities = [
-  "Lagos (LOS)",
-  "Abuja (ABV)",
-  "Port Harcourt (PHC)",
-  "Dubai (DXB)",
-  "London (LHR)",
-  "Accra (ACC)",
-  "Johannesburg (JNB)",
-];
+// Starting route before the visitor picks anything — any airport in the world
+// can be searched through the picker.
+const DEFAULT_FROM = "Lagos (LOS)";
+const DEFAULT_TO = "Dubai (DXB)";
 
 const cabinClasses = ["Economy", "Premium Economy", "Business", "First"];
 const cabinClassValues: Record<string, string> = {
@@ -34,20 +31,9 @@ const flightTypeValues: Record<TripType, string> = {
   "Multi-city": "multicity",
 };
 
-// City options are labeled "City (CODE)" for the picker; only the IATA
-// code is meaningful to the search API.
-function extractCode(cityLabel: string): string {
-  return cityLabel.match(/\(([^)]+)\)/)?.[1] ?? cityLabel;
-}
-
 type Segment = { from: string; to: string; date: string };
 
 const MAX_SEGMENTS = 5;
-
-// Reverse of extractCode: the picker stores full "City (CODE)" labels, so a
-// code coming back from the URL has to be mapped to its label again.
-const cityFromCode = (code: string, fallback: string): string =>
-  cities.find((city) => extractCode(city) === code) ?? fallback;
 
 const tripTypeFromFlightType = (flightType: string): TripType =>
   tripTypes.find((type) => flightTypeValues[type] === flightType) ?? "Round trip";
@@ -151,7 +137,16 @@ function CloseIcon({ className }: { className?: string }) {
 
 // `initialSearch` is the search already in the URL (on /flights), so the bar
 // shows what was actually searched instead of resetting to its defaults.
-export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearchParams | null }) {
+// `airportLabels` maps the codes in that search to "City (CODE)" labels,
+// resolved on the server so the airport dataset never ships to the browser.
+export function FlightSearchBar({
+  initialSearch,
+  airportLabels = {},
+}: {
+  initialSearch?: FlightSearchParams | null;
+  airportLabels?: Record<string, string>;
+}) {
+  const labelFor = (code: string) => airportLabels[code] ?? code;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -166,8 +161,8 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
   });
 
   const singleTrip = initialSearch && initialSearch.flight_type !== "multicity" ? initialSearch : null;
-  const [from, setFrom] = useState(singleTrip ? cityFromCode(singleTrip.from, cities[0]) : cities[0]);
-  const [to, setTo] = useState(singleTrip ? cityFromCode(singleTrip.to, cities[3]) : cities[3]);
+  const [from, setFrom] = useState(singleTrip ? labelFor(singleTrip.from) : DEFAULT_FROM);
+  const [to, setTo] = useState(singleTrip ? labelFor(singleTrip.to) : DEFAULT_TO);
   const [depart, setDepart] = useState(singleTrip?.flights_departure_date ?? "");
   const [returnDate, setReturnDate] = useState(
     singleTrip?.flight_type === "roundtrip" ? singleTrip.flights_return_date : ""
@@ -176,13 +171,13 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
   const [segments, setSegments] = useState<Segment[]>(
     initialSearch?.flight_type === "multicity"
       ? initialSearch.routes.map((route) => ({
-          from: cityFromCode(route.from, cities[0]),
-          to: cityFromCode(route.to, cities[3]),
+          from: labelFor(route.from),
+          to: labelFor(route.to),
           date: route.date,
         }))
       : [
-          { from: cities[0], to: cities[3], date: "" },
-          { from: cities[3], to: cities[0], date: "" },
+          { from: DEFAULT_FROM, to: DEFAULT_TO, date: "" },
+          { from: DEFAULT_TO, to: DEFAULT_FROM, date: "" },
         ]
   );
 
@@ -196,7 +191,8 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
   }
 
   function addSegment() {
-    setSegments((prev) => [...prev, { from: cities[0], to: cities[3], date: "" }]);
+    // A new leg naturally starts where the previous one ended.
+    setSegments((prev) => [...prev, { from: prev[prev.length - 1]?.to ?? DEFAULT_FROM, to: DEFAULT_TO, date: "" }]);
   }
 
   function removeSegment(index: number) {
@@ -214,11 +210,13 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
     if (tripType === "Multi-city") {
       params.set(
         "routes",
-        JSON.stringify(segments.map((s) => ({ from: extractCode(s.from), to: extractCode(s.to), date: s.date })))
+        JSON.stringify(
+          segments.map((s) => ({ from: extractAirportCode(s.from), to: extractAirportCode(s.to), date: s.date }))
+        )
       );
     } else {
-      params.set("from", extractCode(from));
-      params.set("to", extractCode(to));
+      params.set("from", extractAirportCode(from));
+      params.set("to", extractAirportCode(to));
       params.set("flights_departure_date", depart);
       if (tripType === "Round trip") {
         params.set("flights_return_date", returnDate);
@@ -275,12 +273,10 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
           )}
         >
           <div className="relative flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <ListSelect
+            <AirportPicker
               label="From"
-              options={cities}
               value={from}
               onChange={setFrom}
-              panelClassName="w-64"
               triggerClassName="text-base font-bold text-text-primary"
             />
             <button
@@ -294,12 +290,10 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
           </div>
 
           <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <ListSelect
+            <AirportPicker
               label="To"
-              options={cities}
               value={to}
               onChange={setTo}
-              panelClassName="w-64"
               triggerClassName="text-base font-bold text-text-primary"
             />
           </div>
@@ -336,22 +330,18 @@ export function FlightSearchBar({ initialSearch }: { initialSearch?: FlightSearc
                 className="flex flex-col rounded-[2px] border border-border-primary sm:flex-row"
               >
                 <div className="border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
-                  <ListSelect
+                  <AirportPicker
                     label={`Flight ${index + 1} from`}
-                    options={cities}
                     value={segment.from}
                     onChange={(value) => updateSegment(index, "from", value)}
-                    panelClassName="w-64"
                     triggerClassName="text-base font-bold text-text-primary"
                   />
                 </div>
                 <div className="border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
-                  <ListSelect
+                  <AirportPicker
                     label={`Flight ${index + 1} to`}
-                    options={cities}
                     value={segment.to}
                     onChange={(value) => updateSegment(index, "to", value)}
-                    panelClassName="w-64"
                     triggerClassName="text-base font-bold text-text-primary"
                   />
                 </div>
