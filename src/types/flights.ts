@@ -99,6 +99,7 @@ export type FlightSearchResult = {
   baggage_allowance?: FlightBaggageAllowance;
   amenities?: FlightAmenity[];
   fare_types?: string[];
+  last_ticketing_date?: string; // ISO date, e.g. "2026-11-10"
 };
 
 export type FlightSearchResponse = {

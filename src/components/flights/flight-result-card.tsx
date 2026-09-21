@@ -18,6 +18,7 @@ import {
   legStops,
   type FlightLeg,
 } from "@/lib/flight-format";
+import { formatIsoDate } from "@/lib/dates";
 import type { FlightAmenity, FlightSearchResult, FlightSegment } from "@/types";
 import { cn, formatNaira } from "@/lib/utils";
 
@@ -226,42 +227,125 @@ const SegmentDetail = ({ segment }: { segment: FlightSegment }) => (
   </div>
 );
 
-const FlightDetails = ({ flight, tripType }: { flight: FlightSearchResult; tripType: TripType }) => {
-  const amenities = uniqueAmenities(flight.amenities);
+type DetailsTab = "details" | "baggage" | "fare";
+
+const detailTabs: { key: DetailsTab; label: string }[] = [
+  { key: "details", label: "Flight Details" },
+  { key: "baggage", label: "Baggage" },
+  { key: "fare", label: "Fare Rules" },
+];
+
+const eyebrowClass = "mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary";
+
+// "1 PC" / "23 KG" as sent; "0 PC" means none; nothing sent means unknown.
+const describeBag = (value: string | undefined): string => {
+  if (!value) return "Not specified";
+  return /[1-9]/.test(value) ? value : "Not included";
+};
+
+const ItineraryTab = ({ flight, tripType }: { flight: FlightSearchResult; tripType: TripType }) => (
+  <div className="space-y-6">
+    {flight.segments.map((leg, legIndex) => (
+      <div key={legIndex}>
+        {legLabel(tripType, legIndex) && <p className={eyebrowClass}>{legLabel(tripType, legIndex)}</p>}
+        <div className="space-y-4">
+          {leg.map((segment, index) => {
+            const wait = index > 0 ? layoverMinutes(leg[index - 1], segment) : null;
+            return (
+              <div key={`${segment.flight_no}-${index}`} className="space-y-4">
+                {index > 0 && (
+                  <p className="rounded-sm bg-neutral-900/[0.06] px-3 py-2 text-xs font-semibold uppercase tracking-widest text-text-secondary">
+                    {wait !== null ? `Layover ${formatDuration(wait)}` : "Layover"} in {segment.departure_city} (
+                    {segment.departure_code})
+                  </p>
+                )}
+                <SegmentDetail segment={segment} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const BaggageTab = ({ flight, tripType }: { flight: FlightSearchResult; tripType: TripType }) => {
+  const usesPieces = flight.segments
+    .flat()
+    .some((segment) => /PC/i.test(`${segment.baggage ?? ""} ${segment.cabin_baggage ?? ""}`));
 
   return (
-    <div className="space-y-6 border-t border-border-primary bg-neutral-900/[0.02] p-5">
+    <div className="space-y-6">
       {flight.segments.map((leg, legIndex) => (
         <div key={legIndex}>
-          {legLabel(tripType, legIndex) && (
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
-              {legLabel(tripType, legIndex)}
-            </p>
-          )}
-          <div className="space-y-4">
-            {leg.map((segment, index) => {
-              const wait = index > 0 ? layoverMinutes(leg[index - 1], segment) : null;
-              return (
-                <div key={`${segment.flight_no}-${index}`} className="space-y-4">
-                  {index > 0 && (
-                    <p className="rounded-sm bg-neutral-900/[0.06] px-3 py-2 text-xs font-semibold uppercase tracking-widest text-text-secondary">
-                      {wait !== null ? `Layover ${formatDuration(wait)}` : "Layover"} in {segment.departure_city} (
-                      {segment.departure_code})
-                    </p>
-                  )}
-                  <SegmentDetail segment={segment} />
-                </div>
-              );
-            })}
+          {legLabel(tripType, legIndex) && <p className={eyebrowClass}>{legLabel(tripType, legIndex)}</p>}
+          <div className="overflow-x-auto border border-border-primary bg-surface-primary">
+            <table className="w-full min-w-max border-collapse text-sm">
+              <thead>
+                <tr>
+                  {["Flight", "Route", "Checked bag", "Cabin bag"].map((heading) => (
+                    <th
+                      key={heading}
+                      scope="col"
+                      className="bg-neutral-900/[0.03] px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-text-tertiary"
+                    >
+                      {heading}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {leg.map((segment, index) => (
+                  <tr key={`${segment.flight_no}-${index}`} className="border-t border-border-primary">
+                    <td className="px-4 py-3 text-text-secondary">
+                      {segment.airline} · {segment.flight_no}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-text-primary">
+                      {segment.departure_code} → {segment.arrival_code}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-text-primary">{describeBag(segment.baggage)}</td>
+                    <td className="px-4 py-3 font-semibold text-text-primary">{describeBag(segment.cabin_baggage)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       ))}
+      {usesPieces && <p className="text-xs text-text-tertiary">PC = pieces of baggage.</p>}
+    </div>
+  );
+};
+
+// Only what the search actually returned — SkyLink doesn't send the airline's
+// full change and cancellation terms, so none are shown or implied.
+const FareTab = ({ flight }: { flight: FlightSearchResult }) => {
+  const refundable = isRefundable(flight);
+  const ticketBy = flight.last_ticketing_date ? formatIsoDate(flight.last_ticketing_date) : null;
+  const amenities = uniqueAmenities(flight.amenities);
+
+  const rows: [string, string][] = [
+    ["Fare", fareName(flight) ?? "Not specified"],
+    ["Cabin", cabinLabel(flight.segments[0]) ?? "Not specified"],
+    ["Refundable", refundable === null ? "Not specified" : refundable ? "Yes" : "No"],
+    ["Ticket by", ticketBy ?? "Not specified"],
+    ["Seats left", flight.seats_left > 0 ? String(flight.seats_left) : "Not specified"],
+  ];
+
+  return (
+    <div className="space-y-6">
+      <dl className="grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+        {rows.map(([term, description]) => (
+          <div key={term} className="flex items-baseline justify-between gap-4 border-b border-border-primary pb-2">
+            <dt className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">{term}</dt>
+            <dd className="text-right font-semibold text-text-primary">{description}</dd>
+          </div>
+        ))}
+      </dl>
 
       {amenities.length > 0 && (
         <div>
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
-            Fare includes
-          </p>
+          <p className={eyebrowClass}>Fare includes</p>
           <ul className="grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
             {amenities.map((amenity) => (
               <li key={amenity.description} className="flex items-center justify-between gap-3">
@@ -279,6 +363,40 @@ const FlightDetails = ({ flight, tripType }: { flight: FlightSearchResult; tripT
           </ul>
         </div>
       )}
+    </div>
+  );
+};
+
+const FlightDetails = ({ flight, tripType }: { flight: FlightSearchResult; tripType: TripType }) => {
+  const [tab, setTab] = useState<DetailsTab>("details");
+
+  return (
+    <div className="border-t border-border-primary bg-neutral-900/[0.02]">
+      <div role="tablist" aria-label="Flight information" className="flex gap-6 overflow-x-auto border-b border-border-primary px-5">
+        {detailTabs.map((entry) => (
+          <button
+            key={entry.key}
+            type="button"
+            role="tab"
+            aria-selected={tab === entry.key}
+            onClick={() => setTab(entry.key)}
+            className={cn(
+              "-mb-px shrink-0 border-b-2 py-3 text-xs font-semibold uppercase tracking-widest transition-colors",
+              tab === entry.key
+                ? "border-green-700 text-green-700"
+                : "border-transparent text-text-tertiary hover:text-text-primary"
+            )}
+          >
+            {entry.label}
+          </button>
+        ))}
+      </div>
+
+      <div role="tabpanel" className="p-5">
+        {tab === "details" && <ItineraryTab flight={flight} tripType={tripType} />}
+        {tab === "baggage" && <BaggageTab flight={flight} tripType={tripType} />}
+        {tab === "fare" && <FareTab flight={flight} />}
+      </div>
     </div>
   );
 };

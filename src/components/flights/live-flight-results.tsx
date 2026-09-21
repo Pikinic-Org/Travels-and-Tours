@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FlightPriceGrid, type PriceGridCells } from "@/components/flights/flight-price-grid";
 import { FlightResultCard } from "@/components/flights/flight-result-card";
 import {
   FlightFilterSidebar,
@@ -100,6 +101,22 @@ const buildFacets = (results: FlightSearchResult[]): FlightFacets => {
   };
 };
 
+// Cheapest fare for every airline at every number of stops — the numbers in the
+// grid above the list. A flight with several airlines counts under each.
+const buildPriceCells = (results: FlightSearchResult[]): PriceGridCells => {
+  const cells: PriceGridCells = {};
+
+  for (const flight of results) {
+    const bucket = stopBucket(flight);
+    for (const airline of flightAirlines(flight)) {
+      const row = (cells[airline] ??= {});
+      row[bucket] = Math.min(row[bucket] ?? Number.POSITIVE_INFINITY, flight.price);
+    }
+  }
+
+  return cells;
+};
+
 const matchesFilters = (
   flight: FlightSearchResult,
   filters: FlightFilterState,
@@ -154,6 +171,9 @@ export const LiveFlightResults = ({
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const facets = useMemo(() => (results.length > 0 ? buildFacets(results) : null), [results]);
+  // Built from every result, not the filtered list, so the grid stays put
+  // while you narrow things down with it.
+  const priceCells = useMemo(() => buildPriceCells(results), [results]);
 
   const filtered = useMemo(() => {
     if (!facets) return [];
@@ -200,82 +220,113 @@ export const LiveFlightResults = ({
     router.push("/flights/checkout");
   };
 
+  // Picking a price narrows the list to that airline and number of stops;
+  // picking the same one again clears both.
+  const handlePricePick = (airline: string, bucket: StopsBucket) =>
+    setFilters((current) => {
+      const alreadyPicked =
+        current.airlines.length === 1 &&
+        current.airlines[0] === airline &&
+        current.stops.length === 1 &&
+        current.stops[0] === bucket;
+      return alreadyPicked
+        ? { ...current, airlines: [], stops: [] }
+        : { ...current, airlines: [airline], stops: [bucket] };
+    });
+
+  // With a single airline there's nothing to compare.
+  const showPriceGrid = facets.airlines.length > 1;
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start">
-      <FlightFilterSidebar
-        facets={facets}
-        value={filters}
-        onChange={setFilters}
-        className={cn(filtersOpen ? "block" : "hidden", "lg:block")}
-      />
-
-      <div className="min-w-0">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-            {filtered.length} {filtered.length === 1 ? "Flight" : "Flights"} Found
-          </p>
-          <button
-            type="button"
-            onClick={() => setFiltersOpen((open) => !open)}
-            aria-expanded={filtersOpen}
-            className="relative flex items-center gap-2 rounded-[2px] border border-border-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-text-primary transition-colors hover:bg-neutral-900/[0.06] lg:hidden"
-          >
-            <FilterIcon className="h-4 w-4" />
-            {filtersOpen ? "Hide filters" : "Filters"}
-            {activeCount > 0 && (
-              <span className="rounded-full bg-green-700 px-1.5 text-[10px] font-bold text-neutral-0">{activeCount}</span>
-            )}
-          </button>
+    <>
+      {showPriceGrid && (
+        <div className="mb-8">
+          <FlightPriceGrid
+            airlines={facets.airlines}
+            cells={priceCells}
+            activeAirlines={filters.airlines}
+            activeStops={filters.stops}
+            onPick={handlePricePick}
+          />
         </div>
+      )}
 
-        <div role="tablist" aria-label="Sort flights" className="mb-5 grid grid-cols-3 border border-border-primary">
-          {sortTabs.map((tab) => (
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start">
+        <FlightFilterSidebar
+          facets={facets}
+          value={filters}
+          onChange={setFilters}
+          className={cn(filtersOpen ? "block" : "hidden", "lg:block")}
+        />
+
+        <div className="min-w-0">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+              {filtered.length} {filtered.length === 1 ? "Flight" : "Flights"} Found
+            </p>
             <button
-              key={tab.key}
               type="button"
-              role="tab"
-              aria-selected={filters.sort === tab.key}
-              onClick={() => setFilters((current) => ({ ...current, sort: tab.key }))}
-              className={cn(
-                "border-b-2 px-3 py-3 text-left transition-colors sm:px-5",
-                "border-r border-r-border-primary last:border-r-0",
-                filters.sort === tab.key
-                  ? "border-b-green-700 bg-green-50"
-                  : "border-b-transparent hover:bg-neutral-900/[0.03]"
-              )}
+              onClick={() => setFiltersOpen((open) => !open)}
+              aria-expanded={filtersOpen}
+              className="relative flex items-center gap-2 rounded-[2px] border border-border-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-text-primary transition-colors hover:bg-neutral-900/[0.06] lg:hidden"
             >
-              <span className="block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
-                {tab.label}
-              </span>
-              <span
+              <FilterIcon className="h-4 w-4" />
+              {filtersOpen ? "Hide filters" : "Filters"}
+              {activeCount > 0 && (
+                <span className="rounded-full bg-green-700 px-1.5 text-[10px] font-bold text-neutral-0">{activeCount}</span>
+              )}
+            </button>
+          </div>
+
+          <div role="tablist" aria-label="Sort flights" className="mb-5 grid grid-cols-3 border border-border-primary">
+            {sortTabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={filters.sort === tab.key}
+                onClick={() => setFilters((current) => ({ ...current, sort: tab.key }))}
                 className={cn(
-                  "mt-0.5 block truncate text-sm font-bold sm:text-base",
-                  filters.sort === tab.key ? "text-green-700" : "text-text-primary"
+                  "border-b-2 px-3 py-3 text-left transition-colors sm:px-5",
+                  "border-r border-r-border-primary last:border-r-0",
+                  filters.sort === tab.key
+                    ? "border-b-green-700 bg-green-50"
+                    : "border-b-transparent hover:bg-neutral-900/[0.03]"
                 )}
               >
-                {tab.detail}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
-            No flights match those filters. Try widening your search.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filtered.map((flight) => (
-              <FlightResultCard
-                key={flight.booking_token}
-                flight={flight}
-                tripType={searchParams.flight_type}
-                onSelect={() => handleSelect(flight)}
-              />
+                <span className="block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+                  {tab.label}
+                </span>
+                <span
+                  className={cn(
+                    "mt-0.5 block truncate text-sm font-bold sm:text-base",
+                    filters.sort === tab.key ? "text-green-700" : "text-text-primary"
+                  )}
+                >
+                  {tab.detail}
+                </span>
+              </button>
             ))}
           </div>
-        )}
+
+          {filtered.length === 0 ? (
+            <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+              No flights match those filters. Try widening your search.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filtered.map((flight) => (
+                <FlightResultCard
+                  key={flight.booking_token}
+                  flight={flight}
+                  tripType={searchParams.flight_type}
+                  onSelect={() => handleSelect(flight)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
