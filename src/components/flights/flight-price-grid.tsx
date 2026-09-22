@@ -130,7 +130,7 @@ export const FlightPriceGrid = ({
         <table className="w-full min-w-max border-collapse text-sm">
           <thead>
             <tr>
-              <th scope="col" className="sticky left-0 z-10 w-0 bg-surface-primary px-4 py-3" aria-hidden />
+              <th scope="col" className="sticky left-0 z-10 bg-surface-primary px-4 py-3" aria-hidden />
               {airlines.map((airline) => (
                 <th key={airline.name} scope="col" className="px-4 py-3 text-left font-normal">
                   <span className="flex items-center gap-2">
@@ -146,7 +146,7 @@ export const FlightPriceGrid = ({
               <tr key={bucket} className="border-t border-border-primary">
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 bg-surface-primary px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-text-secondary"
+                  className="sticky left-0 z-10 whitespace-nowrap bg-surface-primary px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-text-secondary"
                 >
                   {rowLabels[bucket]}
                 </th>

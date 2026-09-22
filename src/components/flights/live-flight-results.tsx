@@ -240,7 +240,11 @@ export const LiveFlightResults = ({
   return (
     <>
       {showPriceGrid && (
-        <div className="mb-8">
+        // Same width as the search form above (max-w-5xl) rather than the
+        // full results column — also means it overflows (and shows the
+        // swipe arrows) at a realistic airline count, instead of a
+        // full-bleed box wide enough to fit every column without scrolling.
+        <div className="mb-8 max-w-5xl mx-auto">
           <FlightPriceGrid
             airlines={facets.airlines}
             cells={priceCells}
