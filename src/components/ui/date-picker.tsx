@@ -70,24 +70,32 @@ const CalendarPanel = ({ title, children }: { title: string; children: ReactNode
   </div>
 );
 
-// One date: one-way trips and each leg of a multi-city trip. `min` (an ISO
-// date) blocks anything earlier — a leg can't start before the one before it.
+// One date: one-way trips and each leg of a multi-city trip, and — with
+// `max` set and `withYearNav` on — DOB/passport dates in checkout. `min`
+// blocks anything earlier (a flight leg can't start before the one before
+// it; a birth date can't be before a sensible cutoff); `max` blocks
+// anything later (a birth date can't be after today).
 export const DatePickerField = ({
   label,
   value,
   onChange,
   min,
+  max,
+  withYearNav = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   min?: string;
+  max?: string;
+  withYearNav?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   useDismiss(ref, open, () => setOpen(false));
 
   const earliest = (min ? fromIsoDate(min) : undefined) ?? startOfToday();
+  const latest = max ? fromIsoDate(max) : undefined;
 
   return (
     <div ref={ref} className="relative">
@@ -96,7 +104,11 @@ export const DatePickerField = ({
         <CalendarPanel title={label}>
           <Calendar
             selected={fromIsoDate(value)}
-            disabled={{ before: earliest }}
+            defaultMonth={fromIsoDate(value) ?? latest ?? earliest}
+            disabled={latest ? [{ before: earliest }, { after: latest }] : { before: earliest }}
+            startMonth={earliest}
+            endMonth={latest}
+            withYearNav={withYearNav}
             onSelect={(date) => {
               onChange(toIsoDate(date));
               setOpen(false);

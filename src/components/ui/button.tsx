@@ -16,11 +16,14 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: ReactNode;
 };
 
-// Simple diagonal "go" arrow — same 21x21 fixed size and span placement as
-// what it replaces, just a clean shaft+head instead of the old glyph (which
-// read more like a pin/paperclip than an arrow at this size).
-const defaultArrow = (
-  <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+// Simple diagonal "go" arrow. Sized per button size (not a fixed 21px like
+// before) — a fixed icon left almost no padding around it in the small chip
+// (24px chip, 21px icon = ~1.5px breathing room per side) and not much more
+// in medium; scaling it keeps comfortable, consistent padding at every size.
+const arrowSizePx: Record<ButtonSize, number> = { sm: 14, md: 17, lg: 20 };
+
+const renderDefaultArrow = (size: ButtonSize) => (
+  <svg width={arrowSizePx[size]} height={arrowSizePx[size]} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M6 15L15 6M15 6H8M15 6V13"
       stroke="currentColor"
@@ -72,14 +75,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (href) {
       return (
         <Link href={href} className={classes}>
-          {children}  <span className={spanClass}>{icon ?? defaultArrow}</span>
+          {children}  <span className={spanClass}>{icon ?? renderDefaultArrow(size)}</span>
         </Link>
       );
     }
 
     return (
       <button ref={ref} className={classes} {...props}>
-        {children} <span className={spanClass}>{icon ?? defaultArrow}</span>
+        {children} <span className={spanClass}>{icon ?? renderDefaultArrow(size)}</span>
       </button>
     );
   }

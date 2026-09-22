@@ -27,6 +27,17 @@ const classNames = {
   disabled: "[&>button]:pointer-events-none [&>button]:text-text-tertiary [&>button]:opacity-40",
   outside: "opacity-40",
   hidden: "invisible",
+  // Only rendered when captionLayout is "dropdown" — jumping straight to a
+  // year (e.g. picking a birth date decades back) instead of clicking
+  // "previous month" hundreds of times. Styled as plain visible selects
+  // (not the usual invisible-overlay-on-styled-label trick) so it's
+  // guaranteed to render correctly without needing to match react-day-
+  // picker's exact internal markup.
+  dropdowns: "flex items-center gap-1.5",
+  months_dropdown:
+    "rounded-[2px] border border-border-primary bg-surface-primary px-2 py-1 text-sm font-bold uppercase tracking-widest text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700",
+  years_dropdown:
+    "rounded-[2px] border border-border-primary bg-surface-primary px-2 py-1 text-sm font-bold uppercase tracking-widest text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700",
 };
 
 // Single-date calendar. Callers that need more (like the round-trip range
@@ -38,6 +49,9 @@ export const Calendar = ({
   defaultMonth,
   modifiers,
   modifiersClassNames,
+  startMonth,
+  endMonth,
+  withYearNav = false,
 }: {
   selected?: Date;
   onSelect: (date: Date) => void;
@@ -45,6 +59,12 @@ export const Calendar = ({
   defaultMonth?: Date;
   modifiers?: Record<string, Matcher | Matcher[]>;
   modifiersClassNames?: Record<string, string>;
+  startMonth?: Date;
+  endMonth?: Date;
+  // Month/year dropdowns instead of prev/next-only navigation — for a date
+  // that can be decades away (birth date, passport dates), not just a few
+  // months out like a flight departure.
+  withYearNav?: boolean;
 }) => {
   return (
     <DayPicker
@@ -60,6 +80,9 @@ export const Calendar = ({
       modifiers={modifiers}
       modifiersClassNames={modifiersClassNames}
       classNames={classNames}
+      captionLayout={withYearNav ? "dropdown" : "label"}
+      startMonth={startMonth}
+      endMonth={endMonth}
     />
   );
 };
