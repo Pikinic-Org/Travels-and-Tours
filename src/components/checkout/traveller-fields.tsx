@@ -27,58 +27,54 @@ type TravellerFieldsProps = {
 // every other traveller skips them entirely, matching 247Travels' own booking
 // form, which shows contact fields on "Lead Traveler" only.
 //
-// Grouped two columns: Title/Gender together, First/Last/Other Name together
-// — everything else follows in its own generously-sized row (not squeezed
-// into a small fixed-width box).
+// Row layout: Title/Gender/First/Last/Other Name share one row, five equal
+// columns. Contact Email sits alone (half width). Country Code, Nationality
+// and Contact Phone share the next row. Date of Birth and Passport Number
+// each sit alone (half width). Passport Issue/Expiry share the final row.
 export const TravellerFields = (props: TravellerFieldsProps) => {
   const { value, onChange } = props;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="space-y-4">
-          <FormField label="Title">
-            <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={selectClass}>
-              {travellerTitles.map((title) => (
-                <option key={title} value={title}>
-                  {title}
-                </option>
-              ))}
-            </select>
-          </FormField>
-          <FormField label="Gender">
-            <select value={value.gender} onChange={(e) => onChange("gender", e.target.value)} className={selectClass}>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </FormField>
-        </div>
-
-        <div className="space-y-4">
-          <FormField label="First Name">
-            <input
-              required
-              value={value.first_name}
-              onChange={(e) => onChange("first_name", e.target.value)}
-              className={inputClass}
-            />
-          </FormField>
-          <FormField label="Last Name">
-            <input
-              required
-              value={value.last_name}
-              onChange={(e) => onChange("last_name", e.target.value)}
-              className={inputClass}
-            />
-          </FormField>
-          <FormField label="Other Name (optional)">
-            <input
-              value={value.other_name}
-              onChange={(e) => onChange("other_name", e.target.value)}
-              className={inputClass}
-            />
-          </FormField>
-        </div>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <FormField label="Title">
+          <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={selectClass}>
+            {travellerTitles.map((title) => (
+              <option key={title} value={title}>
+                {title}
+              </option>
+            ))}
+          </select>
+        </FormField>
+        <FormField label="Gender">
+          <select value={value.gender} onChange={(e) => onChange("gender", e.target.value)} className={selectClass}>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </FormField>
+        <FormField label="First Name">
+          <input
+            required
+            value={value.first_name}
+            onChange={(e) => onChange("first_name", e.target.value)}
+            className={inputClass}
+          />
+        </FormField>
+        <FormField label="Last Name">
+          <input
+            required
+            value={value.last_name}
+            onChange={(e) => onChange("last_name", e.target.value)}
+            className={inputClass}
+          />
+        </FormField>
+        <FormField label="Other Name (optional)">
+          <input
+            value={value.other_name}
+            onChange={(e) => onChange("other_name", e.target.value)}
+            className={inputClass}
+          />
+        </FormField>
       </div>
 
       {props.isLead && (
@@ -90,7 +86,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
             <p className="mt-1 text-xs text-text-secondary">Booking confirmation will be sent to this email.</p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Contact Email">
               <input
                 required
@@ -100,56 +96,86 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
                 className={inputClass}
               />
             </FormField>
+          </div>
 
-            <div className="grid grid-cols-[auto_1fr] gap-3">
-              <FormField label="Country Code" className="w-36">
-                <select
-                  required
-                  value={value.country_code}
-                  onChange={(e) => onChange("country_code", e.target.value)}
-                  className={selectClass}
-                >
-                  {countryCodes.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.label}
-                    </option>
-                  ))}
-                </select>
-              </FormField>
-              <FormField label="Contact Phone">
-                <input
-                  required
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={15}
-                  value={props.contact.phone}
-                  onChange={(e) => props.onContactChange("phone", digitsOnly(e.target.value))}
-                  className={inputClass}
-                />
-              </FormField>
-            </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <FormField label="Country Code">
+              <select
+                required
+                value={value.country_code}
+                onChange={(e) => onChange("country_code", e.target.value)}
+                className={selectClass}
+              >
+                {countryCodes.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.label}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+            <FormField label="Nationality">
+              <select
+                required
+                value={value.nationality}
+                onChange={(e) => onChange("nationality", e.target.value)}
+                className={selectClass}
+              >
+                {countries.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+            <FormField label="Contact Phone">
+              <input
+                required
+                type="tel"
+                inputMode="numeric"
+                maxLength={15}
+                value={props.contact.phone}
+                onChange={(e) => props.onContactChange("phone", digitsOnly(e.target.value))}
+                className={inputClass}
+              />
+            </FormField>
           </div>
         </>
       )}
 
       {!props.isLead && (
-        <FormField label="Country Code" className="sm:max-w-xs">
-          <select
-            required
-            value={value.country_code}
-            onChange={(e) => onChange("country_code", e.target.value)}
-            className={selectClass}
-          >
-            {countryCodes.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.label}
-              </option>
-            ))}
-          </select>
-        </FormField>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Country Code">
+            <select
+              required
+              value={value.country_code}
+              onChange={(e) => onChange("country_code", e.target.value)}
+              className={selectClass}
+            >
+              {countryCodes.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+          <FormField label="Nationality">
+            <select
+              required
+              value={value.nationality}
+              onChange={(e) => onChange("nationality", e.target.value)}
+              className={selectClass}
+            >
+              {countries.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </div>
       )}
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <DatePickerField
           label="Date of Birth"
           value={value.dob}
@@ -157,36 +183,25 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           min={isoYearsAgo(100)}
           max={isoToday}
           withYearNav
+          boxed
         />
-        <FormField label="Nationality">
-          <select
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField label="Passport Number">
+          <input
             required
-            value={value.nationality}
-            onChange={(e) => onChange("nationality", e.target.value)}
-            className={selectClass}
-          >
-            {countries.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
-            ))}
-          </select>
+            value={value.passport_number}
+            onChange={(e) => onChange("passport_number", alphanumericUpper(e.target.value))}
+            minLength={6}
+            maxLength={9}
+            autoCapitalize="characters"
+            className={inputClass}
+          />
         </FormField>
       </div>
 
-      <FormField label="Passport Number" className="sm:max-w-xs">
-        <input
-          required
-          value={value.passport_number}
-          onChange={(e) => onChange("passport_number", alphanumericUpper(e.target.value))}
-          minLength={6}
-          maxLength={9}
-          autoCapitalize="characters"
-          className={inputClass}
-        />
-      </FormField>
-
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <DatePickerField
           label="Passport Issue Date"
           value={value.passport_issue_date}
@@ -194,6 +209,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           min={isoYearsAgo(15)}
           max={isoToday}
           withYearNav
+          boxed
         />
         <DatePickerField
           label="Passport Expiry"
@@ -202,6 +218,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           min={isoToday}
           max={isoYearsFromNow(15)}
           withYearNav
+          boxed
         />
       </div>
     </div>

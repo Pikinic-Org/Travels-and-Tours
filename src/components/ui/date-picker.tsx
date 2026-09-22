@@ -33,12 +33,18 @@ const DateTrigger = ({
   placeholder,
   open,
   onClick,
+  boxed,
 }: {
   label: string;
   value: string;
   placeholder: string;
   open: boolean;
   onClick: () => void;
+  // The search bar drops this straight into an already-bordered grid cell,
+  // so the trigger itself stays bare. Checkout has no such cell around it —
+  // without its own border/background it rendered as plain floating text
+  // with no visible box at all, unlike every other field on the form.
+  boxed?: boolean;
 }) => {
   const display = formatIsoDate(value);
 
@@ -49,9 +55,19 @@ const DateTrigger = ({
       aria-haspopup="dialog"
       aria-expanded={open}
       aria-label={`${label}: ${display ?? "not chosen"}`}
-      className="flex w-full items-center justify-between gap-2 text-left"
+      className={cn(
+        "flex w-full items-center justify-between gap-2 text-left",
+        boxed &&
+          "rounded-[2px] border border-border-primary bg-surface-primary px-3 py-3 transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
+      )}
     >
-      <span className={cn("truncate text-base font-bold", display ? "text-text-primary" : "text-text-tertiary")}>
+      <span
+        className={cn(
+          "truncate font-bold",
+          boxed ? "text-sm" : "text-base",
+          display ? "text-text-primary" : "text-text-tertiary"
+        )}
+      >
         {display ?? placeholder}
       </span>
       <CalendarIcon className="h-4 w-4 shrink-0 text-text-tertiary" />
@@ -82,6 +98,7 @@ export const DatePickerField = ({
   min,
   max,
   withYearNav = false,
+  boxed = false,
 }: {
   label: string;
   value: string;
@@ -89,6 +106,11 @@ export const DatePickerField = ({
   min?: string;
   max?: string;
   withYearNav?: boolean;
+  // The search bar's date fields sit inside an already-bordered grid cell
+  // with no visible label (the whole cell is the field). Checkout fields
+  // each need their own bordered box and a visible label above it, like
+  // every other input on the form — set this there.
+  boxed?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -99,7 +121,19 @@ export const DatePickerField = ({
 
   return (
     <div ref={ref} className="relative">
-      <DateTrigger label={label} value={value} placeholder="Select date" open={open} onClick={() => setOpen((v) => !v)} />
+      {boxed && (
+        <span className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+          {label}
+        </span>
+      )}
+      <DateTrigger
+        label={label}
+        value={value}
+        placeholder="Select date"
+        open={open}
+        onClick={() => setOpen((v) => !v)}
+        boxed={boxed}
+      />
       {open && (
         <CalendarPanel title={label}>
           <Calendar
