@@ -83,6 +83,16 @@ export const Calendar = ({
       captionLayout={withYearNav ? "dropdown" : "label"}
       startMonth={startMonth}
       endMonth={endMonth}
+      // The prev/next arrows are absolutely positioned across the full
+      // header width — fine next to a short "November 2026" label, but in
+      // dropdown mode they'd sit on top of the month+year selects in that
+      // same narrow row (nowhere near enough width for both). The dropdowns
+      // already let you jump to any month/year directly, so the arrows are
+      // redundant here anyway — just hide them.
+      hideNavigation={withYearNav}
+      // "Nov" instead of "November" — a single-month panel this narrow has
+      // no room for a full month name next to a year dropdown.
+      formatters={withYearNav ? { formatMonthDropdown: (month) => month.toLocaleString("en-US", { month: "short" }) } : undefined}
     />
   );
 };

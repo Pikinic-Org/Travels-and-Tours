@@ -36,6 +36,8 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Line 1: Title, Gender — narrow, ~20% each (5-column grid, only 2
+          cells filled). Line 2, below: First/Last/Other Name, equal thirds. */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         <FormField label="Title">
           <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={selectClass}>
@@ -52,6 +54,9 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
             <option value="female">Female</option>
           </select>
         </FormField>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <FormField label="First Name">
           <input
             required
