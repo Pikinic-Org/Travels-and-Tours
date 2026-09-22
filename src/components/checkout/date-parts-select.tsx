@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FormField, inputClass } from "@/components/checkout/form-field";
+import { FormField, selectClass } from "@/components/checkout/form-field";
 
 const MONTHS = [
   ["01", "Jan"], ["02", "Feb"], ["03", "Mar"], ["04", "Apr"],
@@ -76,13 +76,13 @@ export const DatePartsSelect = ({
 
   return (
     <FormField label={label} className={className}>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid grid-cols-3 gap-2">
         <select
           required
           aria-label={`${label} — day`}
           value={parts.day}
           onChange={(event) => set({ day: event.target.value })}
-          className={inputClass}
+          className={selectClass}
         >
           <option value="">Day</option>
           {days.map((d) => (
@@ -96,7 +96,7 @@ export const DatePartsSelect = ({
           aria-label={`${label} — month`}
           value={parts.month}
           onChange={(event) => set({ month: event.target.value })}
-          className={inputClass}
+          className={selectClass}
         >
           <option value="">Month</option>
           {MONTHS.map(([value, label]) => (
@@ -110,7 +110,7 @@ export const DatePartsSelect = ({
           aria-label={`${label} — year`}
           value={parts.year}
           onChange={(event) => set({ year: event.target.value })}
-          className={inputClass}
+          className={selectClass}
         >
           <option value="">Year</option>
           {years.map((y) => (

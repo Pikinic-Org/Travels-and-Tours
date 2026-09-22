@@ -1,5 +1,5 @@
 import { DatePartsSelect } from "@/components/checkout/date-parts-select";
-import { FormField, inputClass } from "@/components/checkout/form-field";
+import { FormField, inputClass, selectClass } from "@/components/checkout/form-field";
 import { alphanumericUpper, countryCodes, digitsOnly, travellerTitles } from "@/lib/checkout-form";
 import { countries } from "@/lib/countries";
 import type { ContactFormState, TravellerFormState } from "@/types";
@@ -31,9 +31,9 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
   const { value, onChange } = props;
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-x-4 gap-y-6">
       <FormField label="Title" className="w-28">
-        <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={inputClass}>
+        <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={selectClass}>
           {travellerTitles.map((title) => (
             <option key={title} value={title}>
               {title}
@@ -42,7 +42,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         </select>
       </FormField>
       <FormField label="Gender" className="w-32">
-        <select value={value.gender} onChange={(e) => onChange("gender", e.target.value)} className={inputClass}>
+        <select value={value.gender} onChange={(e) => onChange("gender", e.target.value)} className={selectClass}>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
@@ -96,7 +96,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           required
           value={value.country_code}
           onChange={(e) => onChange("country_code", e.target.value)}
-          className={inputClass}
+          className={selectClass}
         >
           {countryCodes.map((country) => (
             <option key={country.code} value={country.code}>
@@ -126,7 +126,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("dob", v)}
         minYear={CURRENT_YEAR - 100}
         maxYear={CURRENT_YEAR}
-        className="w-56"
+        className="w-64"
       />
 
       <FormField label="Nationality" className="w-56">
@@ -134,7 +134,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           required
           value={value.nationality}
           onChange={(e) => onChange("nationality", e.target.value)}
-          className={inputClass}
+          className={selectClass}
         >
           {countries.map((country) => (
             <option key={country.code} value={country.code}>
@@ -162,7 +162,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("passport_issue_date", v)}
         minYear={CURRENT_YEAR - 15}
         maxYear={CURRENT_YEAR}
-        className="w-56"
+        className="w-64"
       />
 
       <DatePartsSelect
@@ -171,7 +171,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("passport_expiry", v)}
         minYear={CURRENT_YEAR}
         maxYear={CURRENT_YEAR + 15}
-        className="w-56"
+        className="w-64"
       />
     </div>
   );

@@ -34,12 +34,12 @@ export const CheckoutView = () => {
                 Confirming price…
               </div>
             ) : (
-              <form onSubmit={checkout.handleSubmit} className="space-y-6">
+              <form onSubmit={checkout.handleSubmit} className="space-y-8">
                 {checkout.slots.map((slot, index) => {
                   const isLead = index === 0;
                   return (
-                    <div key={slot.key} className="rounded-[2px] border border-border-primary bg-surface-primary p-6">
-                      <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-text-primary">
+                    <div key={slot.key} className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
+                      <h2 className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-text-primary">
                         <UserIcon className="h-4 w-4 text-green-700" />
                         {slot.label}
                       </h2>
