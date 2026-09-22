@@ -39,10 +39,14 @@ export async function FlightOffers() {
 
         <ScrollReveal
           delay={100}
-          className="mt-12 grid grid-cols-1 border-l border-t border-border-primary bg-surface-primary sm:grid-cols-2"
+          className="scroll-snap-row mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:snap-none md:overflow-visible lg:grid-cols-4"
         >
           {flightOffers.slice(0, 4).map((offer) => (
-            <FlightOfferCard key={offer.id} offer={offer} />
+            <FlightOfferCard
+              key={offer.id}
+              offer={offer}
+              className="w-[80%] shrink-0 snap-start sm:w-[45%] md:w-full"
+            />
           ))}
         </ScrollReveal>
       </Container>
