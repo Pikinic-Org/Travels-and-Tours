@@ -127,6 +127,20 @@ export const TagIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const CheckCircleIcon = ({ className }: IconProps) => (
+  <svg {...iconProps} className={className}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m8.5 12.5 2.5 2.5 5-5" />
+  </svg>
+);
+
+export const AlertCircleIcon = ({ className }: IconProps) => (
+  <svg {...iconProps} className={className}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 8v5M12 16h.01" />
+  </svg>
+);
+
 // A ticket/flight-number lookup — "Flight number" section.
 export const TicketIcon = ({ className }: IconProps) => (
   <svg {...iconProps} className={className}>
