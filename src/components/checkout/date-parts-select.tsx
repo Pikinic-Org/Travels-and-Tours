@@ -41,12 +41,14 @@ export const DatePartsSelect = ({
   onChange,
   minYear,
   maxYear,
+  className,
 }: {
   label: string;
   value: string; // "" or "YYYY-MM-DD"
   onChange: (value: string) => void;
   minYear: number;
   maxYear: number;
+  className?: string;
 }) => {
   const [parts, setParts] = useState<Parts>(() => partsFromValue(value));
   // Tracks the last `value` we've seen, so an external change (e.g. the form
@@ -73,8 +75,8 @@ export const DatePartsSelect = ({
   };
 
   return (
-    <FormField label={label}>
-      <div className="grid grid-cols-3 gap-2">
+    <FormField label={label} className={className}>
+      <div className="grid grid-cols-3 gap-1.5">
         <select
           required
           aria-label={`${label} — day`}

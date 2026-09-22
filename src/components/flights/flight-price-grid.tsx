@@ -95,13 +95,16 @@ export const FlightPriceGrid = ({
           Cheapest fares by airline &amp; stops
         </p>
         {scroll.canScroll && (
-          <div className="flex shrink-0 items-center gap-1">
+          // One flat, square-cornered bordered box holding both arrows,
+          // split by a divider — same idiom as the trip-type toggle on the
+          // search bar, not a pair of separate circular buttons.
+          <div className="flex shrink-0 items-center rounded-[2px] border border-border-primary">
             <button
               type="button"
               onClick={() => scrollByPage(-1)}
               disabled={scroll.atStart}
               aria-label="Scroll fares left"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-30"
+              className="flex h-7 w-8 items-center justify-center border-r border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronLeftIcon className="h-4 w-4" />
             </button>
@@ -110,7 +113,7 @@ export const FlightPriceGrid = ({
               onClick={() => scrollByPage(1)}
               disabled={scroll.atEnd}
               aria-label="Scroll fares right"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-30"
+              className="flex h-7 w-8 items-center justify-center text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronRightIcon className="h-4 w-4" />
             </button>

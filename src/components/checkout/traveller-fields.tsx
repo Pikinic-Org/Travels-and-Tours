@@ -21,12 +21,18 @@ type TravellerFieldsProps = {
 // SkyLink only requires email + phone on primary_guest (the lead traveller) —
 // every other traveller skips them entirely, matching 247Travels' own booking
 // form, which shows contact fields on "Lead Traveler" only.
+//
+// Fields sit in a wrapping row, each sized to what it actually holds (a Title
+// select doesn't need to be as wide as a Passport Number box) — checked
+// against Wakanow's own booking form, which does the same: Title, DOB day/
+// month/year, and Gender are all narrow and share a row; nothing stretches
+// to fill space just because its grid cell happens to be wide.
 export const TravellerFields = (props: TravellerFieldsProps) => {
   const { value, onChange } = props;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <FormField label="Title">
+    <div className="flex flex-wrap gap-4">
+      <FormField label="Title" className="w-28">
         <select value={value.title} onChange={(e) => onChange("title", e.target.value)} className={inputClass}>
           {travellerTitles.map((title) => (
             <option key={title} value={title}>
@@ -35,13 +41,13 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           ))}
         </select>
       </FormField>
-      <FormField label="Gender">
+      <FormField label="Gender" className="w-32">
         <select value={value.gender} onChange={(e) => onChange("gender", e.target.value)} className={inputClass}>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
       </FormField>
-      <FormField label="First Name">
+      <FormField label="First Name" className="w-48">
         <input
           required
           value={value.first_name}
@@ -49,7 +55,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           className={inputClass}
         />
       </FormField>
-      <FormField label="Last Name">
+      <FormField label="Last Name" className="w-48">
         <input
           required
           value={value.last_name}
@@ -57,7 +63,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           className={inputClass}
         />
       </FormField>
-      <FormField label="Other Name (optional)">
+      <FormField label="Other Name (optional)" className="w-48">
         <input
           value={value.other_name}
           onChange={(e) => onChange("other_name", e.target.value)}
@@ -67,13 +73,13 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
 
       {props.isLead && (
         <>
-          <div className="sm:col-span-2">
+          <div className="w-full">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-text-primary">
               Contact Information
             </h3>
             <p className="mt-1 text-xs text-text-secondary">Booking confirmation will be sent to this email.</p>
           </div>
-          <FormField label="Contact Email">
+          <FormField label="Contact Email" className="w-64">
             <input
               required
               type="email"
@@ -85,7 +91,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         </>
       )}
 
-      <FormField label="Country Code">
+      <FormField label="Country Code" className="w-44">
         <select
           required
           value={value.country_code}
@@ -101,7 +107,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
       </FormField>
 
       {props.isLead && (
-        <FormField label="Contact Phone">
+        <FormField label="Contact Phone" className="w-44">
           <input
             required
             type="tel"
@@ -120,9 +126,10 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("dob", v)}
         minYear={CURRENT_YEAR - 100}
         maxYear={CURRENT_YEAR}
+        className="w-56"
       />
 
-      <FormField label="Nationality">
+      <FormField label="Nationality" className="w-56">
         <select
           required
           value={value.nationality}
@@ -137,7 +144,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         </select>
       </FormField>
 
-      <FormField label="Passport Number">
+      <FormField label="Passport Number" className="w-44">
         <input
           required
           value={value.passport_number}
@@ -155,6 +162,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("passport_issue_date", v)}
         minYear={CURRENT_YEAR - 15}
         maxYear={CURRENT_YEAR}
+        className="w-56"
       />
 
       <DatePartsSelect
@@ -163,6 +171,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         onChange={(v) => onChange("passport_expiry", v)}
         minYear={CURRENT_YEAR}
         maxYear={CURRENT_YEAR + 15}
+        className="w-56"
       />
     </div>
   );
