@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { FormField, inputClass } from "@/components/checkout/form-field";
 
 const MONTHS = [
@@ -15,11 +18,23 @@ const days = Array.from({ length: 31 }, (_, i) => pad(i + 1));
 const yearsDescending = (minYear: number, maxYear: number): string[] =>
   Array.from({ length: maxYear - minYear + 1 }, (_, i) => String(maxYear - i));
 
+type Parts = { day: string; month: string; year: string };
+
+const partsFromValue = (value: string): Parts => {
+  const [year = "", month = "", day = ""] = value ? value.split("-") : [];
+  return { day, month, year };
+};
+
 // Same field SkyLink wants (dob / passport_issue_date / passport_expiry are
 // all plain "YYYY-MM-DD" strings) — three plain <select>s instead of a native
 // date input, matching how 247Travels' own booking form takes a birth date.
-// The value only changes once all three parts are picked, so a half-filled
-// date is never sent as a malformed string.
+//
+// Keeps its own day/month/year state rather than deriving it from `value`:
+// the parent only receives a value once all three parts are chosen, so if the
+// three selects read straight from `value` each partial pick (e.g. just the
+// day) would render as "" again on the next keystroke — the selection visibly
+// not sticking. Local state remembers each part as it's picked; `value` is
+// only ever the fully-resolved date once complete.
 export const DatePartsSelect = ({
   label,
   value,
@@ -33,14 +48,28 @@ export const DatePartsSelect = ({
   minYear: number;
   maxYear: number;
 }) => {
-  const [year = "", month = "", day = ""] = value ? value.split("-") : [];
+  const [parts, setParts] = useState<Parts>(() => partsFromValue(value));
+  // Tracks the last `value` we've seen, so an external change (e.g. the form
+  // resetting this field) can be told apart from render to render — adjusted
+  // during render itself, not in an effect, per React's guidance for syncing
+  // local state to a changed prop.
+  const [lastSeenValue, setLastSeenValue] = useState(value);
   const years = yearsDescending(minYear, maxYear);
 
-  const set = (next: { day?: string; month?: string; year?: string }) => {
-    const nextDay = next.day ?? day;
-    const nextMonth = next.month ?? month;
-    const nextYear = next.year ?? year;
-    onChange(nextDay && nextMonth && nextYear ? `${nextYear}-${nextMonth}-${nextDay}` : "");
+  if (value !== lastSeenValue) {
+    setLastSeenValue(value);
+    // A reset to "" while a part is already picked is *our own* onChange
+    // firing below (still-incomplete date), not an external reset — ignore
+    // it, or the part the visitor just picked would visibly disappear.
+    if (!(value === "" && (parts.day || parts.month || parts.year))) {
+      setParts(partsFromValue(value));
+    }
+  }
+
+  const set = (patch: Partial<Parts>) => {
+    const next = { ...parts, ...patch };
+    setParts(next);
+    onChange(next.day && next.month && next.year ? `${next.year}-${next.month}-${next.day}` : "");
   };
 
   return (
@@ -49,7 +78,7 @@ export const DatePartsSelect = ({
         <select
           required
           aria-label={`${label} — day`}
-          value={day}
+          value={parts.day}
           onChange={(event) => set({ day: event.target.value })}
           className={inputClass}
         >
@@ -63,7 +92,7 @@ export const DatePartsSelect = ({
         <select
           required
           aria-label={`${label} — month`}
-          value={month}
+          value={parts.month}
           onChange={(event) => set({ month: event.target.value })}
           className={inputClass}
         >
@@ -77,7 +106,7 @@ export const DatePartsSelect = ({
         <select
           required
           aria-label={`${label} — year`}
-          value={year}
+          value={parts.year}
           onChange={(event) => set({ year: event.target.value })}
           className={inputClass}
         >

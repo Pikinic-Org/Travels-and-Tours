@@ -1,6 +1,7 @@
 import { DatePartsSelect } from "@/components/checkout/date-parts-select";
 import { FormField, inputClass } from "@/components/checkout/form-field";
 import { alphanumericUpper, countryCodes, digitsOnly, travellerTitles } from "@/lib/checkout-form";
+import { countries } from "@/lib/countries";
 import type { ContactFormState, TravellerFormState } from "@/types";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -65,15 +66,23 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
       </FormField>
 
       {props.isLead && (
-        <FormField label="Contact Email">
-          <input
-            required
-            type="email"
-            value={props.contact.email}
-            onChange={(e) => props.onContactChange("email", e.target.value)}
-            className={inputClass}
-          />
-        </FormField>
+        <>
+          <div className="sm:col-span-2">
+            <h3 className="text-sm font-semibold uppercase tracking-widest text-text-primary">
+              Contact Information
+            </h3>
+            <p className="mt-1 text-xs text-text-secondary">Booking confirmation will be sent to this email.</p>
+          </div>
+          <FormField label="Contact Email">
+            <input
+              required
+              type="email"
+              value={props.contact.email}
+              onChange={(e) => props.onContactChange("email", e.target.value)}
+              className={inputClass}
+            />
+          </FormField>
+        </>
       )}
 
       <FormField label="Country Code">
@@ -113,14 +122,19 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
         maxYear={CURRENT_YEAR}
       />
 
-      <FormField label="Nationality (ISO code)">
-        <input
+      <FormField label="Nationality">
+        <select
           required
-          maxLength={2}
           value={value.nationality}
-          onChange={(e) => onChange("nationality", e.target.value.toUpperCase())}
+          onChange={(e) => onChange("nationality", e.target.value)}
           className={inputClass}
-        />
+        >
+          {countries.map((country) => (
+            <option key={country.code} value={country.code}>
+              {country.name}
+            </option>
+          ))}
+        </select>
       </FormField>
 
       <FormField label="Passport Number">
