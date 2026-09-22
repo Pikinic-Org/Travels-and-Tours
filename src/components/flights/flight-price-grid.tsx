@@ -41,7 +41,10 @@ export const FlightPriceGrid = ({
     activeStops[0] === bucket;
 
   return (
-    <section aria-label="Cheapest fares by airline and stops" className="overflow-x-auto border border-border-primary bg-surface-primary">
+    <section
+      aria-label="Cheapest fares by airline and stops"
+      className="no-scrollbar overflow-x-auto border border-border-primary bg-surface-primary"
+    >
       <table className="w-full min-w-max border-collapse text-sm">
         <thead>
           <tr>

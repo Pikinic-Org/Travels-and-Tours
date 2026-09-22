@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { DatePickerField, DateRangePickerField } from "@/components/ui/date-picker";
 import { ListSelect } from "@/components/ui/list-select";
 import { PassengersSelect, type PassengerCounts } from "@/components/ui/passengers-select";
-import { PlaneIcon, SeatIcon, TripTypeIcon, UsersIcon } from "@/components/ui/search-icons";
+import { PlaneIcon, SearchGlassIcon, SeatIcon, TripTypeIcon, UsersIcon } from "@/components/ui/search-icons";
 import { extractAirportCode } from "@/lib/airport-label";
 import { cn } from "@/lib/utils";
 import type { FlightSearchParams } from "@/types";
@@ -302,6 +302,7 @@ export function FlightSearchBar({
               disabled={isPending || !airportsChosen}
               size="lg"
               variant="primary"
+              icon={<SearchGlassIcon className="h-5 w-5" />}
               className="w-full"
             >
               {isPending ? "Searching…" : "Search"}
@@ -378,6 +379,7 @@ export function FlightSearchBar({
               disabled={isPending || !airportsChosen}
               size="lg"
               variant="primary"
+              icon={<SearchGlassIcon className="h-5 w-5" />}
               className="w-full sm:w-auto"
             >
               {isPending ? "Searching…" : "Search"}

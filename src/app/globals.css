@@ -221,6 +221,17 @@ body {
   display: none;
 }
 
+/* Any other scrollable strip that shouldn't show the browser's own grey
+   scrollbar (the price grid table, baggage table, sidebar overflow) — same
+   technique as .scroll-snap-row, generic name for non-carousel uses. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mesh-glow,
   .float-slow,

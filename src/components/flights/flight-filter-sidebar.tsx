@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { AirlineLogo } from "@/components/flights/airline-logo";
 import { PriceRangeSlider } from "@/components/ui/price-range-slider";
+import { BagIcon, ClockIcon, PlaneIcon, RouteIcon, TagIcon, TicketIcon } from "@/components/ui/search-icons";
 import type { DepartureWindow } from "@/lib/flight-format";
 import { cn, formatNaira } from "@/lib/utils";
 
@@ -66,9 +67,12 @@ const windowLabels: Record<DepartureWindow, string> = {
 const toggle = <T,>(list: T[], item: T): T[] =>
   list.includes(item) ? list.filter((entry) => entry !== item) : [...list, item];
 
-const Section = ({ title, children }: { title: string; children: ReactNode }) => (
+const Section = ({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) => (
   <div className="border-t border-border-primary py-5 first:border-t-0 first:pt-0">
-    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-text-tertiary">{title}</p>
+    <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+      <span className="text-text-tertiary [&>svg]:h-3.5 [&>svg]:w-3.5">{icon}</span>
+      {title}
+    </p>
     {children}
   </div>
 );
@@ -122,7 +126,7 @@ export const FlightFilterSidebar = ({
     <aside
       aria-label="Filter flights"
       className={cn(
-        "rounded-[2px] border border-border-primary bg-surface-primary p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto",
+        "no-scrollbar rounded-[2px] border border-border-primary bg-surface-primary p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto",
         className
       )}
     >
@@ -139,7 +143,7 @@ export const FlightFilterSidebar = ({
         )}
       </div>
 
-      <Section title="Flight number">
+      <Section title="Flight number" icon={<TicketIcon />}>
         <input
           type="text"
           value={value.flightNumber}
@@ -152,7 +156,7 @@ export const FlightFilterSidebar = ({
         />
       </Section>
 
-      <Section title="Stops">
+      <Section title="Stops" icon={<RouteIcon />}>
         {([0, 1, 2] as StopsBucket[]).map((bucket) => (
           <CheckRow
             key={bucket}
@@ -167,7 +171,7 @@ export const FlightFilterSidebar = ({
       </Section>
 
       {facets.maxPrice > facets.minPrice && (
-        <Section title="Price">
+        <Section title="Price" icon={<TagIcon />}>
           <PriceRangeSlider
             min={facets.minPrice}
             max={facets.maxPrice}
@@ -177,7 +181,7 @@ export const FlightFilterSidebar = ({
         </Section>
       )}
 
-      <Section title="Departure time">
+      <Section title="Departure time" icon={<ClockIcon />}>
         {(Object.keys(windowLabels) as DepartureWindow[]).map((window) => (
           <CheckRow
             key={window}
@@ -192,7 +196,7 @@ export const FlightFilterSidebar = ({
       </Section>
 
       {(facets.bagKnown || facets.refundKnown) && (
-        <Section title="Baggage & fare">
+        <Section title="Baggage & fare" icon={<BagIcon />}>
           {facets.bagKnown && (
             <CheckRow checked={value.checkedBagOnly} onChange={() => update({ checkedBagOnly: !value.checkedBagOnly })}>
               Checked bag included
@@ -207,7 +211,7 @@ export const FlightFilterSidebar = ({
       )}
 
       {facets.airlines.length > 1 && (
-        <Section title="Airlines">
+        <Section title="Airlines" icon={<PlaneIcon />}>
           {facets.airlines.map((airline) => (
             <CheckRow
               key={airline.name}

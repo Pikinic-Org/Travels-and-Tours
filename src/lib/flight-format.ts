@@ -1,4 +1,4 @@
-import type { FlightSearchResult, FlightSegment } from "@/types";
+import type { FlightSearchResult, FlightSegment, TripType } from "@/types";
 
 export type FlightLeg = FlightSegment[];
 export type DepartureWindow = "early_morning" | "morning" | "afternoon" | "evening";
@@ -137,3 +137,11 @@ export const isRefundable = (flight: FlightSearchResult): boolean | null => {
 
 export const fareName = (flight: FlightSearchResult): string | null =>
   flight.segments[0]?.[0]?.branded_fare ?? null;
+
+// "Outbound"/"Return" for a round trip, "Flight N" for multi-city, and no
+// label at all for a one-way (there's only one leg, so nothing to distinguish).
+export const legLabel = (tripType: TripType, index: number): string | null => {
+  if (tripType === "roundtrip") return index === 0 ? "Outbound" : "Return";
+  if (tripType === "multicity") return `Flight ${index + 1}`;
+  return null;
+};

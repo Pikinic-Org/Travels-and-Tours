@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, forwardRef } from "react";
+import { ButtonHTMLAttributes, forwardRef, ReactNode } from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -10,7 +10,20 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   href?: string;
+  // Overrides the default diagonal-arrow icon chip — use sparingly, only when
+  // the arrow doesn't fit the action (e.g. a search button gets a magnifying
+  // glass instead). Every other button keeps the standard arrow.
+  icon?: ReactNode;
 };
+
+const defaultArrow = (
+  <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M10.4499 8.55483L0.00345457 12.2505L8.16842 20.4155L11.8641 9.96905L10.4499 8.55483ZM11.3147 9.10424C13.3975 11.187 16.7744 11.187 18.8572 9.10424C20.94 7.02145 20.94 3.64457 18.8572 1.56177C16.7744 -0.521025 13.3975 -0.521024 11.3147 1.56177C9.2319 3.64457 9.2319 7.02145 11.3147 9.10424ZM10.4499 9.96905L11.157 10.6762L15.793 6.04012L15.0859 5.33301L14.3788 4.6259L9.74279 9.26194L10.4499 9.96905Z"
+      fill="currentColor"
+    />
+  </svg>
+);
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
@@ -36,7 +49,7 @@ const spanSizeClasses: Record<ButtonSize, string> = {
     lg:"h-[40px] w-[40px]",
 }
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", href, children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", href, icon, children, ...props }, ref) => {
     const classes = cn(
       "group flex items-center justify-between  gap-[28px]  rounded-[2px] font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 disabled:pointer-events-none",
       variantClasses[variant],
@@ -53,24 +66,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (href) {
       return (
         <Link href={href} className={classes}>
-          {children}  <span className={spanClass}>
-          <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.4499 8.55483L0.00345457 12.2505L8.16842 20.4155L11.8641 9.96905L10.4499 8.55483ZM11.3147 9.10424C13.3975 11.187 16.7744 11.187 18.8572 9.10424C20.94 7.02145 20.94 3.64457 18.8572 1.56177C16.7744 -0.521025 13.3975 -0.521024 11.3147 1.56177C9.2319 3.64457 9.2319 7.02145 11.3147 9.10424ZM10.4499 9.96905L11.157 10.6762L15.793 6.04012L15.0859 5.33301L14.3788 4.6259L9.74279 9.26194L10.4499 9.96905Z" fill="currentColor"/>
-</svg>
-        </span>
+          {children}  <span className={spanClass}>{icon ?? defaultArrow}</span>
         </Link>
       );
     }
 
     return (
       <button ref={ref} className={classes} {...props}>
-        {children} <span className={spanClass}>
-          <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.4499 8.55483L0.00345457 12.2505L8.16842 20.4155L11.8641 9.96905L10.4499 8.55483ZM11.3147 9.10424C13.3975 11.187 16.7744 11.187 18.8572 9.10424C20.94 7.02145 20.94 3.64457 18.8572 1.56177C16.7744 -0.521025 13.3975 -0.521024 11.3147 1.56177C9.2319 3.64457 9.2319 7.02145 11.3147 9.10424ZM10.4499 9.96905L11.157 10.6762L15.793 6.04012L15.0859 5.33301L14.3788 4.6259L9.74279 9.26194L10.4499 9.96905Z" fill="currentColor"/>
-</svg>
-
-        </span>
-      </button> 
+        {children} <span className={spanClass}>{icon ?? defaultArrow}</span>
+      </button>
     );
   }
 );

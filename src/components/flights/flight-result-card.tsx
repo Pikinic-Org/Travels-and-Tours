@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AirlineLogo } from "@/components/flights/airline-logo";
+import { BagIcon, CabinBagIcon, RefundIcon } from "@/components/ui/search-icons";
 import {
   arrivalDayOffset,
   cabinBagText,
@@ -15,14 +16,13 @@ import {
   isRefundable,
   layoverMinutes,
   legDurationMinutes,
+  legLabel,
   legStops,
   type FlightLeg,
 } from "@/lib/flight-format";
 import { formatIsoDate } from "@/lib/dates";
-import type { FlightAmenity, FlightSearchResult, FlightSegment } from "@/types";
+import type { FlightAmenity, FlightSearchResult, FlightSegment, TripType } from "@/types";
 import { cn, formatNaira } from "@/lib/utils";
-
-type TripType = "oneway" | "roundtrip" | "multicity";
 
 const LOW_SEATS_THRESHOLD = 5;
 
@@ -34,26 +34,6 @@ const iconProps = {
   strokeLinecap: "round",
   strokeLinejoin: "round",
 } as const;
-
-const BagIcon = ({ className }: { className?: string }) => (
-  <svg {...iconProps} className={className}>
-    <rect x="5" y="8" width="14" height="13" rx="2" />
-    <path d="M9 8V6a3 3 0 0 1 6 0v2" />
-  </svg>
-);
-
-const CabinBagIcon = ({ className }: { className?: string }) => (
-  <svg {...iconProps} className={className}>
-    <rect x="7" y="9" width="10" height="11" rx="2" />
-    <path d="M10 9V7a2 2 0 0 1 4 0v2" />
-  </svg>
-);
-
-const RefundIcon = ({ className }: { className?: string }) => (
-  <svg {...iconProps} className={className}>
-    <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
-  </svg>
-);
 
 const ChevronIcon = ({ className }: { className?: string }) => (
   <svg {...iconProps} strokeWidth={2} className={className}>
@@ -84,12 +64,6 @@ const Chip = ({
 );
 
 const clock = (time: string) => time.toUpperCase();
-
-const legLabel = (tripType: TripType, index: number): string | null => {
-  if (tripType === "roundtrip") return index === 0 ? "Outbound" : "Return";
-  if (tripType === "multicity") return `Flight ${index + 1}`;
-  return null;
-};
 
 // "PRE RESERVATION SEAT ASSIGNMEN" → "Pre reservation seat assignmen" —
 // SkyLink sends these shouting and single-spaced-inconsistently.
@@ -279,7 +253,7 @@ const BaggageTab = ({ flight, tripType }: { flight: FlightSearchResult; tripType
       {flight.segments.map((leg, legIndex) => (
         <div key={legIndex}>
           {legLabel(tripType, legIndex) && <p className={eyebrowClass}>{legLabel(tripType, legIndex)}</p>}
-          <div className="overflow-x-auto border border-border-primary bg-surface-primary">
+          <div className="no-scrollbar overflow-x-auto border border-border-primary bg-surface-primary">
             <table className="w-full min-w-max border-collapse text-sm">
               <thead>
                 <tr>
