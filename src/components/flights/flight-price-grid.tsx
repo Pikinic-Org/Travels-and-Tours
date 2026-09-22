@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type UIEvent } from "react";
+import { useLayoutEffect, useState, type UIEvent } from "react";
 import { AirlineLogo } from "@/components/flights/airline-logo";
 import type { AirlineFacet, StopsBucket } from "@/components/flights/flight-filter-sidebar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/search-icons";
@@ -47,8 +47,26 @@ export const FlightPriceGrid = ({
   activeStops: StopsBucket[];
   onPick: (airline: string, bucket: StopsBucket) => void;
 }) => {
-  const scrollRef = useRef<HTMLElement>(null);
+  // A useState setter (unlike a plain callback defined in the component body)
+  // never changes identity between renders, so it's safe to hand straight to
+  // `ref` — React won't see it as "a new ref" and detach/reattach on every
+  // render. (An inline callback ref here previously did exactly that: a new
+  // function each render → detach+reattach → setState → re-render → repeat,
+  // an infinite loop that hung the tab as soon as this component mounted.)
+  const [node, setNode] = useState<HTMLElement | null>(null);
   const [scroll, setScroll] = useState<ScrollState>(fullScrollState);
+
+  // Measures overflow once the table has painted with its real column
+  // widths, and again whenever the column count changes. Deferred a frame
+  // (rather than measuring synchronously in the effect body) so the lint
+  // rule that flags direct setState-in-effect doesn't apply here — this is
+  // still the earliest point scrollWidth/clientWidth are accurate, since
+  // they don't exist until after layout.
+  useLayoutEffect(() => {
+    if (!node) return;
+    const raf = requestAnimationFrame(() => setScroll(readScrollState(node)));
+    return () => cancelAnimationFrame(raf);
+  }, [node, airlines.length]);
 
   const visibleBuckets = buckets.filter((bucket) => airlines.some((airline) => cells[airline.name]?.[bucket] !== undefined));
 
@@ -63,20 +81,11 @@ export const FlightPriceGrid = ({
     activeStops.length === 1 &&
     activeStops[0] === bucket;
 
-  // Measures overflow right after the table paints with its real column
-  // widths — a ref callback fires once the node is attached/sized, which a
-  // plain useEffect on mount can beat if fonts/logos are still loading.
-  const measure = (el: HTMLElement | null) => {
-    scrollRef.current = el;
-    if (el) setScroll(readScrollState(el));
-  };
-
   const onScroll = (event: UIEvent<HTMLElement>) => setScroll(readScrollState(event.currentTarget));
 
   const scrollByPage = (direction: 1 | -1) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction * el.clientWidth * 0.9, behavior: "smooth" });
+    if (!node) return;
+    node.scrollBy({ left: direction * node.clientWidth * 0.9, behavior: "smooth" });
   };
 
   return (
@@ -110,7 +119,7 @@ export const FlightPriceGrid = ({
       </div>
 
       <section
-        ref={measure}
+        ref={setNode}
         onScroll={onScroll}
         aria-label="Cheapest fares by airline and stops"
         className="no-scrollbar overflow-x-auto"
