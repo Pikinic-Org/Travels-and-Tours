@@ -16,11 +16,17 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: ReactNode;
 };
 
+// Simple diagonal "go" arrow — same 21x21 fixed size and span placement as
+// what it replaces, just a clean shaft+head instead of the old glyph (which
+// read more like a pin/paperclip than an arrow at this size).
 const defaultArrow = (
   <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M10.4499 8.55483L0.00345457 12.2505L8.16842 20.4155L11.8641 9.96905L10.4499 8.55483ZM11.3147 9.10424C13.3975 11.187 16.7744 11.187 18.8572 9.10424C20.94 7.02145 20.94 3.64457 18.8572 1.56177C16.7744 -0.521025 13.3975 -0.521024 11.3147 1.56177C9.2319 3.64457 9.2319 7.02145 11.3147 9.10424ZM10.4499 9.96905L11.157 10.6762L15.793 6.04012L15.0859 5.33301L14.3788 4.6259L9.74279 9.26194L10.4499 9.96905Z"
-      fill="currentColor"
+      d="M6 15L15 6M15 6H8M15 6V13"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

@@ -37,6 +37,19 @@ export const SeatIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+// Horizontal-scroll nav — the "swipe for more" arrows on the price grid.
+export const ChevronLeftIcon = ({ className }: IconProps) => (
+  <svg {...iconProps} strokeWidth={2} className={className}>
+    <path d="M15 18l-6-6 6-6" />
+  </svg>
+);
+
+export const ChevronRightIcon = ({ className }: IconProps) => (
+  <svg {...iconProps} strokeWidth={2} className={className}>
+    <path d="M9 18l6-6-6-6" />
+  </svg>
+);
+
 export const SearchGlassIcon = ({ className }: IconProps) => (
   <svg {...iconProps} className={className}>
     <circle cx="11" cy="11" r="7" />
