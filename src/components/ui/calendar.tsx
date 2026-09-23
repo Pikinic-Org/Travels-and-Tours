@@ -15,11 +15,16 @@ const classNames = {
   month: "flex flex-col gap-3",
   month_caption: "flex h-8 items-center justify-center",
   caption_label: "text-sm font-bold uppercase tracking-widest text-text-primary",
-  nav: "absolute inset-x-0 top-0 z-10 flex items-center justify-between",
+  // Full-width + absolute so the two arrow buttons can sit at opposite
+  // edges — but that means its (invisible) middle would otherwise overlap
+  // and swallow clicks meant for the caption's dropdown buttons underneath.
+  // pointer-events-none on the row + pointer-events-auto on each button
+  // lets clicks pass through everywhere except the actual arrows.
+  nav: "absolute inset-x-0 top-0 z-10 flex items-center justify-between pointer-events-none",
   button_previous:
-    "inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
+    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
   button_next:
-    "inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
+    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
   chevron: "h-4 w-4 fill-current",
   month_grid: "w-full border-collapse",
   weekday: "h-9 w-10 text-center text-[11px] font-semibold uppercase tracking-widest text-text-tertiary",
