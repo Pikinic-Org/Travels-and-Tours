@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { DayPicker, type Matcher, type MonthCaptionProps } from "react-day-picker";
+import { DayPicker, type Matcher } from "react-day-picker";
 import { ChevronRightIcon } from "@/components/ui/search-icons";
 import { useDismiss } from "@/lib/use-dismiss";
 import { cn } from "@/lib/utils";
@@ -65,14 +65,22 @@ const DropdownButton = ({ label, open, onClick }: { label: string; open: boolean
 );
 
 const DropdownList = ({ items }: { items: DropdownItem[] }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: "center" });
+    const container = containerRef.current;
+    const active = activeRef.current;
+    if (!container || !active) return;
+    // Scroll only the list's own overflow container, not `scrollIntoView`
+    // (which walks up to and scrolls the whole PAGE too, since the active
+    // item can sit outside the page's own viewport near the top of a form).
+    container.scrollTop = active.offsetTop - container.clientHeight / 2 + active.clientHeight / 2;
   }, []);
 
   return (
     <div
+      ref={containerRef}
       role="listbox"
       className="absolute left-1/2 top-full z-20 mt-1 max-h-52 w-24 -translate-x-1/2 overflow-y-auto rounded-[2px] border border-border-primary bg-surface-primary py-1 shadow-lg"
     >
@@ -168,51 +176,58 @@ export const Calendar = ({
       : [];
 
   return (
-    <DayPicker
-      mode="single"
-      required
-      selected={selected}
-      onSelect={onSelect}
-      disabled={disabled}
-      numberOfMonths={1}
-      month={month}
-      onMonthChange={setMonth}
-      weekStartsOn={0}
-      showOutsideDays={false}
-      modifiers={modifiers}
-      modifiersClassNames={modifiersClassNames}
-      classNames={classNames}
-      startMonth={startMonth}
-      endMonth={endMonth}
-      components={
-        withYearNav
-          ? {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars -- calendarMonth/displayIndex must be excluded from `rest`, which is spread onto a <div>
-              MonthCaption: ({ calendarMonth, displayIndex, className, children: _children, ...rest }: MonthCaptionProps) => (
-                <div className={className} {...rest}>
-                  <div ref={captionRef} className="flex items-center gap-2">
-                    <div className="relative">
-                      <DropdownButton
-                        label={MONTH_LABELS[activeMonthIndex]}
-                        open={openDropdown === "month"}
-                        onClick={() => setOpenDropdown((v) => (v === "month" ? null : "month"))}
-                      />
-                      {openDropdown === "month" && <DropdownList items={monthItems} />}
-                    </div>
-                    <div className="relative">
-                      <DropdownButton
-                        label={String(activeYear)}
-                        open={openDropdown === "year"}
-                        onClick={() => setOpenDropdown((v) => (v === "year" ? null : "year"))}
-                      />
-                      {openDropdown === "year" && <DropdownList items={yearItems} />}
-                    </div>
-                  </div>
-                </div>
-              ),
-            }
-          : undefined
-      }
-    />
+    <div className="relative">
+      <DayPicker
+        mode="single"
+        required
+        selected={selected}
+        onSelect={onSelect}
+        disabled={disabled}
+        numberOfMonths={1}
+        month={month}
+        onMonthChange={setMonth}
+        weekStartsOn={0}
+        showOutsideDays={false}
+        modifiers={modifiers}
+        modifiersClassNames={modifiersClassNames}
+        classNames={classNames}
+        startMonth={startMonth}
+        endMonth={endMonth}
+        // Overriding `components.MonthCaption` (a new function every render,
+        // since it needs fresh closures over local state) made react-day-
+        // picker's own prev/next month buttons jump back to roughly today's
+        // month instead of stepping from wherever the dropdowns had
+        // navigated to — its internal nav wiring appears to go stale when
+        // that component's *type* keeps changing across renders. Left the
+        // caption's default rendering (and `components`) completely alone
+        // and instead render the dropdown buttons as a plain overlay
+        // positioned on top of it, with `formatCaption` blanking the
+        // default "Sep 2026" text so it doesn't show through underneath.
+        formatters={withYearNav ? { formatCaption: () => "" } : undefined}
+      />
+      {withYearNav && (
+        <div
+          ref={captionRef}
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 flex h-8 items-center justify-center gap-2"
+        >
+          <div className="relative pointer-events-auto">
+            <DropdownButton
+              label={MONTH_LABELS[activeMonthIndex]}
+              open={openDropdown === "month"}
+              onClick={() => setOpenDropdown((v) => (v === "month" ? null : "month"))}
+            />
+            {openDropdown === "month" && <DropdownList items={monthItems} />}
+          </div>
+          <div className="relative pointer-events-auto">
+            <DropdownButton
+              label={String(activeYear)}
+              open={openDropdown === "year"}
+              onClick={() => setOpenDropdown((v) => (v === "year" ? null : "year"))}
+            />
+            {openDropdown === "year" && <DropdownList items={yearItems} />}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
