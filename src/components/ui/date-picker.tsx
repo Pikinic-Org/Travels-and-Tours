@@ -1,31 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "@/components/ui/search-icons";
 import { formatIsoDate, fromIsoDate, startOfToday, toIsoDate } from "@/lib/dates";
+import { useDismiss } from "@/lib/use-dismiss";
 import { cn } from "@/lib/utils";
-
-// Closes on a click outside the element or on Escape.
-const useDismiss = (ref: RefObject<HTMLElement | null>, active: boolean, dismiss: () => void) => {
-  useEffect(() => {
-    if (!active) return;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) dismiss();
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") dismiss();
-    };
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [ref, active, dismiss]);
-};
 
 const DateTrigger = ({
   label,
