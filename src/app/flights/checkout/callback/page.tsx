@@ -5,9 +5,11 @@ import { AlertCircleIcon, CheckCircleIcon, PlaneIcon } from "@/components/ui/sea
 import { formatIsoDate } from "@/lib/dates";
 import { cn, formatNaira } from "@/lib/utils";
 import { confirmBooking, getBooking } from "@/server/modules/bookings/bookings.service";
+import { getAirportByCode } from "@/server/modules/airports/airports.service";
 import type { FlightBooking } from "@/types";
 import { AutoRefresh } from "@/components/flights/auto-refresh";
 import { ClearSelectedFlight } from "@/components/flights/clear-selected-flight";
+import { PrintTicketButton } from "@/components/flights/print-ticket-button";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -74,7 +76,7 @@ const StatusHeader = ({
 // elsewhere (border-l/border-t on the container, border-b/border-r per
 // cell) — here holding the booking's actual details rather than numbers.
 const DetailGrid = ({ items }: { items: { label: string; value: string }[] }) => (
-  <div className="mt-8 grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2">
+  <div className="grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2">
     {items.map((item) => (
       <div key={item.label} className="border-b border-r border-border-primary p-5">
         <p className="text-xs uppercase tracking-widest text-text-tertiary">{item.label}</p>
@@ -84,10 +86,52 @@ const DetailGrid = ({ items }: { items: { label: string; value: string }[] }) =>
   </div>
 );
 
+// A boarding-pass-style ticket: route header, a "torn" perforation (dashed
+// line + circular notches cut into the card's own edges, punched through
+// with the page background), the detail grid, then a stub row with the
+// booking reference set apart in wide tracking, the way a real ticket sets
+// its code apart from the rest of the printout.
+const BoardingPassTicket = ({ booking, details }: { booking: FlightBooking; details: { label: string; value: string }[] }) => {
+  // Falls back to the bare code for any airport not in the dataset — never
+  // fabricate a city name we don't actually have.
+  const fromCity = getAirportByCode(booking.fromCode)?.city ?? booking.fromCode;
+  const toCity = getAirportByCode(booking.toCode)?.city ?? booking.toCode;
+
+  return (
+    <div id="booking-ticket" className="relative mt-8 rounded-[2px] border border-border-primary bg-surface-primary">
+      <div className="flex items-center justify-between gap-4 px-6 py-6 sm:px-8">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">E-Ticket</p>
+          <p className="mt-2 text-2xl font-bold uppercase tracking-tight text-text-primary sm:text-3xl">
+            {fromCity} <span className="text-green-700">→</span> {toCity}
+          </p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+            {booking.fromCode} → {booking.toCode}
+          </p>
+        </div>
+        <PlaneIcon className="h-8 w-8 shrink-0 text-green-700" />
+      </div>
+
+      <div className="relative border-t border-dashed border-border-secondary">
+        <span className="absolute -left-[11px] top-1/2 h-[22px] w-[22px] -translate-y-1/2 rounded-full bg-background-primary" />
+        <span className="absolute -right-[11px] top-1/2 h-[22px] w-[22px] -translate-y-1/2 rounded-full bg-background-primary" />
+      </div>
+
+      <DetailGrid items={details} />
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border-primary px-6 py-4 sm:px-8">
+        <span className="text-xs uppercase tracking-widest text-text-tertiary">Booking Reference</span>
+        <span className="font-mono text-lg font-bold tracking-[0.3em] text-text-primary">
+          {booking.bookingReference ?? "—"}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 function StatusPanel({ booking }: { booking: FlightBooking }) {
   if (booking.status === "reserved") {
     const details = [
-      { label: "Booking Reference", value: booking.bookingReference ?? "—" },
       { label: "PNR", value: booking.pnr ?? "—" },
       { label: "Amount Paid", value: formatNaira(booking.customerPrice) },
     ];
@@ -98,7 +142,7 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
     if (ticketBy) details.push({ label: "Ticket By", value: ticketBy });
 
     return (
-      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
+      <div>
         <StatusHeader
           icon={<CheckCircleIcon className="h-6 w-6" />}
           tone="good"
@@ -107,24 +151,18 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
           accent="Set."
         />
 
-        <div className="mt-6 flex items-center gap-3 rounded-[2px] border border-border-primary bg-neutral-900/[0.02] px-4 py-3">
-          <PlaneIcon className="h-4 w-4 shrink-0 text-green-700" />
-          <span className="text-sm font-bold uppercase tracking-widest text-text-primary">
-            {booking.fromCode} → {booking.toCode}
-          </span>
-        </div>
-
-        <DetailGrid items={details} />
+        <BoardingPassTicket booking={booking} details={details} />
 
         <p className="mt-6 text-sm text-text-secondary">
           Keep your booking reference and PNR safe — you&apos;ll need them to manage this booking or check in
           with the airline.
         </p>
 
-        <div className="mt-6">
+        <div className="no-print mt-6 flex flex-wrap gap-3">
           <Button href="/flights" size="md" variant="secondary">
             Search More Flights
           </Button>
+          <PrintTicketButton />
         </div>
       </div>
     );

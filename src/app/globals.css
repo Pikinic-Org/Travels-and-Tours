@@ -232,6 +232,24 @@ body {
   display: none;
 }
 
+/* Printing the booking ticket (checkout callback page) — only the ticket
+   itself should print, not the site chrome or any on-page buttons. */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  #booking-ticket {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    box-shadow: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mesh-glow,
   .float-slow,
