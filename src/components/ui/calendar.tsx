@@ -69,9 +69,10 @@ const GridHeader = ({
       <button
         type="button"
         onClick={onLabelClick}
-        className="text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:text-green-700"
+        className="inline-flex items-center gap-1.5 rounded-[2px] border border-border-primary bg-surface-primary px-3 py-1 text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:border-neutral-400 hover:text-green-700"
       >
         {label}
+        <ChevronRightIcon className="h-3 w-3 rotate-90" />
       </button>
     ) : (
       <span className="text-sm font-bold uppercase tracking-widest text-text-primary">{label}</span>
@@ -352,6 +353,13 @@ export const Calendar = ({
       classNames={classNames}
       startMonth={startMonth}
       endMonth={endMonth}
+      // The prev/next arrows only step one month at a time — fine for a
+      // flight-search calendar, but a trap for a decades-wide DOB/passport
+      // range (hundreds of clicks to reach 2001 from 2026). In withYearNav
+      // mode the bordered, chevron-marked caption below is the only way to
+      // move, which is unmistakably clickable and jumps straight to the
+      // block/year/month grids instead.
+      hideNavigation={withYearNav}
       components={
         withYearNav
           ? {
@@ -369,9 +377,10 @@ export const Calendar = ({
                         setView("years");
                       }
                     }}
-                    className="text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:text-green-700"
+                    className="inline-flex items-center gap-1.5 rounded-[2px] border border-border-primary bg-surface-primary px-3 py-1 text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:border-neutral-400 hover:text-green-700"
                   >
                     {children}
+                    <ChevronRightIcon className="h-3 w-3 rotate-90" />
                   </button>
                 </div>
               ),
