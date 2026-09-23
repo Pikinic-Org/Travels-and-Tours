@@ -63,7 +63,7 @@ export function Ecosystem() {
     <section className="py-20 md:py-28">
       <Container>
         <ScrollReveal className="lg:mx-auto lg:w-[65%]">
-          <div className="relative isolate aspect-[4/3] w-full overflow-hidden rounded-[2px] bg-green-900 sm:aspect-[16/9]">
+          <div className="relative isolate aspect-[16/10] w-full overflow-hidden rounded-[2px] bg-green-900 sm:aspect-[21/9]">
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full text-neutral-0/[0.08]"
               preserveAspectRatio="xMidYMid slice"
