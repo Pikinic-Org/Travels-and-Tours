@@ -25,10 +25,22 @@ export const socialLinks = [
 ] as const;
 
 export const siblingLinks = [
-  { label: "Study Abroad", href: "https://studyabroad.pikinic.ng" },
+  {
+    label: "Study Abroad",
+    href: "https://studyabroad.pikinic.ng",
+    description: "Applications, visas, and the paperwork that comes with studying overseas.",
+  },
   { label: "Travel & Tours", href: "https://travelsandtours.pikinic.ng" },
-  { label: "Stay & Ride", href: "https://stayandride.pikinic.ng" },
-  { label: "Finance", href: "https://firstmushrooom.com" },
+  {
+    label: "Stay & Ride",
+    href: "https://stayandride.pikinic.ng",
+    description: "Accommodation and local rides sorted before you land.",
+  },
+  {
+    label: "Finance",
+    href: "https://firstmushrooom.com",
+    description: "Proof of funds and the financial documentation your journey needs.",
+  },
 ];
 
 export const footerColumns = [
