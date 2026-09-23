@@ -52,15 +52,19 @@ const GridHeader = ({
 }: {
   label: string;
   onLabelClick?: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-  prevDisabled: boolean;
-  nextDisabled: boolean;
+  onPrev?: () => void;
+  onNext?: () => void;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
 }) => (
   <div className="mb-3 flex h-8 items-center justify-between">
-    <button type="button" onClick={onPrev} disabled={prevDisabled} className={navButton} aria-label="Previous">
-      <ChevronLeftIcon className="h-4 w-4" />
-    </button>
+    {onPrev ? (
+      <button type="button" onClick={onPrev} disabled={prevDisabled} className={navButton} aria-label="Previous">
+        <ChevronLeftIcon className="h-4 w-4" />
+      </button>
+    ) : (
+      <span className="h-8 w-8" />
+    )}
     {onLabelClick ? (
       <button
         type="button"
@@ -72,41 +76,88 @@ const GridHeader = ({
     ) : (
       <span className="text-sm font-bold uppercase tracking-widest text-text-primary">{label}</span>
     )}
-    <button type="button" onClick={onNext} disabled={nextDisabled} className={navButton} aria-label="Next">
-      <ChevronRightIcon className="h-4 w-4" />
-    </button>
+    {onNext ? (
+      <button type="button" onClick={onNext} disabled={nextDisabled} className={navButton} aria-label="Next">
+        <ChevronRightIcon className="h-4 w-4" />
+      </button>
+    ) : (
+      <span className="h-8 w-8" />
+    )}
   </div>
 );
 
 const YEAR_PAGE_SIZE = 12;
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+// The start-year of the 12-year block that contains `year`, anchored at
+// `minYear` (which is rarely a round number — e.g. "100 years ago today")
+// rather than at a decade boundary.
+const blockStartFor = (year: number, minYear?: number) =>
+  minYear === undefined
+    ? Math.floor(year / YEAR_PAGE_SIZE) * YEAR_PAGE_SIZE
+    : minYear + Math.floor((year - minYear) / YEAR_PAGE_SIZE) * YEAR_PAGE_SIZE;
+
+// One tile per 12-year block, covering the *entire* min–max range in a
+// single screen — no pagination. A 100-year birth-date range is ~9 tiles,
+// so any year is at most two taps away (block, then year) instead of
+// clicking "previous 12 years" repeatedly.
+const BlocksGrid = ({
+  minYear,
+  maxYear,
+  activeYear,
+  onPick,
+}: {
+  minYear: number;
+  maxYear: number;
+  activeYear: number;
+  onPick: (blockStart: number) => void;
+}) => {
+  const blocks: number[] = [];
+  for (let start = minYear; start <= maxYear; start += YEAR_PAGE_SIZE) blocks.push(start);
+
+  return (
+    <div>
+      <GridHeader label={`${minYear} – ${maxYear}`} />
+      <div className={tileGrid}>
+        {blocks.map((start) => {
+          const end = Math.min(start + YEAR_PAGE_SIZE - 1, maxYear);
+          const active = activeYear >= start && activeYear <= end;
+          return (
+            <button
+              key={start}
+              type="button"
+              onClick={() => onPick(start)}
+              className={cn(tile, "text-xs", active && tileActive)}
+            >
+              {start}–{String(end).slice(-2)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const YearGrid = ({
   pageStart,
   activeYear,
   minYear,
   maxYear,
-  onPage,
+  onBack,
   onPick,
 }: {
   pageStart: number;
   activeYear: number;
   minYear?: number;
   maxYear?: number;
-  onPage: (nextPageStart: number) => void;
+  onBack?: () => void;
   onPick: (year: number) => void;
 }) => {
   const years = Array.from({ length: YEAR_PAGE_SIZE }, (_, i) => pageStart + i);
 
   return (
     <div>
-      <GridHeader
-        label={`${pageStart} – ${pageStart + YEAR_PAGE_SIZE - 1}`}
-        onPrev={() => onPage(pageStart - YEAR_PAGE_SIZE)}
-        onNext={() => onPage(pageStart + YEAR_PAGE_SIZE)}
-        prevDisabled={minYear !== undefined && pageStart <= minYear}
-        nextDisabled={maxYear !== undefined && pageStart + YEAR_PAGE_SIZE > maxYear}
-      />
+      <GridHeader label={`${pageStart} – ${pageStart + YEAR_PAGE_SIZE - 1}`} onLabelClick={onBack} />
       <div className={tileGrid}>
         {years.map((year) => {
           const disabled = (minYear !== undefined && year < minYear) || (maxYear !== undefined && year > maxYear);
@@ -186,7 +237,7 @@ const MonthGrid = ({
   </div>
 );
 
-type View = "days" | "months" | "years";
+type View = "days" | "blocks" | "years" | "months";
 
 // Single-date calendar. Callers that need more (like the round-trip range
 // highlight) pass modifiers + modifiersClassNames.
@@ -213,26 +264,44 @@ export const Calendar = ({
   // navigation — for a date that can be decades away (birth date, passport
   // dates), not just a few months out like a flight departure. No native
   // <select> involved anywhere, unlike react-day-picker's own dropdown mode.
+  // Every current caller passes both startMonth and endMonth alongside this,
+  // so a full-range block grid (below) is always available — there's no
+  // unbounded fallback to support.
   withYearNav?: boolean;
 }) => {
   const initial = defaultMonth ?? selected ?? new Date();
-  const [view, setView] = useState<View>("days");
-  const [month, setMonth] = useState(initial);
-  const [yearPageStart, setYearPageStart] = useState(
-    () => Math.floor(initial.getFullYear() / YEAR_PAGE_SIZE) * YEAR_PAGE_SIZE
-  );
-
   const minYear = startMonth?.getFullYear();
   const maxYear = endMonth?.getFullYear();
+  // Below one page of years there's nothing a block grid would add — the
+  // year grid already shows the whole range at once.
+  const needsBlocks = minYear !== undefined && maxYear !== undefined && maxYear - minYear + 1 > YEAR_PAGE_SIZE;
+
+  const [view, setView] = useState<View>("days");
+  const [month, setMonth] = useState(initial);
+  const [yearsPageStart, setYearsPageStart] = useState(() => blockStartFor(initial.getFullYear(), minYear));
+
+  if (withYearNav && view === "blocks" && minYear !== undefined && maxYear !== undefined) {
+    return (
+      <BlocksGrid
+        minYear={minYear}
+        maxYear={maxYear}
+        activeYear={month.getFullYear()}
+        onPick={(start) => {
+          setYearsPageStart(start);
+          setView("years");
+        }}
+      />
+    );
+  }
 
   if (withYearNav && view === "years") {
     return (
       <YearGrid
-        pageStart={yearPageStart}
+        pageStart={yearsPageStart}
         activeYear={month.getFullYear()}
         minYear={minYear}
         maxYear={maxYear}
-        onPage={setYearPageStart}
+        onBack={needsBlocks ? () => setView("blocks") : undefined}
         onPick={(year) => {
           setMonth(new Date(year, month.getMonth(), 1));
           setView("months");
@@ -253,7 +322,7 @@ export const Calendar = ({
         startMonth={startMonth}
         endMonth={endMonth}
         onYearClick={() => {
-          setYearPageStart(Math.floor(year / YEAR_PAGE_SIZE) * YEAR_PAGE_SIZE);
+          setYearsPageStart(blockStartFor(year, minYear));
           setView("years");
         }}
         onPrevYear={() => setMonth(new Date(year - 1, month.getMonth(), 1))}
@@ -293,8 +362,12 @@ export const Calendar = ({
                     type="button"
                     onClick={() => {
                       const year = calendarMonth.date.getFullYear();
-                      setYearPageStart(Math.floor(year / YEAR_PAGE_SIZE) * YEAR_PAGE_SIZE);
-                      setView("years");
+                      if (needsBlocks) {
+                        setView("blocks");
+                      } else {
+                        setYearsPageStart(blockStartFor(year, minYear));
+                        setView("years");
+                      }
                     }}
                     className="text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:text-green-700"
                   >
