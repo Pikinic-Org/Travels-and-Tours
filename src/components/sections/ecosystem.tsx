@@ -1,12 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { PathwayMark } from "@/components/ui/pathway-mark";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { siblingLinks } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+
+// Generated line-art matches the brand's flat, thin-stroke blueprint style
+// (see design.md's pathway/square-frame motifs) rather than a photo — no
+// real product photography exists for these sibling sites either.
+const images: Record<string, string> = {
+  "Study Abroad": "/ecosystem/study-abroad.png",
+  "Stay & Ride": "/ecosystem/stay-and-ride.png",
+  Finance: "/ecosystem/finance.png",
+};
 
 // Every sibling except this one — a card linking to the site you're already
 // on doesn't belong in a "more from Pikinic" slider.
@@ -14,6 +23,29 @@ const otherSiblings = siblingLinks.filter(
   (sibling): sibling is typeof sibling & { description: string } =>
     sibling.label !== "Travel & Tours" && sibling.description !== undefined
 );
+
+// Ad-style copy per sibling — kept local to this carousel rather than on
+// siblingLinks, since the footer just needs the plain label/description.
+const adCopy: Record<string, { kicker: string; accent: string; body: string; cta: string }> = {
+  "Study Abroad": {
+    kicker: "We Can Help You",
+    accent: "Study Abroad.",
+    body: "Applications, visas, and the paperwork sorted — start your journey now.",
+    cta: "Start Your Journey",
+  },
+  "Stay & Ride": {
+    kicker: "We've Got Your",
+    accent: "Stay & Rides Sorted.",
+    body: "Accommodation and local rides, arranged before you land.",
+    cta: "Sort My Stay",
+  },
+  Finance: {
+    kicker: "We Can Handle Your",
+    accent: "Travel Finance.",
+    body: "Proof of funds and the financial documentation your journey needs.",
+    cta: "Get Funded",
+  },
+};
 
 const AUTO_ADVANCE_MS = 6000;
 
@@ -32,51 +64,54 @@ export function Ecosystem() {
       <Container>
         <ScrollReveal className="lg:mx-auto lg:w-[65%]">
           <div className="relative overflow-hidden rounded-[2px] bg-green-900 p-8 sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-0/60">The Ecosystem</p>
-            <h2 className="mt-3 max-w-2xl text-4xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-5xl">
-              More Than <span className="text-green-400">Flights.</span>
-            </h2>
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
+              <div className="relative hidden h-48 items-center justify-center lg:flex">
+                {otherSiblings.map((sibling, index) => (
+                  <Image
+                    key={sibling.label}
+                    src={images[sibling.label]}
+                    alt=""
+                    aria-hidden="true"
+                    width={280}
+                    height={280}
+                    className={cn(
+                      "float-slow absolute h-48 w-48 object-contain transition-opacity duration-500 motion-reduce:transition-none",
+                      index === active ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                ))}
+              </div>
 
-            <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
               <div>
-                <div className="relative min-h-[170px] sm:min-h-[150px]">
-                  {otherSiblings.map((sibling, index) => (
-                    <div
-                      key={sibling.label}
-                      aria-hidden={index !== active}
-                      className={cn(
-                        "transition-all duration-500 motion-reduce:transition-none",
-                        index === active
-                          ? "relative opacity-100"
-                          : "pointer-events-none absolute inset-0 opacity-0 translate-y-2"
-                      )}
-                    >
-                      <span className="text-sm font-bold tracking-widest text-green-400">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <h3 className="mt-3 text-2xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-3xl">
-                        {sibling.label}
-                      </h3>
-                      <p className="mt-3 max-w-md text-neutral-300">{sibling.description}</p>
-                      <Link
-                        href={sibling.href}
-                        className="group mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-green-400"
+                <div className="relative min-h-[190px] sm:min-h-[170px]">
+                  {otherSiblings.map((sibling, index) => {
+                    const copy = adCopy[sibling.label];
+                    return (
+                      <div
+                        key={sibling.label}
+                        aria-hidden={index !== active}
+                        className={cn(
+                          "transition-all duration-500 motion-reduce:transition-none",
+                          index === active
+                            ? "relative opacity-100"
+                            : "pointer-events-none absolute inset-0 opacity-0 translate-y-2"
+                        )}
                       >
-                        Visit Site
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.75"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                        <h3 className="text-2xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-3xl">
+                          {copy.kicker} <span className="text-green-400">{copy.accent}</span>
+                        </h3>
+                        <p className="mt-3 max-w-md text-neutral-300">{copy.body}</p>
+                        <Button
+                          href={sibling.href}
+                          size="sm"
+                          variant="primary"
+                          className="mt-5 bg-neutral-0 text-green-800 hover:bg-green-50"
                         >
-                          <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                      </Link>
-                    </div>
-                  ))}
+                          {copy.cta}
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="mt-6 flex gap-2">
@@ -93,23 +128,6 @@ export function Ecosystem() {
                     />
                   ))}
                 </div>
-              </div>
-
-              {/* No real illustration exists per sibling yet, so the pathway
-                  brand mark stands in for each slide — same motif used
-                  elsewhere on the site, not a stock image pretending to
-                  represent the ecosystem. No background box, just the mark. */}
-              <div className="relative hidden h-40 items-center justify-center lg:flex">
-                {otherSiblings.map((sibling, index) => (
-                  <PathwayMark
-                    key={sibling.label}
-                    aria-hidden="true"
-                    className={cn(
-                      "float-slow absolute h-40 w-40 text-neutral-0/10 transition-opacity duration-500 motion-reduce:transition-none",
-                      index === active ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                ))}
               </div>
             </div>
           </div>
