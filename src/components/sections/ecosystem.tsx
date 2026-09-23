@@ -30,16 +30,14 @@ export function Ecosystem() {
   return (
     <section className="py-20 md:py-28">
       <Container>
-        <ScrollReveal>
-          <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">The Ecosystem</p>
-          <h2 className="mt-3 max-w-2xl text-4xl font-bold uppercase leading-[0.95] tracking-tight text-text-primary sm:text-5xl">
-            More Than <span className="text-green-700">Flights.</span>
-          </h2>
-        </ScrollReveal>
-
-        <ScrollReveal delay={100} className="mt-12 lg:mx-auto lg:w-[65%]">
+        <ScrollReveal className="lg:mx-auto lg:w-[65%]">
           <div className="relative overflow-hidden rounded-[2px] bg-green-900 p-8 sm:p-10">
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
+            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-0/60">The Ecosystem</p>
+            <h2 className="mt-3 max-w-2xl text-4xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-5xl">
+              More Than <span className="text-green-400">Flights.</span>
+            </h2>
+
+            <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
               <div>
                 <div className="relative min-h-[170px] sm:min-h-[150px]">
                   {otherSiblings.map((sibling, index) => (
