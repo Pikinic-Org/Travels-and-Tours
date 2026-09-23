@@ -31,7 +31,7 @@ const adCopy: Record<string, { kicker: string; accent: string; body: string; cta
     kicker: "We Can Help You",
     accent: "Study Abroad.",
     body: "Applications, visas, and the paperwork sorted — start your journey now.",
-    cta: "Start Your Journey",
+    cta: "Start Now",
   },
   "Stay & Ride": {
     kicker: "We've Got Your",
@@ -64,7 +64,21 @@ export function Ecosystem() {
       <Container>
         <ScrollReveal className="lg:mx-auto lg:w-[65%]">
           <div className="relative overflow-hidden rounded-[2px] bg-green-900 p-8 sm:p-10">
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
+            <svg
+              className="pointer-events-none absolute inset-0 h-full w-full text-neutral-0/[0.08]"
+              preserveAspectRatio="xMidYMid slice"
+              viewBox="0 0 1282 579"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.25 0.25H1281.25M640.75 0.25V578.25M640.75 0.25H480.625M640.75 0.25H800.875M640.75 578.25H480.625M640.75 578.25H800.875M961 0.25V578.25M961 0.25H800.875M961 0.25H1121.12M961 578.25H800.875M961 578.25H1121.12M320.5 0.25V578.25M320.5 0.25H480.625M320.5 0.25H160.375M320.5 578.25H480.625M320.5 578.25H160.375M0.25 289.25H1281.25M0.25 289.25V144.75M0.25 289.25V433.75M1281.25 289.25V144.75M1281.25 289.25V433.75M1281.25 144.75V0.25H1121.12M1281.25 144.75H0.25M0.25 144.75V0.25H160.375M0.25 433.75V578.25H160.375M0.25 433.75H1281.25M1281.25 433.75V578.25H1121.12M480.625 0.25V578.25M800.875 0.25V578.25M1121.12 0.25V578.25M160.375 0.25V578.25"
+                stroke="currentColor"
+                strokeWidth="0.5"
+              />
+            </svg>
+
+            <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
               <div className="relative hidden h-48 items-center justify-center lg:flex">
                 {otherSiblings.map((sibling, index) => (
                   <Image

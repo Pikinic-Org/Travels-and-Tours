@@ -42,9 +42,9 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-8 pl-[6px] pr-[3px] text-[14px]",
-  md: "h-[40px] pl-[8px] pr-[4px] text-[14px]",
-  lg: "h-[48px] pl-[8px] pr-[4px] text-[14px]",
+  sm: "h-8 gap-[10px] pl-[6px] pr-[3px] text-[14px]",
+  md: "h-[40px] gap-[16px] pl-[8px] pr-[4px] text-[14px]",
+  lg: "h-[48px] gap-[20px] pl-[8px] pr-[4px] text-[14px]",
 };
 
 const spanClasses:Record<ButtonVariant, string> = {
@@ -60,7 +60,7 @@ const spanSizeClasses: Record<ButtonSize, string> = {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", href, icon, children, ...props }, ref) => {
     const classes = cn(
-      "group flex items-center justify-between  gap-[28px]  rounded-[2px] font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 disabled:pointer-events-none",
+      "group flex items-center justify-between rounded-[2px] font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 disabled:pointer-events-none",
       variantClasses[variant],
       sizeClasses[size],
       className
