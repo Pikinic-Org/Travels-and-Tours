@@ -63,7 +63,7 @@ export function Ecosystem() {
     <section className="py-20 md:py-28">
       <Container>
         <ScrollReveal className="lg:mx-auto lg:w-[65%]">
-          <div className="relative overflow-hidden rounded-[2px] bg-green-900 p-8 sm:p-10">
+          <div className="relative isolate aspect-[4/3] w-full overflow-hidden rounded-[2px] bg-green-900 sm:aspect-[16/9]">
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full text-neutral-0/[0.08]"
               preserveAspectRatio="xMidYMid slice"
@@ -78,71 +78,60 @@ export function Ecosystem() {
               />
             </svg>
 
-            <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
-              <div className="relative hidden h-48 items-center justify-center lg:flex">
-                {otherSiblings.map((sibling, index) => (
-                  <Image
-                    key={sibling.label}
-                    src={images[sibling.label]}
-                    alt=""
-                    aria-hidden="true"
-                    width={280}
-                    height={280}
-                    className={cn(
-                      "float-slow absolute h-48 w-48 object-contain transition-opacity duration-500 motion-reduce:transition-none",
-                      index === active ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                ))}
-              </div>
+            {otherSiblings.map((sibling, index) => {
+              const copy = adCopy[sibling.label];
+              return (
+                <div
+                  key={sibling.label}
+                  aria-hidden={index !== active}
+                  className={cn(
+                    "absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none",
+                    index === active ? "opacity-100" : "pointer-events-none opacity-0"
+                  )}
+                >
+                  <Image src={images[sibling.label]} alt="" fill className="object-contain" />
 
-              <div>
-                <div className="relative min-h-[190px] sm:min-h-[170px]">
-                  {otherSiblings.map((sibling, index) => {
-                    const copy = adCopy[sibling.label];
-                    return (
-                      <div
-                        key={sibling.label}
-                        aria-hidden={index !== active}
-                        className={cn(
-                          "transition-all duration-500 motion-reduce:transition-none",
-                          index === active
-                            ? "relative opacity-100"
-                            : "pointer-events-none absolute inset-0 opacity-0 translate-y-2"
-                        )}
+                  {/* Dark overlay so the glass panel's text stays legible over
+                      the image, same treatment as the package cards. */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-green-950/95 via-green-950/40 to-transparent" />
+
+                  <span className="absolute left-5 top-5 rounded-sm border border-neutral-0/20 bg-neutral-0/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-neutral-0 backdrop-blur-sm">
+                    {sibling.label}
+                  </span>
+
+                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
+                    <div className="max-w-xl rounded-[2px] border border-neutral-0/15 bg-neutral-0/10 p-5 backdrop-blur-md sm:p-6">
+                      <h3 className="text-2xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-4xl">
+                        {copy.kicker} <span className="text-green-400">{copy.accent}</span>
+                      </h3>
+                      <p className="mt-3 max-w-md text-sm text-neutral-200 sm:text-base">{copy.body}</p>
+                      <Button
+                        href={sibling.href}
+                        size="sm"
+                        variant="secondary"
+                        className="mt-5 border-neutral-0/40 text-neutral-0 hover:bg-neutral-0/10"
                       >
-                        <h3 className="text-2xl font-bold uppercase leading-[0.95] tracking-tight text-neutral-0 sm:text-3xl">
-                          {copy.kicker} <span className="text-green-400">{copy.accent}</span>
-                        </h3>
-                        <p className="mt-3 max-w-md text-neutral-300">{copy.body}</p>
-                        <Button
-                          href={sibling.href}
-                          size="sm"
-                          variant="primary"
-                          className="mt-5 bg-neutral-0 text-green-800 hover:bg-green-50"
-                        >
-                          {copy.cta}
-                        </Button>
-                      </div>
-                    );
-                  })}
+                        {copy.cta}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
+              );
+            })}
 
-                <div className="mt-6 flex gap-2">
-                  {otherSiblings.map((sibling, index) => (
-                    <button
-                      key={sibling.label}
-                      type="button"
-                      onClick={() => setActive(index)}
-                      aria-label={`Show ${sibling.label}`}
-                      className={cn(
-                        "h-1.5 rounded-[2px] transition-all duration-300",
-                        index === active ? "w-8 bg-neutral-0" : "w-4 bg-neutral-0/25 hover:bg-neutral-0/50"
-                      )}
-                    />
-                  ))}
-                </div>
-              </div>
+            <div className="absolute bottom-5 right-5 z-10 flex gap-2 sm:bottom-8 sm:right-8">
+              {otherSiblings.map((sibling, index) => (
+                <button
+                  key={sibling.label}
+                  type="button"
+                  onClick={() => setActive(index)}
+                  aria-label={`Show ${sibling.label}`}
+                  className={cn(
+                    "h-1.5 rounded-[2px] transition-all duration-300",
+                    index === active ? "w-8 bg-neutral-0" : "w-4 bg-neutral-0/30 hover:bg-neutral-0/60"
+                  )}
+                />
+              ))}
             </div>
           </div>
         </ScrollReveal>
