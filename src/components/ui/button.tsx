@@ -60,7 +60,7 @@ const spanSizeClasses: Record<ButtonSize, string> = {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", href, icon, children, ...props }, ref) => {
     const classes = cn(
-      "group flex items-center justify-between rounded-[2px] font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 disabled:pointer-events-none",
+      "group inline-flex items-center justify-between rounded-[2px] font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 disabled:pointer-events-none",
       variantClasses[variant],
       sizeClasses[size],
       className
