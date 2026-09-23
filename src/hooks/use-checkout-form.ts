@@ -14,6 +14,7 @@ export const useCheckoutForm = () => {
   const router = useRouter();
   const selected = useSelectedFlightStore((state) => state.selected);
   const hasHydrated = useSelectedFlightStore((state) => state.hasHydrated);
+  const clearSelected = useSelectedFlightStore((state) => state.clear);
 
   const [pricing, setPricing] = useState<FlightPricingResult | null>(null);
   const [pricingError, setPricingError] = useState<string | null>(null);
@@ -35,7 +36,17 @@ export const useCheckoutForm = () => {
     }
     priceSelectedFlight(selected.flight.booking_token, selected.passengers)
       .then(setPricing)
-      .catch((err) => setPricingError(err instanceof Error ? err.message : "Could not price this flight."));
+      .catch(() => {
+        // A stale/expired booking_token can't be re-priced — there's no
+        // recovery for this flight, so send them back to search instead of
+        // leaving them on a dead error box. (Also avoids a rare crash: a
+        // failed re-price on an already-expired token has been seen coming
+        // back as an uncaught Server Action error rather than a normal
+        // rejection, which reload would then hit again.)
+        setPricingError("This fare is no longer available. Taking you back to search…");
+        clearSelected();
+        router.replace("/flights");
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated, selected]);
 
@@ -59,6 +70,16 @@ export const useCheckoutForm = () => {
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, [pricing]);
+
+  // The hold expired while they were sitting on this page — send them back
+  // to search rather than leaving a dead "0:00" screen up. Submitting (or
+  // reloading into a fresh re-price attempt) against an expired token isn't
+  // recoverable, so there's nothing useful left to do here.
+  useEffect(() => {
+    if (secondsLeft !== 0) return;
+    clearSelected();
+    router.replace("/flights");
+  }, [secondsLeft, clearSelected, router]);
 
   const updateContact = <K extends keyof ContactFormState>(field: K, value: ContactFormState[K]) =>
     setContact((previous) => ({ ...previous, [field]: value }));
