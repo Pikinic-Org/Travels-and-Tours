@@ -28,9 +28,11 @@ type TravellerFieldsProps = {
 // form, which shows contact fields on "Lead Traveler" only.
 //
 // Row layout: Title/Gender/First/Last/Other Name share one row, five equal
-// columns. Contact Email sits alone (half width). Country Code, Nationality
-// and Contact Phone share the next row. Date of Birth and Passport Number
-// each sit alone (half width). Passport Issue/Expiry share the final row.
+// columns. Contact Email sits alone (half width). Country Code, Nationality,
+// Contact Phone and Date of Birth share the next row (lead traveller; DOB
+// joins Country Code/Nationality on that row for everyone else too).
+// Passport Number sits alone (half width). Passport Issue/Expiry share the
+// final row.
 export const TravellerFields = (props: TravellerFieldsProps) => {
   const { value, onChange } = props;
 
@@ -103,7 +105,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
             </FormField>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
             <FormField label="Country Code">
               <select
                 required
@@ -143,12 +145,21 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
                 className={inputClass}
               />
             </FormField>
+            <DatePickerField
+              label="Date of Birth"
+              value={value.dob}
+              onChange={(v) => onChange("dob", v)}
+              min={isoYearsAgo(100)}
+              max={isoToday}
+              withYearNav
+              boxed
+            />
           </div>
         </>
       )}
 
       {!props.isLead && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <FormField label="Country Code">
             <select
               required
@@ -177,20 +188,17 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
               ))}
             </select>
           </FormField>
+          <DatePickerField
+            label="Date of Birth"
+            value={value.dob}
+            onChange={(v) => onChange("dob", v)}
+            min={isoYearsAgo(100)}
+            max={isoToday}
+            withYearNav
+            boxed
+          />
         </div>
       )}
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <DatePickerField
-          label="Date of Birth"
-          value={value.dob}
-          onChange={(v) => onChange("dob", v)}
-          min={isoYearsAgo(100)}
-          max={isoToday}
-          withYearNav
-          boxed
-        />
-      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Passport Number">
