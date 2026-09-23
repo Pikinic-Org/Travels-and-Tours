@@ -37,7 +37,7 @@ export function Ecosystem() {
           </h2>
         </ScrollReveal>
 
-        <ScrollReveal delay={100} className="mt-12 lg:w-[65%]">
+        <ScrollReveal delay={100} className="mt-12 lg:mx-auto lg:w-[65%]">
           <div className="relative overflow-hidden rounded-[2px] bg-green-900 p-8 sm:p-10">
             <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
               <div>
