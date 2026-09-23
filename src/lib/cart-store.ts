@@ -27,6 +27,15 @@ export const useCartStore = create<CartState>()(
       setHasHydrated: (value) => set({ hasHydrated: value }),
       addItem: (item) => {
         const items = get().items;
+        if (item.type === "flight") {
+          // Only one flight ticket can be held at a time — matches Wakanow:
+          // picking a different flight (a new route, a new deal card)
+          // replaces whatever ticket was already in the cart rather than
+          // stacking a second one alongside it. Packages aren't limited
+          // this way.
+          set({ items: [...items.filter((i) => i.type !== "flight"), { ...item, quantity: 1 }] });
+          return;
+        }
         const existing = items.find((i) => i.id === item.id);
         set({
           items: existing
