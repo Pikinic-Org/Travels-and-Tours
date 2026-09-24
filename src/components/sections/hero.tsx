@@ -11,6 +11,9 @@ export function Hero() {
       <Container className="relative flex flex-col items-center pb-28 pt-16 text-center md:pb-36 md:pt-24">
         <div className="pointer-events-none absolute left-1/2 top-0 bottom-0 z-0 w-[calc(100%-24px)] -translate-x-1/2 overflow-hidden rounded-2xl md:w-[calc(100%-32px)]">
           <Image src="/hero-sky.png" alt="" fill priority className="object-cover object-top" />
+          {/* Darker behind the title and subcopy, lighter behind the search
+              card, so white text holds up over the bright clouds. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/40 to-neutral-900/10" />
         </div>
 
 
