@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { DeepGreenBackdrop } from "@/components/ui/brand-pattern";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Modal } from "@/components/ui/modal";
@@ -43,6 +44,7 @@ export function CustomPackageCta() {
   return (
     <section className="px-3 pb-3 md:px-4 md:pb-4">
       <div className="relative isolate overflow-hidden rounded-2xl bg-green-900 py-20 text-neutral-0 md:py-28">
+      <DeepGreenBackdrop />
       <Container className="relative flex flex-col items-center text-center">
         <h2 className="w-full max-w-none text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
           Don&rsquo;t see what you <span className="text-green-500">want?</span>
