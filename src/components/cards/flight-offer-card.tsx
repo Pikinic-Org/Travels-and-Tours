@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { flightOfferToCartItem, type FlightOffer } from "@/lib/data/flights";
 import { useCartStore } from "@/lib/cart-store";
 import { cn, formatNaira } from "@/lib/utils";
-import { BrandPattern } from "@/components/ui/brand-pattern";
+import { DeepGreenBackdrop } from "@/components/ui/brand-pattern";
 
 // Route-agnostic: one card of the homepage flight-deals rail today, reused
 // as-is for the /flights listing page.
@@ -35,14 +35,7 @@ export function FlightOfferCard({ offer, className }: { offer: FlightOffer; clas
       {/* Placeholder backdrop — swap for a real photo (offer.imageUrl) once
           pikinic-site's API provides one; nothing here claims to be a real
           route photo. */}
-      <div className="absolute inset-0 -z-10 transition-transform duration-700 ease-out group-hover:scale-105 bg-green-900">
-            <BrandPattern />
-          </div>
-
-      {/* Black overlay — a bottom-up gradient so the image (or, today, the
-          placeholder) stays visible up top while the text at the bottom
-          stays legible regardless of what's behind it. */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-neutral-900/90 via-neutral-900/25 to-transparent" />
+      <DeepGreenBackdrop className="transition-transform duration-700 ease-out group-hover:scale-105" />
 
       {/* Glass chip — frosted, not solid, so it reads as an overlay on the
           image rather than a flat label. */}

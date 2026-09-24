@@ -1,4 +1,4 @@
-import { BrandPattern } from "@/components/ui/brand-pattern";
+import { BrandPattern, DeepGreenBackdrop } from "@/components/ui/brand-pattern";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
@@ -18,7 +18,8 @@ export function Cta() {
 
           <ScrollReveal delay={100} className="mt-14 grid gap-4 md:grid-cols-3 md:gap-6">
             {partnershipPoints.map((point) => (
-              <div key={point.heading} className="flex flex-col gap-3 rounded-2xl bg-green-900/80 p-6 backdrop-blur-sm md:p-8">
+              <div key={point.heading} className="relative isolate flex flex-col gap-3 overflow-hidden rounded-2xl p-6 md:p-8">
+                <DeepGreenBackdrop />
                 <h3 className="text-xl font-semibold leading-tight tracking-tight">{point.heading}</h3>
                 <p className="text-sm leading-relaxed text-neutral-0/70 sm:text-base">{point.body}</p>
               </div>

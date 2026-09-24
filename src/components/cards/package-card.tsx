@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { packageToCartItem, type Package } from "@/lib/data/packages";
 import { useCartStore } from "@/lib/cart-store";
 import { cn, formatNaira } from "@/lib/utils";
-import { BrandPattern } from "@/components/ui/brand-pattern";
+import { DeepGreenBackdrop } from "@/components/ui/brand-pattern";
 
 // Route-agnostic: used on the homepage packages rail today, and by the
 // /packages listing page — takes a Package record, renders one card.
@@ -39,11 +39,7 @@ export function PackageCard({ pkg, className }: { pkg: Package; className?: stri
         className
       )}
     >
-      <div className="absolute inset-0 -z-10 transition-transform duration-700 ease-out group-hover:scale-105 bg-green-900">
-            <BrandPattern />
-          </div>
-
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-neutral-900/90 via-neutral-900/25 to-transparent" />
+      <DeepGreenBackdrop className="transition-transform duration-700 ease-out group-hover:scale-105" />
 
       <span className="absolute left-4 top-4 rounded-md border border-neutral-0/20 bg-neutral-0/15 px-2 py-1 text-[10px] font-semibold text-neutral-0 backdrop-blur-sm">
         {pkg.duration}
