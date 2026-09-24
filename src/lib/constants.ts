@@ -64,19 +64,19 @@ export const footerColumns = [
 // /packages/[slug], and /blog routes can key off the same records instead
 // of duplicating shapes per page.
 
-export const partnershipPoints = [
+export const partnershipPoints: { icon: "tag" | "passport" | "route"; heading: string; body: string }[] = [
   {
-    number: "01",
+    icon: "tag",
     heading: "Best fares, honestly sourced",
     body: "We search across airlines and only recommend the fares that are genuinely good value. No inflated prices. No hidden charges.",
   },
   {
-    number: "02",
+    icon: "passport",
     heading: "We know the Nigerian traveller",
     body: "We understand the documentation requirements, the timing pressures, and the specific needs of Nigerians travelling for business, study, tourism, and relocation.",
   },
   {
-    number: "03",
+    icon: "route",
     heading: "One team for the whole journey",
     body: "Your flight, your accommodation, your study abroad application, your proof of funds. All in one brand so you never have to start over with someone new.",
   },
