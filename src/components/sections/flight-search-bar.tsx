@@ -241,72 +241,76 @@ export function FlightSearchBar({
       </div>
 
       {tripType !== "Multi-city" ? (
-        <div
-          className={cn(
-            "grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2",
-            tripType === "Round trip" ? "lg:grid-cols-5" : "lg:grid-cols-4"
-          )}
-        >
-          <div className="relative flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <AirportPicker
-              label="From"
-              icon={takeoffIcon}
-              value={from}
-              onChange={setFrom}
-              inputClassName="text-base font-bold text-text-primary"
-            />
-            <button
-              type="button"
-              onClick={swap}
-              aria-label="Swap origin and destination"
-              className="absolute -right-4 top-1/2 z-20 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-border-primary bg-surface-primary text-text-secondary transition-colors hover:border-green-700 hover:text-green-700 sm:flex"
-            >
-              <SwapIcon className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-            <AirportPicker
-              label="To"
-              icon={landingIcon}
-              value={to}
-              onChange={setTo}
-              inputClassName="text-base font-bold text-text-primary"
-            />
-          </div>
-
-          {tripType === "Round trip" ? (
-            <DateRangePickerField
-              depart={depart}
-              returnDate={returnDate}
-              onChange={(range) => {
-                setDepart(range.depart);
-                setReturnDate(range.return);
-              }}
-            />
-          ) : (
-            <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
-              <DatePickerField label="Depart" value={depart} onChange={setDepart} />
-            </div>
-          )}
-
+        // Padded like the multi-city layout so the fields never sit flush on
+        // the card's bottom edge.
+        <div className="p-5 sm:p-6">
           <div
             className={cn(
-              "flex items-center border-b border-r border-border-primary p-3",
-              tripType === "Round trip" && "sm:col-span-2 lg:col-span-1"
+              "grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2",
+              tripType === "Round trip" ? "lg:grid-cols-5" : "lg:grid-cols-4"
             )}
           >
-            <Button
-              type="button"
-              onClick={handleSearch}
-              disabled={isPending || !airportsChosen}
-              size="lg"
-              variant="primary"
-              icon={<SearchGlassIcon className="h-5 w-5" />}
-              className="w-full"
+            <div className="relative flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+              <AirportPicker
+                label="From"
+                icon={takeoffIcon}
+                value={from}
+                onChange={setFrom}
+                inputClassName="text-base font-bold text-text-primary"
+              />
+              <button
+                type="button"
+                onClick={swap}
+                aria-label="Swap origin and destination"
+                className="absolute -right-4 top-1/2 z-20 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-border-primary bg-surface-primary text-text-secondary transition-colors hover:border-green-700 hover:text-green-700 sm:flex"
+              >
+                <SwapIcon className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+              <AirportPicker
+                label="To"
+                icon={landingIcon}
+                value={to}
+                onChange={setTo}
+                inputClassName="text-base font-bold text-text-primary"
+              />
+            </div>
+
+            {tripType === "Round trip" ? (
+              <DateRangePickerField
+                depart={depart}
+                returnDate={returnDate}
+                onChange={(range) => {
+                  setDepart(range.depart);
+                  setReturnDate(range.return);
+                }}
+              />
+            ) : (
+              <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+                <DatePickerField label="Depart" value={depart} onChange={setDepart} />
+              </div>
+            )}
+
+            <div
+              className={cn(
+                "flex items-center border-b border-r border-border-primary p-3",
+                tripType === "Round trip" && "sm:col-span-2 lg:col-span-1"
+              )}
             >
-              {isPending ? "Searching…" : "Search"}
-            </Button>
+              <Button
+                type="button"
+                onClick={handleSearch}
+                disabled={isPending || !airportsChosen}
+                size="lg"
+                variant="primary"
+                icon={<SearchGlassIcon className="h-5 w-5" />}
+                className="w-full"
+              >
+                {isPending ? "Searching…" : "Search"}
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
