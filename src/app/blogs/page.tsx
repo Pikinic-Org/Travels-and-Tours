@@ -11,7 +11,7 @@ export default async function BlogsPage() {
       <section className="relative isolate overflow-hidden text-text-primary">
         <Container className="relative flex flex-col items-center pb-16 pt-16 text-center md:pb-20 md:pt-24">
           <h1 className="relative z-10 w-full max-w-none text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-            Travel Tips, <span className="text-green-700">Sorted.</span>
+            Travel tips, <span className="text-green-700">sorted.</span>
           </h1>
           <p className="relative z-10 mt-6 max-w-2xl text-base text-text-secondary sm:text-lg">
             Practical advice on documents, fares, and getting the most out of every trip — written

@@ -14,7 +14,7 @@ export async function FlightOffers() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
               <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary sm:text-5xl">
-                Fares Worth <span className="text-green-700">Booking</span> Today.
+                Fares worth <span className="text-green-700">booking</span> today.
               </h2>
             </div>
             <Link

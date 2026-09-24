@@ -14,7 +14,7 @@ export async function Packages() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
               <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary sm:text-5xl">
-                Packages Built for <span className="text-green-700">Nigerians</span> Going Places.
+                Packages built for <span className="text-green-700">Nigerians</span> going places.
               </h2>
             </div>
             <Link

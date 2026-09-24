@@ -19,7 +19,7 @@ export const CheckoutView = () => {
     <section className="py-20 md:py-28">
       <Container>
         <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
-          Complete Your <span className="text-green-700">Booking</span>
+          Complete your <span className="text-green-700">booking</span>
         </h1>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">

@@ -202,7 +202,7 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
           <div>
             <p className="text-sm font-semibold text-text-tertiary">Payment received</p>
             <h1 className="mt-1 text-2xl font-semibold leading-[1.05] tracking-tight sm:text-3xl">
-              Finishing Your <span className="text-green-700">Reservation.</span>
+              Finishing your <span className="text-green-700">reservation.</span>
             </h1>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default async function CheckoutCallbackPage({
         ) : (
           <div className="rounded-2xl border border-border-primary bg-surface-primary p-8 text-center">
             <h1 className="text-2xl font-semibold leading-[1.05] tracking-tight">
-              We Couldn&apos;t Find That <span className="text-green-700">Booking.</span>
+              We couldn&apos;t find that <span className="text-green-700">booking.</span>
             </h1>
             <p className="mt-4 text-text-secondary">
               Something went wrong loading your booking status.

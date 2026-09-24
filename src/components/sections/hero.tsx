@@ -18,14 +18,17 @@ export function Hero() {
           <span className="reveal block" style={{ animationDelay: "0.1s" }}>
             Fly further.
           </span>
-          <span className="reveal block" style={{ animationDelay: "0.25s" }}>
-            <span className="text-orange-500">Travel smarter.</span> Book easier.
+          <span className="reveal block text-orange-500" style={{ animationDelay: "0.25s" }}>
+            Travel smarter.
+          </span>
+          <span className="reveal block" style={{ animationDelay: "0.4s" }}>
+            Book easier.
           </span>
         </h1>
 
         <p
           className="reveal relative z-10 mt-6 max-w-2xl text-base text-neutral-0 sm:text-lg"
-          style={{ animationDelay: "0.4s" }}
+          style={{ animationDelay: "0.55s" }}
         >
           Flights, vacation packages, and travel planning for Nigerians going
           places. We handle the search, the booking, and the details so you
@@ -35,7 +38,7 @@ export function Hero() {
         <div
           id="flights"
           className="reveal mt-12 w-full max-w-5xl scroll-mt-24"
-          style={{ animationDelay: "0.55s" }}
+          style={{ animationDelay: "0.7s" }}
         >
           <FlightSearchBar />
         </div>

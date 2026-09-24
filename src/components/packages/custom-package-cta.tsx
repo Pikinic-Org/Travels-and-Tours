@@ -93,7 +93,7 @@ export function CustomPackageCta() {
         ) : (
           <>
             <h3 className="text-lg font-semibold tracking-tight text-text-primary">
-              Request a Custom Package
+              Request a custom package
             </h3>
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <TextField
