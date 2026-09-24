@@ -245,12 +245,15 @@ export function FlightSearchBar({
         // the card's bottom edge.
         <div className="p-5 sm:p-6">
           <div
+            // Rounded without overflow-hidden (that would clip the airport and
+            // calendar pop-ups): the grid rounds its top-left, and whichever
+            // cell sits at each other corner at this width rounds that corner.
             className={cn(
-              "grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2",
+              "grid grid-cols-1 rounded-lg border-l border-t border-border-primary sm:grid-cols-2",
               tripType === "Round trip" ? "lg:grid-cols-5" : "lg:grid-cols-4"
             )}
           >
-            <div className="relative flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+            <div className="relative flex flex-col justify-center gap-1 rounded-tr-lg border-b border-r border-border-primary px-5 py-4 sm:rounded-tr-none sm:px-6 lg:rounded-bl-lg">
               <AirportPicker
                 label="From"
                 icon={takeoffIcon}
@@ -268,7 +271,7 @@ export function FlightSearchBar({
               </button>
             </div>
 
-            <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+            <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:rounded-tr-lg sm:px-6 lg:rounded-tr-none">
               <AirportPicker
                 label="To"
                 icon={landingIcon}
@@ -288,15 +291,15 @@ export function FlightSearchBar({
                 }}
               />
             ) : (
-              <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:px-6">
+              <div className="flex flex-col justify-center gap-1 border-b border-r border-border-primary px-5 py-4 sm:rounded-bl-lg sm:px-6 lg:rounded-bl-none">
                 <DatePickerField label="Depart" value={depart} onChange={setDepart} />
               </div>
             )}
 
             <div
               className={cn(
-                "flex items-center border-b border-r border-border-primary p-3",
-                tripType === "Round trip" && "sm:col-span-2 lg:col-span-1"
+                "flex items-center rounded-b-lg border-b border-r border-border-primary p-3 lg:rounded-bl-none lg:rounded-tr-lg",
+                tripType === "Round trip" ? "sm:col-span-2 lg:col-span-1" : "sm:rounded-bl-none"
               )}
             >
               <Button
