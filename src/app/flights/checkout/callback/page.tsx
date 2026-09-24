@@ -50,7 +50,7 @@ const StatusHeader = ({
   <div className="flex items-start gap-4">
     <span
       className={cn(
-        "flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px]",
+        "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg",
         tone === "good" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
       )}
     >
@@ -59,13 +59,13 @@ const StatusHeader = ({
     <div>
       <p
         className={cn(
-          "text-xs font-semibold uppercase tracking-widest",
+          "text-sm font-semibold",
           tone === "good" ? "text-green-700" : "text-text-tertiary"
         )}
       >
         {eyebrow}
       </p>
-      <h1 className="mt-1 text-3xl font-bold uppercase leading-[0.95] tracking-tight sm:text-4xl">
+      <h1 className="mt-1 text-3xl font-semibold leading-[1.05] tracking-tight sm:text-4xl">
         {title} <span className="text-green-700">{accent}</span>
       </h1>
     </div>
@@ -79,7 +79,7 @@ const DetailGrid = ({ items }: { items: { label: string; value: string }[] }) =>
   <div className="grid grid-cols-1 border-l border-t border-border-primary sm:grid-cols-2">
     {items.map((item) => (
       <div key={item.label} className="border-b border-r border-border-primary p-5">
-        <p className="text-xs uppercase tracking-widest text-text-tertiary">{item.label}</p>
+        <p className="text-sm text-text-tertiary">{item.label}</p>
         <p className="mt-1 text-lg font-bold text-text-primary">{item.value}</p>
       </div>
     ))}
@@ -98,14 +98,14 @@ const BoardingPassTicket = ({ booking, details }: { booking: FlightBooking; deta
   const toCity = getAirportByCode(booking.toCode)?.city ?? booking.toCode;
 
   return (
-    <div id="booking-ticket" className="relative mt-8 rounded-[2px] border border-border-primary bg-surface-primary">
+    <div id="booking-ticket" className="relative mt-8 rounded-lg border border-border-primary bg-surface-primary">
       <div className="flex items-center justify-between gap-4 px-6 py-6 sm:px-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">E-Ticket</p>
-          <p className="mt-2 text-2xl font-bold uppercase tracking-tight text-text-primary sm:text-3xl">
+          <p className="text-sm font-semibold text-text-tertiary">E-Ticket</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
             {fromCity} <span className="text-green-700">→</span> {toCity}
           </p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+          <p className="mt-1 text-sm font-semibold text-text-tertiary">
             {booking.fromCode} → {booking.toCode}
           </p>
         </div>
@@ -120,7 +120,7 @@ const BoardingPassTicket = ({ booking, details }: { booking: FlightBooking; deta
       <DetailGrid items={details} />
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border-primary px-6 py-4 sm:px-8">
-        <span className="text-xs uppercase tracking-widest text-text-tertiary">Booking Reference</span>
+        <span className="text-sm text-text-tertiary">Booking reference</span>
         <span className="font-mono text-lg font-bold tracking-[0.3em] text-text-primary">
           {booking.bookingReference ?? "—"}
         </span>
@@ -133,20 +133,20 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
   if (booking.status === "reserved") {
     const details = [
       { label: "PNR", value: booking.pnr ?? "—" },
-      { label: "Amount Paid", value: formatNaira(booking.customerPrice) },
+      { label: "Amount paid", value: formatNaira(booking.customerPrice) },
     ];
     if (booking.carrier) details.push({ label: "Airline", value: booking.carrier });
     const departure = formatBookingDate(booking.departureDate);
     if (departure) details.push({ label: "Departure", value: departure });
     const ticketBy = formatBookingDate(booking.ticketDeadline);
-    if (ticketBy) details.push({ label: "Ticket By", value: ticketBy });
+    if (ticketBy) details.push({ label: "Ticket by", value: ticketBy });
 
     return (
       <div>
         <StatusHeader
           icon={<CheckCircleIcon className="h-6 w-6" />}
           tone="good"
-          eyebrow="Booking Confirmed"
+          eyebrow="Booking confirmed"
           title="You're All"
           accent="Set."
         />
@@ -160,7 +160,7 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
 
         <div className="no-print mt-6 flex flex-wrap gap-3">
           <Button href="/flights" size="md" variant="secondary">
-            Search More Flights
+            Search more flights
           </Button>
           <PrintTicketButton />
         </div>
@@ -170,12 +170,12 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
 
   if (booking.status === "failed") {
     return (
-      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
+      <div className="rounded-2xl border border-border-primary bg-surface-primary p-6 sm:p-8">
         <StatusHeader
           icon={<AlertCircleIcon className="h-6 w-6" />}
           tone="bad"
-          eyebrow="Booking Failed"
-          title="We Couldn't"
+          eyebrow="Booking failed"
+          title="We couldn't"
           accent="Reserve This Fare."
         />
         <p className="mt-6 max-w-md text-text-secondary">
@@ -186,7 +186,7 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
         </p>
         <div className="mt-6">
           <Button href="/flights" size="md" variant="primary">
-            Search Again
+            Search again
           </Button>
         </div>
       </div>
@@ -195,13 +195,13 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
 
   if (booking.status === "paid") {
     return (
-      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
+      <div className="rounded-2xl border border-border-primary bg-surface-primary p-6 sm:p-8">
         <AutoRefresh />
         <div className="flex items-center gap-4">
           <span className="h-8 w-8 shrink-0 animate-spin rounded-full border-2 border-border-primary border-t-green-700" />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">Payment Received</p>
-            <h1 className="mt-1 text-2xl font-bold uppercase leading-[0.95] tracking-tight sm:text-3xl">
+            <p className="text-sm font-semibold text-text-tertiary">Payment received</p>
+            <h1 className="mt-1 text-2xl font-semibold leading-[1.05] tracking-tight sm:text-3xl">
               Finishing Your <span className="text-green-700">Reservation.</span>
             </h1>
           </div>
@@ -214,13 +214,13 @@ function StatusPanel({ booking }: { booking: FlightBooking }) {
   }
 
   return (
-    <div className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
+    <div className="rounded-2xl border border-border-primary bg-surface-primary p-6 sm:p-8">
       <AutoRefresh />
       <StatusHeader
         icon={<AlertCircleIcon className="h-6 w-6" />}
         tone="bad"
-        eyebrow="Payment Pending"
-        title="We Haven't Received"
+        eyebrow="Payment pending"
+        title="We haven't received"
         accent="Your Payment."
       />
       <p className="mt-6 max-w-md text-text-secondary">
@@ -265,8 +265,8 @@ export default async function CheckoutCallbackPage({
             <StatusPanel booking={booking} />
           </>
         ) : (
-          <div className="rounded-[2px] border border-border-primary bg-surface-primary p-8 text-center">
-            <h1 className="text-2xl font-bold uppercase leading-[0.95] tracking-tight">
+          <div className="rounded-2xl border border-border-primary bg-surface-primary p-8 text-center">
+            <h1 className="text-2xl font-semibold leading-[1.05] tracking-tight">
               We Couldn&apos;t Find That <span className="text-green-700">Booking.</span>
             </h1>
             <p className="mt-4 text-text-secondary">

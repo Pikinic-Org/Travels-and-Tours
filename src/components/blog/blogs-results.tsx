@@ -27,7 +27,7 @@ export function BlogsResults({ posts }: { posts: BlogPost[] }) {
       <PillFilterBar options={CATEGORY_FILTERS} value={category} onChange={setCategory} />
 
       {results.length === 0 ? (
-        <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+        <div className="mt-10 rounded-2xl border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
           No posts in this category yet — check back soon.
         </div>
       ) : (

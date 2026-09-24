@@ -38,7 +38,7 @@ const DateTrigger = ({
       className={cn(
         "flex w-full items-center justify-between gap-2 text-left",
         boxed &&
-          "rounded-[2px] border border-border-primary bg-surface-primary px-3 py-3 transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
+          "rounded-lg border border-border-primary bg-surface-primary px-3 py-3 transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
       )}
     >
       <span
@@ -59,9 +59,9 @@ const CalendarPanel = ({ title, children }: { title: string; children: ReactNode
   <div
     role="dialog"
     aria-label={title}
-    className="absolute right-0 top-full z-30 mt-2 max-w-[calc(100vw-2rem)] rounded-[2px] border border-border-primary bg-surface-primary p-4 shadow-lg"
+    className="absolute right-0 top-full z-30 mt-2 max-w-[calc(100vw-2rem)] rounded-lg border border-border-primary bg-surface-primary p-4 shadow-lg"
   >
-    <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">{title}</p>
+    <p className="mb-3 text-[10px] font-semibold text-text-tertiary">{title}</p>
     {children}
   </div>
 );
@@ -102,7 +102,7 @@ export const DatePickerField = ({
   return (
     <div ref={ref} className="relative">
       {boxed && (
-        <span className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+        <span className="mb-1.5 block text-sm font-semibold text-text-tertiary">
           {label}
         </span>
       )}

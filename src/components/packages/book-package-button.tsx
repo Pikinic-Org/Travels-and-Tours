@@ -16,7 +16,7 @@ export function BookPackageButton({ pkg, className }: { pkg: Package; className?
 
   return (
     <Button type="button" onClick={handleBook} size="lg" variant="primary" className={className}>
-      Book Now
+      Book now
     </Button>
   );
 }

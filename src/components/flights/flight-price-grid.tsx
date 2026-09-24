@@ -91,14 +91,14 @@ export const FlightPriceGrid = ({
   return (
     <div className="border border-border-primary bg-surface-primary">
       <div className="flex items-center justify-between gap-3 border-b border-border-primary px-4 py-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">
+        <p className="text-[10px] font-semibold text-text-tertiary">
           Cheapest fares by airline &amp; stops
         </p>
         {scroll.canScroll && (
           // One flat, square-cornered bordered box holding both arrows,
           // split by a divider — same idiom as the trip-type toggle on the
           // search bar, not a pair of separate circular buttons.
-          <div className="flex shrink-0 items-center rounded-[2px] border border-border-primary">
+          <div className="flex shrink-0 items-center rounded-lg border border-border-primary">
             <button
               type="button"
               onClick={() => scrollByPage(-1)}
@@ -146,7 +146,7 @@ export const FlightPriceGrid = ({
               <tr key={bucket} className="border-t border-border-primary">
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 whitespace-nowrap bg-surface-primary px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-text-secondary"
+                  className="sticky left-0 z-10 whitespace-nowrap bg-surface-primary px-4 py-3 text-left text-sm font-semibold text-text-secondary"
                 >
                   {rowLabels[bucket]}
                 </th>

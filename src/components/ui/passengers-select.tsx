@@ -82,7 +82,7 @@ export function PassengersSelect({
           onClick={toggle}
           aria-haspopup="dialog"
           aria-expanded={open}
-          className="flex items-center gap-2 rounded-sm border border-border-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-primary transition-colors hover:bg-neutral-900/[0.06]"
+          className="flex items-center gap-2 rounded-md border border-border-primary px-3 py-1.5 text-sm font-semibold text-text-primary transition-colors hover:bg-neutral-900/[0.06]"
         >
           {formatPassengers(value)}
           <svg
@@ -100,7 +100,7 @@ export function PassengersSelect({
       )}
     >
       {({ close }) => (
-        <div className="w-[85vw] max-w-72 rounded-[2px] border border-border-primary bg-surface-primary p-4 shadow-lg">
+        <div className="w-[85vw] max-w-72 rounded-lg border border-border-primary bg-surface-primary p-4 shadow-lg">
           <div className="divide-y divide-border-primary">
             <CounterRow
               label="Adults"
@@ -132,7 +132,7 @@ export function PassengersSelect({
           <button
             type="button"
             onClick={close}
-            className="mt-3 w-full rounded-sm bg-green-700 py-2 text-sm font-semibold uppercase tracking-wide text-neutral-0 transition-colors hover:bg-green-800"
+            className="mt-3 w-full rounded-md bg-green-700 py-2 text-sm font-semibold text-neutral-0 transition-colors hover:bg-green-800"
           >
             Done
           </button>

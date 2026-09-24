@@ -83,7 +83,7 @@ export function ListSelect({
         <div
           role="listbox"
           className={cn(
-            "max-h-72 w-56 overflow-auto rounded-[2px] border border-border-primary bg-surface-primary p-2 shadow-lg",
+            "max-h-72 w-56 overflow-auto rounded-lg border border-border-primary bg-surface-primary p-2 shadow-lg",
             panelClassName
           )}
         >
@@ -98,7 +98,7 @@ export function ListSelect({
                 close();
               }}
               className={cn(
-                "flex w-full items-center justify-between gap-2 rounded-sm px-3 py-2 text-left text-sm font-semibold transition-colors hover:bg-neutral-900/[0.06]",
+                "flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm font-semibold transition-colors hover:bg-neutral-900/[0.06]",
                 option === value ? "text-green-700" : "text-text-primary"
               )}
             >

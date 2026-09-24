@@ -67,17 +67,17 @@ export const footerColumns = [
 export const partnershipPoints = [
   {
     number: "01",
-    heading: "Best Fares, Honestly Sourced",
+    heading: "Best fares, honestly sourced",
     body: "We search across airlines and only recommend the fares that are genuinely good value. No inflated prices. No hidden charges.",
   },
   {
     number: "02",
-    heading: "We Know the Nigerian Traveller",
+    heading: "We know the Nigerian traveller",
     body: "We understand the documentation requirements, the timing pressures, and the specific needs of Nigerians travelling for business, study, tourism, and relocation.",
   },
   {
     number: "03",
-    heading: "One Team for the Whole Journey",
+    heading: "One team for the whole journey",
     body: "Your flight, your accommodation, your study abroad application, your proof of funds. All in one brand so you never have to start over with someone new.",
   },
 ];

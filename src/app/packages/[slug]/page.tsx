@@ -59,23 +59,23 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
       <Container>
         <Link
           href="/packages"
-          className="text-sm font-semibold uppercase tracking-wide text-text-secondary transition-colors hover:text-text-primary"
+          className="text-sm font-semibold text-text-secondary transition-colors hover:text-text-primary"
         >
           ← All Packages
         </Link>
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-8 border-b border-border-primary pb-10">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+            <p className="text-sm font-semibold text-text-tertiary">
               {pkg.destination}, {pkg.country}
             </p>
-            <h1 className="mt-2 text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
+            <h1 className="mt-2 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
               {pkg.name}
             </h1>
             <p className="mt-4 text-lg text-text-secondary">{pkg.headline}</p>
           </div>
 
-          <div className="w-full max-w-sm rounded-[2px] border border-border-primary bg-surface-primary p-6">
+          <div className="w-full max-w-sm rounded-2xl border border-border-primary bg-surface-primary p-6">
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between gap-6">
                 <span className="text-text-tertiary">Duration</span>
@@ -108,13 +108,13 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
 
             {pkg.itinerary && pkg.itinerary.length > 0 && (
               <div className="mt-12">
-                <h2 className="text-xl font-bold uppercase tracking-tight text-text-primary">
+                <h2 className="text-xl font-semibold tracking-tight text-text-primary">
                   Itinerary
                 </h2>
                 <div className="mt-4 divide-y divide-border-primary border-y border-border-primary">
                   {pkg.itinerary.map((day) => (
                     <div key={day.day} className="flex gap-5 py-4">
-                      <span className="w-14 shrink-0 text-sm font-bold tracking-widest text-green-700">
+                      <span className="w-14 shrink-0 text-sm font-bold text-green-700">
                         Day {day.day}
                       </span>
                       <div>
@@ -132,7 +132,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
 
           <div className="space-y-8">
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+              <h2 className="text-sm font-semibold text-text-tertiary">
                 What&rsquo;s Included
               </h2>
               <ul className="mt-3 space-y-2">
@@ -146,7 +146,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
             </div>
 
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+              <h2 className="text-sm font-semibold text-text-tertiary">
                 What&rsquo;s Not Included
               </h2>
               <ul className="mt-3 space-y-2">

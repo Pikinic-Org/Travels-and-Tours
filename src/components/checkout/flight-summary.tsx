@@ -28,14 +28,14 @@ const LegItinerary = ({ leg, label }: { leg: FlightLeg; label: string | null }) 
   return (
     <div>
       {label && (
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">{label}</p>
+        <p className="mb-2 text-[10px] font-semibold text-text-tertiary">{label}</p>
       )}
       {leg.map((segment, index) => {
         const wait = index > 0 ? layoverMinutes(leg[index - 1], segment) : null;
         return (
           <div key={`${segment.flight_no}-${index}`}>
             {index > 0 && (
-              <p className="my-2 rounded-sm bg-neutral-900/[0.06] px-2.5 py-1.5 text-xs font-semibold text-text-secondary">
+              <p className="my-2 rounded-md bg-neutral-900/[0.06] px-2.5 py-1.5 text-xs font-semibold text-text-secondary">
                 {wait !== null ? `${formatDuration(wait)} layover` : "Layover"} in {segment.departure_city} (
                 {segment.departure_code})
               </p>
@@ -85,11 +85,11 @@ export const FlightSummary = ({
   const lastLeg = selected.flight.segments[selected.flight.segments.length - 1];
 
   return (
-    <div className="no-scrollbar h-fit rounded-[2px] border border-border-primary bg-surface-primary lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+    <div className="no-scrollbar h-fit rounded-lg border border-border-primary bg-surface-primary lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
       <div className="flex items-center justify-between border-b border-border-primary p-6 pb-4">
-        <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-text-tertiary">
           <TicketIcon className="h-4 w-4" />
-          Booking Summary
+          Booking summary
         </h2>
         <span className="flex items-center gap-1 text-xs font-semibold text-text-tertiary">
           <UsersIcon className="h-3.5 w-3.5" />
@@ -110,10 +110,10 @@ export const FlightSummary = ({
 
       {pricing && (
         <div className="border-t border-border-primary p-6 pt-4">
-          <p className="text-xs uppercase tracking-widest text-text-tertiary">Total</p>
+          <p className="text-sm text-text-tertiary">Total</p>
           <p className="text-2xl font-bold text-green-700">{formatNaira(pricing.customer_price)}</p>
           {pricing.deal && (
-            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-green-700">
+            <p className="mt-1 text-sm font-semibold text-green-700">
               {pricing.deal.label ?? `${pricing.deal.discountPercent}% Off`} applied
             </p>
           )}

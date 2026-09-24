@@ -14,7 +14,7 @@ const classNames = {
   months: "relative flex flex-col",
   month: "flex flex-col gap-3",
   month_caption: "flex h-8 items-center justify-center",
-  caption_label: "text-sm font-bold uppercase tracking-widest text-text-primary",
+  caption_label: "text-sm font-semibold text-text-primary",
   // Full-width + absolute so the two arrow buttons can sit at opposite
   // edges — but that means its (invisible) middle would otherwise overlap
   // and swallow clicks meant for the caption's dropdown buttons underneath.
@@ -22,15 +22,15 @@ const classNames = {
   // lets clicks pass through everywhere except the actual arrows.
   nav: "absolute inset-x-0 top-0 z-10 flex items-center justify-between pointer-events-none",
   button_previous:
-    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
+    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
   button_next:
-    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
+    "pointer-events-auto inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border-primary text-text-secondary transition-colors hover:bg-neutral-900/[0.06] disabled:pointer-events-none disabled:opacity-40",
   chevron: "h-4 w-4 fill-current",
   month_grid: "w-full border-collapse",
-  weekday: "h-9 w-10 text-center text-[11px] font-semibold uppercase tracking-widest text-text-tertiary",
+  weekday: "h-9 w-10 text-center text-[11px] font-semibold text-text-tertiary",
   day: "h-10 w-10 p-0 text-center text-sm",
   day_button:
-    "flex h-10 w-10 items-center justify-center rounded-[2px] font-medium text-text-primary transition-colors hover:bg-neutral-900/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700",
+    "flex h-10 w-10 items-center justify-center rounded-lg font-medium text-text-primary transition-colors hover:bg-neutral-900/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700",
   selected: "[&>button]:bg-green-700 [&>button]:text-neutral-0 [&>button:hover]:bg-green-700",
   today: "[&>button]:font-bold [&>button]:text-green-700",
   disabled: "[&>button]:pointer-events-none [&>button]:text-text-tertiary [&>button]:opacity-40",
@@ -57,7 +57,7 @@ const DropdownButton = ({ label, open, onClick }: { label: string; open: boolean
     onClick={onClick}
     aria-haspopup="listbox"
     aria-expanded={open}
-    className="inline-flex items-center gap-1 rounded-[2px] border border-border-primary bg-surface-primary px-2.5 py-1 text-sm font-bold uppercase tracking-widest text-text-primary transition-colors hover:border-neutral-400 hover:text-green-700"
+    className="inline-flex items-center gap-1 rounded-lg border border-border-primary bg-surface-primary px-2.5 py-1 text-sm font-semibold text-text-primary transition-colors hover:border-neutral-400 hover:text-green-700"
   >
     {label}
     <ChevronRightIcon className="h-3 w-3 rotate-90" />
@@ -82,7 +82,7 @@ const DropdownList = ({ items }: { items: DropdownItem[] }) => {
     <div
       ref={containerRef}
       role="listbox"
-      className="absolute left-1/2 top-full z-20 mt-1 max-h-52 w-24 -translate-x-1/2 overflow-y-auto rounded-[2px] border border-border-primary bg-surface-primary py-1 shadow-lg"
+      className="absolute left-1/2 top-full z-20 mt-1 max-h-52 w-24 -translate-x-1/2 overflow-y-auto rounded-lg border border-border-primary bg-surface-primary py-1 shadow-lg"
     >
       {items.map((item) => (
         <button

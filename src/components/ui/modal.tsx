@@ -45,7 +45,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full max-w-md rounded-[2px] border border-border-primary bg-surface-primary p-6 shadow-xl",
+          "relative w-full max-w-md rounded-2xl border border-border-primary bg-surface-primary p-6 shadow-xl",
           className
         )}
       >

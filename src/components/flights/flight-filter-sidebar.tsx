@@ -69,7 +69,7 @@ const toggle = <T,>(list: T[], item: T): T[] =>
 
 const Section = ({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) => (
   <div className="border-t border-border-primary py-5 first:border-t-0 first:pt-0">
-    <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+    <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-text-tertiary">
       <span className="text-text-tertiary [&>svg]:h-3.5 [&>svg]:w-3.5">{icon}</span>
       {title}
     </p>
@@ -126,17 +126,17 @@ export const FlightFilterSidebar = ({
     <aside
       aria-label="Filter flights"
       className={cn(
-        "no-scrollbar rounded-[2px] border border-border-primary bg-surface-primary p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto",
+        "no-scrollbar rounded-2xl border border-border-primary bg-surface-primary p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto",
         className
       )}
     >
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-text-primary">Filters</h2>
+        <h2 className="text-sm font-semibold text-text-primary">Filters</h2>
         {active > 0 && (
           <button
             type="button"
             onClick={() => onChange({ ...defaultFlightFilters, sort: value.sort })}
-            className="text-xs font-semibold uppercase tracking-widest text-green-700 transition-colors hover:text-green-800"
+            className="text-sm font-semibold text-green-700 transition-colors hover:text-green-800"
           >
             Clear all
           </button>
@@ -152,7 +152,7 @@ export const FlightFilterSidebar = ({
           autoComplete="off"
           spellCheck={false}
           aria-label="Search by flight number"
-          className="w-full rounded-[2px] border border-border-primary bg-surface-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-green-700 focus:outline-none"
+          className="w-full rounded-lg border border-border-primary bg-surface-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-green-700 focus:outline-none"
         />
       </Section>
 

@@ -39,7 +39,7 @@ const MAX_SEGMENTS = 5;
 
 // Small caption shown above the trip type, class and passengers controls.
 const controlLabelClass =
-  "mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary";
+  "mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold text-text-tertiary";
 
 // Icon before the text in the From / To fields: a plane taking off, and one
 // pointing down for landing.
@@ -187,21 +187,21 @@ export function FlightSearchBar({
 
   return (
     <>
-    <div className="relative z-10 w-full rounded-[2px] border border-border-primary bg-surface-primary text-left shadow-xl shadow-neutral-900/5">
+    <div className="relative z-10 w-full rounded-lg border border-border-primary bg-surface-primary text-left shadow-xl shadow-neutral-900/5">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border-primary px-5 py-4 sm:px-6">
         <div>
           <span className={controlLabelClass}>
             <TripTypeIcon className="h-3.5 w-3.5" />
-            Flight Type
+            Flight type
           </span>
-          <div className="flex items-center gap-1 rounded-[2px] border border-border-primary p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-border-primary p-1">
             {tripTypes.map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setTripType(type)}
                 className={cn(
-                  "rounded-sm px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                  "rounded-md px-3 py-1.5 text-sm font-semibold transition-colors",
                   tripType === type
                     ? "bg-green-700 text-neutral-0"
                     : "text-text-secondary hover:bg-neutral-900/[0.06]"
@@ -227,7 +227,7 @@ export function FlightSearchBar({
               align="right"
               wrapperClassName="w-auto"
               panelClassName="w-48"
-              triggerClassName="w-auto rounded-sm border border-border-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-primary hover:bg-neutral-900/[0.06]"
+              triggerClassName="w-auto rounded-md border border-border-primary px-3 py-1.5 text-sm font-semibold text-text-primary hover:bg-neutral-900/[0.06]"
             />
           </div>
           <div>
@@ -315,7 +315,7 @@ export function FlightSearchBar({
             {segments.map((segment, index) => (
               <div
                 key={index}
-                className="flex flex-col rounded-[2px] border border-border-primary sm:flex-row"
+                className="flex flex-col rounded-lg border border-border-primary sm:flex-row"
               >
                 <div className="border-b border-border-primary px-5 py-4 sm:flex-1 sm:border-b-0 sm:border-r">
                   <AirportPicker
@@ -366,7 +366,7 @@ export function FlightSearchBar({
               <button
                 type="button"
                 onClick={addSegment}
-                className="text-sm font-semibold uppercase tracking-wide text-green-700 transition-colors hover:text-green-800"
+                className="text-sm font-semibold text-green-700 transition-colors hover:text-green-800"
               >
                 + Add another flight
               </button>

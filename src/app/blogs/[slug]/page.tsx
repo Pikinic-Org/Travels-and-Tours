@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { CommentsSection } from "@/components/blog/comments-section";
 import { formatBlogDate } from "@/lib/data/blog";
 import { getBlogPostBySlug, getBlogPosts } from "@/server/modules/content/content.service";
+import { BrandPattern } from "@/components/ui/brand-pattern";
 
 export async function generateStaticParams() {
   const blogPosts = await getBlogPosts();
@@ -28,28 +29,30 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
       <Container className="mx-auto max-w-4xl">
         <Link
           href="/blogs"
-          className="text-sm font-semibold uppercase tracking-wide text-text-secondary transition-colors hover:text-text-primary"
+          className="text-sm font-semibold text-text-secondary transition-colors hover:text-text-primary"
         >
           ← All Posts
         </Link>
 
         <div className="mt-6 border-b border-border-primary pb-8">
-          <span className="text-xs font-semibold uppercase tracking-widest text-green-700">
+          <span className="text-sm font-semibold text-green-700">
             {post.category}
           </span>
-          <h1 className="mt-3 text-3xl font-bold uppercase leading-[0.95] tracking-tight sm:text-4xl md:text-5xl">
+          <h1 className="mt-3 text-3xl font-semibold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl">
             {post.title}
           </h1>
-          <p className="mt-4 text-xs uppercase tracking-widest text-text-tertiary">
+          <p className="mt-4 text-sm text-text-tertiary">
             {post.author} · {formatBlogDate(post.publishedAt)} · {post.readTime}
           </p>
         </div>
 
-        <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-[2px] border border-border-primary">
+        <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-2xl">
           {post.imageUrl ? (
             <Image src={post.imageUrl} alt={post.title} fill sizes="(min-width: 768px) 768px, 100vw" className="object-cover" priority />
           ) : (
-            <div className="mesh-gradient absolute inset-0" />
+            <div className="absolute inset-0 bg-green-900">
+            <BrandPattern />
+          </div>
           )}
         </div>
 

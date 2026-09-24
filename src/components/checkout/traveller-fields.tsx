@@ -59,7 +59,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField label="First Name">
+        <FormField label="First name">
           <input
             required
             value={value.first_name}
@@ -67,7 +67,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
             className={inputClass}
           />
         </FormField>
-        <FormField label="Last Name">
+        <FormField label="Last name">
           <input
             required
             value={value.last_name}
@@ -75,7 +75,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
             className={inputClass}
           />
         </FormField>
-        <FormField label="Other Name (optional)">
+        <FormField label="Other name (optional)">
           <input
             value={value.other_name}
             onChange={(e) => onChange("other_name", e.target.value)}
@@ -87,14 +87,14 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
       {props.isLead && (
         <>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-text-primary">
-              Contact Information
+            <h3 className="text-sm font-semibold text-text-primary">
+              Contact information
             </h3>
             <p className="mt-1 text-xs text-text-secondary">Booking confirmation will be sent to this email.</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField label="Contact Email">
+            <FormField label="Contact email">
               <input
                 required
                 type="email"
@@ -106,7 +106,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <FormField label="Country Code">
+            <FormField label="Country code">
               <select
                 required
                 value={value.country_code}
@@ -134,7 +134,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
                 ))}
               </select>
             </FormField>
-            <FormField label="Contact Phone">
+            <FormField label="Contact phone">
               <input
                 required
                 type="tel"
@@ -160,7 +160,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
 
       {!props.isLead && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <FormField label="Country Code">
+          <FormField label="Country code">
             <select
               required
               value={value.country_code}
@@ -201,7 +201,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Passport Number">
+        <FormField label="Passport number">
           <input
             required
             value={value.passport_number}
@@ -216,7 +216,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <DatePickerField
-          label="Passport Issue Date"
+          label="Passport issue date"
           value={value.passport_issue_date}
           onChange={(v) => onChange("passport_issue_date", v)}
           min={isoYearsAgo(15)}
@@ -225,7 +225,7 @@ export const TravellerFields = (props: TravellerFieldsProps) => {
           boxed
         />
         <DatePickerField
-          label="Passport Expiry"
+          label="Passport expiry"
           value={value.passport_expiry}
           onChange={(v) => onChange("passport_expiry", v)}
           min={isoToday}

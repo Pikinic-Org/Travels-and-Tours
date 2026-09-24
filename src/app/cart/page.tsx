@@ -33,19 +33,19 @@ export default function CartPage() {
   return (
     <section className="py-20 md:py-28">
       <Container>
-        <h1 className="text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
+        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
           Your <span className="text-green-700">Cart</span>
         </h1>
 
         {items.length === 0 ? (
-          <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center">
+          <div className="mt-10 rounded-2xl border border-border-primary bg-surface-primary p-10 text-center">
             <p className="text-text-secondary">Your cart is empty.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <Button href="/flights" variant="secondary" size="md">
-                Browse Flights
+                Browse flights
               </Button>
               <Button href="/packages" variant="secondary" size="md">
-                Browse Packages
+                Browse packages
               </Button>
             </div>
           </div>
@@ -55,7 +55,7 @@ export default function CartPage() {
               {items.map((item) => (
                 <div key={item.id} className="flex items-center justify-between gap-4 py-5">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+                    <p className="text-sm font-semibold text-text-tertiary">
                       {item.type}
                     </p>
                     <p className="text-lg font-bold text-text-primary">{item.title}</p>
@@ -83,9 +83,9 @@ export default function CartPage() {
               ))}
             </div>
 
-            <div className="h-fit rounded-[2px] border border-border-primary bg-surface-primary p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-                Order Summary
+            <div className="h-fit rounded-2xl border border-border-primary bg-surface-primary p-6">
+              <h2 className="text-sm font-semibold text-text-tertiary">
+                Order summary
               </h2>
               <div className="mt-4 flex items-center justify-between border-t border-border-primary pt-4">
                 <span className="text-sm font-semibold text-text-secondary">

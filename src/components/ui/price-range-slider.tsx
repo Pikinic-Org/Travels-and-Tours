@@ -42,9 +42,9 @@ export function PriceRangeSlider({
       </div>
 
       <div className="relative mt-4 h-4">
-        <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/2 rounded-[2px] bg-neutral-200" />
+        <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/2 rounded-lg bg-neutral-200" />
         <div
-          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-[2px] bg-green-700"
+          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-lg bg-green-700"
           style={{ left: `${loPercent}%`, right: `${100 - hiPercent}%` }}
         />
         <input

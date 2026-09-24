@@ -49,7 +49,7 @@ export function CommentsSection({ slug }: { slug: string }) {
 
   return (
     <div className="mt-16 border-t border-border-primary pt-10">
-      <h2 className="text-xl font-bold uppercase tracking-tight text-text-primary">
+      <h2 className="text-xl font-semibold tracking-tight text-text-primary">
         Comments{comments.length > 0 ? ` (${comments.length})` : ""}
       </h2>
 
@@ -66,7 +66,7 @@ export function CommentsSection({ slug }: { slug: string }) {
           <div>
             <label
               htmlFor="comment-body"
-              className="text-xs font-semibold uppercase tracking-widest text-text-tertiary"
+              className="text-sm font-semibold text-text-tertiary"
             >
               Comment
             </label>
@@ -77,18 +77,18 @@ export function CommentsSection({ slug }: { slug: string }) {
               rows={4}
               placeholder="Share your thoughts…"
               className={cn(
-                "mt-2 w-full rounded-[2px] border bg-transparent px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
+                "mt-2 w-full rounded-lg border bg-transparent px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
                 errors.body ? "border-red-500" : "border-border-primary"
               )}
             />
             {errors.body && <p className="mt-1.5 text-xs text-red-600">{errors.body}</p>}
           </div>
           <Button type="submit" size="md" variant="primary">
-            Post Comment
+            Post comment
           </Button>
         </form>
       ) : (
-        <p className="mt-6 rounded-[2px] border border-border-primary bg-surface-primary p-6 text-sm text-text-secondary">
+        <p className="mt-6 rounded-2xl border border-border-primary bg-surface-primary p-6 text-sm text-text-secondary">
           Comments are temporarily turned off — check back soon.
         </p>
       )}
@@ -98,7 +98,7 @@ export function CommentsSection({ slug }: { slug: string }) {
           {comments.map((comment) => (
             <div key={comment.id} className="py-6 first:pt-0">
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[2px] bg-green-700 text-xs font-bold uppercase text-neutral-0">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-700 text-sm font-semibold text-neutral-0">
                   {comment.name.slice(0, 1)}
                 </span>
                 <div>

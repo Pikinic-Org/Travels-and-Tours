@@ -30,7 +30,7 @@ export function PackagesResults({ packages }: { packages: Package[] }) {
       <PillFilterBar options={CATEGORY_FILTERS} value={category} onChange={setCategory} />
 
       {results.length === 0 ? (
-        <div className="mt-10 rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center">
+        <div className="mt-10 rounded-2xl border border-border-primary bg-surface-primary p-10 text-center">
           <p className="text-text-secondary">
             We don&rsquo;t have a matching package right now, but we can build one for you. Tell us
             where you want to go and we&rsquo;ll put something together.

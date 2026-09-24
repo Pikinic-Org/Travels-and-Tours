@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 // A grey placeholder block. Pulsing stops for people who prefer reduced motion.
 const Block = ({ className }: { className?: string }) => (
-  <div className={cn("animate-pulse rounded-[2px] bg-neutral-900/[0.07] motion-reduce:animate-none", className)} />
+  <div className={cn("animate-pulse rounded-lg bg-neutral-900/[0.07] motion-reduce:animate-none", className)} />
 );
 
 const CardSkeleton = () => (
@@ -41,7 +41,7 @@ const CardSkeleton = () => (
 // back in one piece, so there's nothing honest to count.
 export const ResultsSkeleton = () => (
   <div role="status" aria-live="polite">
-    <p className="mb-6 flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+    <p className="mb-6 flex items-center gap-3 text-sm font-semibold text-text-tertiary">
       <span
         aria-hidden
         className="h-4 w-4 animate-spin rounded-full border-2 border-border-primary border-t-green-700 motion-reduce:animate-none"
@@ -50,7 +50,7 @@ export const ResultsSkeleton = () => (
     </p>
 
     <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start">
-      <div aria-hidden className="hidden space-y-6 rounded-[2px] border border-border-primary bg-surface-primary p-5 lg:block">
+      <div aria-hidden className="hidden space-y-6 rounded-2xl border border-border-primary bg-surface-primary p-5 lg:block">
         <Block className="h-4 w-20" />
         {[0, 1, 2, 3].map((section) => (
           <div key={section} className="space-y-3 border-t border-border-primary pt-5 first:border-t-0 first:pt-0">

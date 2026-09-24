@@ -13,13 +13,13 @@ export async function FlightOffers() {
         <ScrollReveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
-              <h2 className="text-4xl font-bold uppercase leading-[0.95] tracking-tight text-text-primary sm:text-5xl">
+              <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary sm:text-5xl">
                 Fares Worth <span className="text-green-700">Booking</span> Today.
               </h2>
             </div>
             <Link
               href="/flights"
-              className="group hidden shrink-0 items-center gap-2 text-sm font-semibold uppercase tracking-wide text-text-primary sm:flex"
+              className="group hidden shrink-0 items-center gap-2 text-sm font-semibold text-text-primary sm:flex"
             >
               View all flights
               <svg

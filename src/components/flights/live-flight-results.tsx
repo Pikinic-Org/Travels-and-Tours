@@ -207,7 +207,7 @@ export const LiveFlightResults = ({
 
   if (!facets) {
     return (
-      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+      <div className="rounded-2xl border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
         No flights found for that search. Try a different date or route.
       </div>
     );
@@ -261,14 +261,14 @@ export const LiveFlightResults = ({
 
         <div className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
+            <p className="text-sm font-semibold text-text-tertiary">
               {filtered.length} {filtered.length === 1 ? "Flight" : "Flights"} Found
             </p>
             <button
               type="button"
               onClick={() => setFiltersOpen((open) => !open)}
               aria-expanded={filtersOpen}
-              className="relative flex items-center gap-2 rounded-[2px] border border-border-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-text-primary transition-colors hover:bg-neutral-900/[0.06] lg:hidden"
+              className="relative flex items-center gap-2 rounded-lg border border-border-primary px-4 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:bg-neutral-900/[0.06] lg:hidden"
             >
               <FilterIcon className="h-4 w-4" />
               {filtersOpen ? "Hide filters" : "Filters"}
@@ -294,7 +294,7 @@ export const LiveFlightResults = ({
                     : "border-b-transparent hover:bg-neutral-900/[0.03]"
                 )}
               >
-                <span className="block text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+                <span className="block text-sm font-semibold text-text-tertiary">
                   {tab.label}
                 </span>
                 <span
@@ -310,7 +310,7 @@ export const LiveFlightResults = ({
           </div>
 
           {filtered.length === 0 ? (
-            <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+            <div className="rounded-2xl border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
               No flights match those filters. Try widening your search.
             </div>
           ) : (

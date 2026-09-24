@@ -18,14 +18,14 @@ export const CheckoutView = () => {
   return (
     <section className="py-20 md:py-28">
       <Container>
-        <h1 className="text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
+        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
           Complete Your <span className="text-green-700">Booking</span>
         </h1>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">
           <div>
             {checkout.pricingError ? (
-              <div className="rounded-[2px] border border-border-primary bg-surface-primary p-6 text-text-secondary">
+              <div className="rounded-2xl border border-border-primary bg-surface-primary p-6 text-text-secondary">
                 {checkout.pricingError}
               </div>
             ) : !pricing ? (
@@ -38,8 +38,8 @@ export const CheckoutView = () => {
                 {checkout.slots.map((slot, index) => {
                   const isLead = index === 0;
                   return (
-                    <div key={slot.key} className="rounded-[2px] border border-border-primary bg-surface-primary p-6 sm:p-8">
-                      <h2 className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-text-primary">
+                    <div key={slot.key} className="rounded-2xl border border-border-primary bg-surface-primary p-6 sm:p-8">
+                      <h2 className="mb-6 flex items-center gap-2 text-sm font-semibold text-text-primary">
                         <UserIcon className="h-4 w-4 text-green-700" />
                         {slot.label}
                       </h2>

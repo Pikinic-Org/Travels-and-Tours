@@ -22,7 +22,7 @@ export function PillFilterBar<T extends string>({
           type="button"
           onClick={() => onChange(option)}
           className={cn(
-            "shrink-0 rounded-[2px] border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
+            "shrink-0 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
             value === option
               ? "border-green-700 bg-green-700 text-neutral-0"
               : "border-border-primary text-text-secondary hover:bg-neutral-900/[0.06]"

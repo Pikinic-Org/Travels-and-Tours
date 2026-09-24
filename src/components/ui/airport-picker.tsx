@@ -226,7 +226,7 @@ export const AirportPicker = ({
           // Keep focus in the input while the list is clicked or scrolled.
           onMouseDown={(event) => event.preventDefault()}
           className={cn(
-            "absolute left-0 top-full z-30 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-[2px] border border-border-primary bg-surface-primary shadow-lg",
+            "absolute left-0 top-full z-30 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-lg border border-border-primary bg-surface-primary shadow-lg",
             panelClassName
           )}
         >
@@ -234,7 +234,7 @@ export const AirportPicker = ({
             {!searching && (
               <li
                 role="presentation"
-                className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary"
+                className="px-3 pb-1 pt-2 text-[10px] font-semibold text-text-tertiary"
               >
                 Popular
               </li>
@@ -249,7 +249,7 @@ export const AirportPicker = ({
                 onMouseEnter={() => setActiveIndex(index)}
                 onClick={() => choose(airport)}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-sm px-3 py-2",
+                  "flex cursor-pointer items-center gap-3 rounded-md px-3 py-2",
                   index === activeIndex && "bg-neutral-900/[0.06]"
                 )}
               >

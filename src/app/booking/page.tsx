@@ -16,8 +16,8 @@ export default function BookingPage() {
   return (
     <section className="py-20 md:py-28">
       <Container>
-        <h1 className="text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
-          Online Booking, <span className="text-green-700">Coming Soon.</span>
+        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
+          Online booking, <span className="text-green-700">coming soon.</span>
         </h1>
         <p className="mt-4 max-w-xl text-text-secondary">
           We&rsquo;re connecting this checkout to real-time ticketing. It&rsquo;s not live yet, so
@@ -26,9 +26,9 @@ export default function BookingPage() {
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px]">
-          <div className="rounded-[2px] border border-border-primary bg-surface-primary p-8">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-              Book With Us Directly
+          <div className="rounded-2xl border border-border-primary bg-surface-primary p-8">
+            <h2 className="text-sm font-semibold text-text-tertiary">
+              Book with us directly
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-text-secondary">
               Reach out with what&rsquo;s in your cart and we&rsquo;ll take it from there.
@@ -43,9 +43,9 @@ export default function BookingPage() {
             </div>
           </div>
 
-          <div className="h-fit rounded-[2px] border border-border-primary bg-surface-primary p-6">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-text-tertiary">
-              Order Summary
+          <div className="h-fit rounded-2xl border border-border-primary bg-surface-primary p-6">
+            <h2 className="text-sm font-semibold text-text-tertiary">
+              Order summary
             </h2>
             {items.length === 0 ? (
               <p className="mt-4 border-t border-border-primary pt-4 text-sm text-text-secondary">

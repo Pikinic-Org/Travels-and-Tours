@@ -13,13 +13,13 @@ export async function Packages() {
         <ScrollReveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
-              <h2 className="text-4xl font-bold uppercase leading-[0.95] tracking-tight text-text-primary sm:text-5xl">
+              <h2 className="text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary sm:text-5xl">
                 Packages Built for <span className="text-green-700">Nigerians</span> Going Places.
               </h2>
             </div>
             <Link
               href="/packages"
-              className="group hidden shrink-0 items-center gap-2 text-sm font-semibold uppercase tracking-wide text-text-primary sm:flex"
+              className="group hidden shrink-0 items-center gap-2 text-sm font-semibold text-text-primary sm:flex"
             >
               View all packages
               <svg
@@ -52,7 +52,7 @@ export async function Packages() {
 
         <Link
           href="/packages"
-          className="group mt-8 flex w-fit items-center gap-2 text-sm font-semibold uppercase tracking-wide text-text-primary sm:hidden"
+          className="group mt-8 flex w-fit items-center gap-2 text-sm font-semibold text-text-primary sm:hidden"
         >
           View all packages
           <svg

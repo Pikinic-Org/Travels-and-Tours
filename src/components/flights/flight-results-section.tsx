@@ -16,7 +16,7 @@ export const FlightResultsSection = async ({ params }: { params: FlightSearchPar
 
   if (flights === null) {
     return (
-      <div className="rounded-[2px] border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
+      <div className="rounded-2xl border border-border-primary bg-surface-primary p-10 text-center text-text-secondary">
         Something went wrong searching those flights. Try again in a moment.
       </div>
     );

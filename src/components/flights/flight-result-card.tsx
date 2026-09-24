@@ -52,7 +52,7 @@ const Chip = ({
 }) => (
   <span
     className={cn(
-      "inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-[11px] font-semibold uppercase tracking-widest",
+      "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold",
       tone === "good" && "bg-green-100 text-green-800",
       tone === "warn" && "bg-red-100 text-red-700",
       tone === "neutral" && "bg-neutral-900/[0.06] text-text-secondary"
@@ -102,7 +102,7 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
   return (
     <div>
       {label && (
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary">{label}</p>
+        <p className="mb-2 text-[10px] font-semibold text-text-tertiary">{label}</p>
       )}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
         <div className="flex items-center gap-3 sm:w-48 sm:shrink-0">
@@ -116,10 +116,10 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
         <div className="flex flex-1 items-center gap-4">
           <div>
             <p className="text-xl font-bold leading-none text-text-primary">{clock(first.departure_time)}</p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-primary">
+            <p className="mt-1 text-sm font-semibold text-text-primary">
               {first.departure_code}
             </p>
-            <p className="text-[11px] uppercase tracking-wide text-text-tertiary">{first.departure_city}</p>
+            <p className="text-[11px] text-text-tertiary">{first.departure_city}</p>
             {formatFlightDate(first.departure_date) && (
               <p className="text-[11px] text-text-tertiary">{formatFlightDate(first.departure_date)}</p>
             )}
@@ -127,7 +127,7 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
 
           <div className="min-w-0 flex-1 text-center">
             {cabinLabel(leg) && (
-              <span className="mb-1 inline-block rounded-sm bg-green-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-green-800">
+              <span className="mb-1 inline-block rounded-md bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-800">
                 {cabinLabel(leg)}
               </span>
             )}
@@ -151,10 +151,10 @@ const LegSummary = ({ leg, label }: { leg: FlightLeg; label: string | null }) =>
               {clock(last.arrival_time)}
               {dayOffset > 0 && <sup className="ml-0.5 text-[10px] font-semibold text-text-tertiary">+{dayOffset}</sup>}
             </p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-primary">
+            <p className="mt-1 text-sm font-semibold text-text-primary">
               {last.arrival_code}
             </p>
-            <p className="text-[11px] uppercase tracking-wide text-text-tertiary">{last.arrival_city}</p>
+            <p className="text-[11px] text-text-tertiary">{last.arrival_city}</p>
             {formatFlightDate(last.arrival_date) && (
               <p className="text-[11px] text-text-tertiary">{formatFlightDate(last.arrival_date)}</p>
             )}
@@ -204,12 +204,12 @@ const SegmentDetail = ({ segment }: { segment: FlightSegment }) => (
 type DetailsTab = "details" | "baggage" | "fare";
 
 const detailTabs: { key: DetailsTab; label: string }[] = [
-  { key: "details", label: "Flight Details" },
+  { key: "details", label: "Flight details" },
   { key: "baggage", label: "Baggage" },
-  { key: "fare", label: "Fare Rules" },
+  { key: "fare", label: "Fare rules" },
 ];
 
-const eyebrowClass = "mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-tertiary";
+const eyebrowClass = "mb-3 text-[10px] font-semibold text-text-tertiary";
 
 // "1 PC" / "23 KG" as sent; "0 PC" means none; nothing sent means unknown.
 const describeBag = (value: string | undefined): string => {
@@ -228,7 +228,7 @@ const ItineraryTab = ({ flight, tripType }: { flight: FlightSearchResult; tripTy
             return (
               <div key={`${segment.flight_no}-${index}`} className="space-y-4">
                 {index > 0 && (
-                  <p className="rounded-sm bg-neutral-900/[0.06] px-3 py-2 text-xs font-semibold uppercase tracking-widest text-text-secondary">
+                  <p className="rounded-md bg-neutral-900/[0.06] px-3 py-2 text-sm font-semibold text-text-secondary">
                     {wait !== null ? `Layover ${formatDuration(wait)}` : "Layover"} in {segment.departure_city} (
                     {segment.departure_code})
                   </p>
@@ -261,7 +261,7 @@ const BaggageTab = ({ flight, tripType }: { flight: FlightSearchResult; tripType
                     <th
                       key={heading}
                       scope="col"
-                      className="bg-neutral-900/[0.03] px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-text-tertiary"
+                      className="bg-neutral-900/[0.03] px-4 py-2 text-left text-[10px] font-semibold text-text-tertiary"
                     >
                       {heading}
                     </th>
@@ -311,7 +311,7 @@ const FareTab = ({ flight }: { flight: FlightSearchResult }) => {
       <dl className="grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
         {rows.map(([term, description]) => (
           <div key={term} className="flex items-baseline justify-between gap-4 border-b border-border-primary pb-2">
-            <dt className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">{term}</dt>
+            <dt className="text-sm font-semibold text-text-tertiary">{term}</dt>
             <dd className="text-right font-semibold text-text-primary">{description}</dd>
           </div>
         ))}
@@ -326,7 +326,7 @@ const FareTab = ({ flight }: { flight: FlightSearchResult }) => {
                 <span className="text-text-secondary">{tidyAmenity(amenity.description)}</span>
                 <span
                   className={cn(
-                    "shrink-0 text-[10px] font-semibold uppercase tracking-widest",
+                    "shrink-0 text-[10px] font-semibold",
                     amenity.chargeable ? "text-text-tertiary" : "text-green-700"
                   )}
                 >
@@ -355,7 +355,7 @@ const FlightDetails = ({ flight, tripType }: { flight: FlightSearchResult; tripT
             aria-selected={tab === entry.key}
             onClick={() => setTab(entry.key)}
             className={cn(
-              "-mb-px shrink-0 border-b-2 py-3 text-xs font-semibold uppercase tracking-widest transition-colors",
+              "-mb-px shrink-0 border-b-2 py-3 text-sm font-semibold transition-colors",
               tab === entry.key
                 ? "border-green-700 text-green-700"
                 : "border-transparent text-text-tertiary hover:text-text-primary"
@@ -405,15 +405,15 @@ export const FlightResultCard = ({
         <div className="flex flex-row items-end justify-between gap-3 border-t border-border-primary pt-4 md:min-w-44 md:flex-col md:items-end md:justify-center md:border-l md:border-t-0 md:pl-6 md:pt-0">
           <div className="md:text-right">
             {flight.deal && (
-              <span className="mb-1.5 inline-block rounded-sm bg-green-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-green-800">
+              <span className="mb-1.5 inline-block rounded-md bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-800">
                 {flight.deal.label ?? `${flight.deal.discountPercent}% Off`}
               </span>
             )}
-            <p className="text-xs uppercase tracking-widest text-text-tertiary">From</p>
+            <p className="text-sm text-text-tertiary">From</p>
             <p className="text-2xl font-bold text-green-700">{formatNaira(flight.price)}</p>
           </div>
           <Button type="button" onClick={onSelect} size="md" variant="primary">
-            Book Now
+            Book now
           </Button>
         </div>
       </div>
@@ -440,7 +440,7 @@ export const FlightResultCard = ({
           type="button"
           onClick={() => setShowDetails((open) => !open)}
           aria-expanded={showDetails}
-          className="ml-auto flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-green-700 transition-colors hover:text-green-800"
+          className="ml-auto flex items-center gap-1 text-sm font-semibold text-green-700 transition-colors hover:text-green-800"
         >
           Flight details
           <ChevronIcon className={cn("h-4 w-4 transition-transform duration-200", showDetails && "rotate-180")} />

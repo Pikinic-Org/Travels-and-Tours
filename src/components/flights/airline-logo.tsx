@@ -5,7 +5,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const frame =
-  "flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] border border-border-primary bg-neutral-0";
+  "flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border-primary bg-neutral-0";
 
 // SkyLink only gives a 2-letter carrier code, so the logo comes from Kiwi.com's
 // public airline-logo CDN. Not every carrier is in their set — when one

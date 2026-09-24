@@ -12,7 +12,7 @@ export function TextField({ label, id, className, error, ...props }: TextFieldPr
     <div>
       <label
         htmlFor={inputId}
-        className="text-xs font-semibold uppercase tracking-widest text-text-tertiary"
+        className="text-sm font-semibold text-text-tertiary"
       >
         {label}
       </label>
@@ -20,7 +20,7 @@ export function TextField({ label, id, className, error, ...props }: TextFieldPr
         id={inputId}
         aria-invalid={!!error}
         className={cn(
-          "mt-2 w-full rounded-[2px] border bg-transparent px-4 py-3 text-sm font-semibold text-text-primary placeholder:font-normal placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
+          "mt-2 w-full rounded-lg border bg-transparent px-4 py-3 text-sm font-semibold text-text-primary placeholder:font-normal placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600",
           error ? "border-red-500" : "border-border-primary",
           className
         )}
