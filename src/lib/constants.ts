@@ -57,6 +57,14 @@ export const footerColumns = [
     heading: "Pikinic",
     links: siblingLinks,
   },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Terms & Conditions", href: "/terms" },
+      { label: "Refund & Cancellation", href: "/refund-policy" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+    ],
+  },
 ];
 
 // Domain data (packages, flight offers) lives in `src/lib/data/` — each

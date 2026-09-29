@@ -61,7 +61,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-12 border-t border-neutral-0/10 pt-12 sm:grid-cols-2">
+        <div className="mt-16 grid gap-12 border-t border-neutral-0/10 pt-12 sm:grid-cols-3">
           {footerColumns.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
               <h3 className="text-sm font-semibold text-neutral-400">

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FlightSummary } from "@/components/checkout/flight-summary";
 import { TravellerFields } from "@/components/checkout/traveller-fields";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,18 @@ export const CheckoutView = () => {
                 })}
 
                 {checkout.submitError && <p className="text-sm text-red-700">{checkout.submitError}</p>}
+
+                <p className="text-sm text-text-secondary">
+                  By continuing, you agree to our{" "}
+                  <Link href="/terms" target="_blank" className="text-green-700 underline">
+                    Terms &amp; Conditions
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/refund-policy" target="_blank" className="text-green-700 underline">
+                    Refund &amp; Cancellation Policy
+                  </Link>
+                  , and confirm each traveller&rsquo;s name matches their passport.
+                </p>
 
                 <Button type="submit" size="lg" variant="primary" disabled={checkout.isPending} className="w-full">
                   {checkout.isPending ? "Starting checkout…" : `Pay ${formatNaira(pricing.customer_price)}`}
