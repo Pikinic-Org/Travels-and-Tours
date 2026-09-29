@@ -18,13 +18,14 @@ export const getJson = async <T>(path: string): Promise<T> => {
 
 // Flights, bookings and payments are never cached — prices and availability
 // are only ever valid for a few minutes.
-export const postJson = async <T>(path: string, body: unknown): Promise<T> => {
+export const postJson = async <T>(path: string, body: unknown, extraHeaders?: Record<string, string>): Promise<T> => {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     cache: "no-store",
     headers: {
       "Content-Type": "application/json",
       "x-flights-proxy-secret": requireProxySecret(),
+      ...extraHeaders,
     },
     body: JSON.stringify(body),
   });
