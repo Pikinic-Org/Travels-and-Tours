@@ -2,9 +2,10 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/constants";
 import { getBlogPosts } from "@/server/modules/content/content.service";
 
-// Packages are left out for now because they aren't available. Add "/packages"
-// and the package entries back here when they are.
-const staticPaths = ["/", "/flights", "/about", "/blogs", "/contact", "/terms", "/refund-policy", "/privacy-policy"];
+// The /packages page is listed, but the individual package pages
+// (/packages/<slug>) are left out for now because they aren't available. Add
+// them back here when they are.
+const staticPaths = ["/", "/flights", "/packages", "/about", "/blogs", "/contact", "/terms", "/refund-policy", "/privacy-policy"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = staticPaths.map((path) => ({ url: `${siteConfig.url}${path === "/" ? "" : path}` }));
