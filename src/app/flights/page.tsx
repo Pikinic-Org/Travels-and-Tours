@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { FlightSearchBar } from "@/components/sections/flight-search-bar";
 import { Cta } from "@/components/sections/cta";
@@ -68,6 +69,20 @@ function toSearchParams(query: SearchParams): FlightSearchParams | null {
   }
 
   return { ...common, flight_type: "oneway", from, to, flights_departure_date: departureDate };
+}
+
+// Only the bare /flights page belongs in search results. Every search makes a
+// new URL, so those are kept out of the index and point back to /flights.
+export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const query = await searchParams;
+  const isSearch = Object.keys(query).length > 0;
+
+  return {
+    title: "Flights",
+    description: "Search flights and book with Pikinic Travel & Tours.",
+    alternates: { canonical: "/flights" },
+    ...(isSearch && { robots: { index: false, follow: true } }),
+  };
 }
 
 export default async function FlightsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
