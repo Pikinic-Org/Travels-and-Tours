@@ -1,10 +1,5 @@
 import { getJson } from "@/server/lib/pikinic-client";
-import type { BlogPost, FlightOffer, Package, RemoteBlogContentBlock, RemoteBlogPost } from "@/types";
-
-const flattenBlogContent = (blocks: RemoteBlogContentBlock[]): string[] =>
-  blocks.filter((block) => block.type !== "image").map((block) => (block as { text: string }).text);
-
-const toBlogPost = (post: RemoteBlogPost): BlogPost => ({ ...post, content: flattenBlogContent(post.content) });
+import type { BlogPost, FlightOffer, Package } from "@/types";
 
 export const getFlightOffers = () => getJson<FlightOffer[]>("/api/flights");
 
@@ -18,15 +13,11 @@ export const getPackageBySlug = async (slug: string): Promise<Package | null> =>
   }
 };
 
-export const getBlogPosts = async (): Promise<BlogPost[]> => {
-  const posts = await getJson<RemoteBlogPost[]>("/api/blog");
-  return posts.map(toBlogPost);
-};
+export const getBlogPosts = () => getJson<BlogPost[]>("/api/blog");
 
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   try {
-    const post = await getJson<RemoteBlogPost>(`/api/blog/${encodeURIComponent(slug)}`);
-    return toBlogPost(post);
+    return await getJson<BlogPost>(`/api/blog/${encodeURIComponent(slug)}`);
   } catch {
     return null;
   }

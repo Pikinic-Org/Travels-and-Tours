@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
+import { BlogContent } from "@/components/blog/blog-content";
 import { CommentsSection } from "@/components/blog/comments-section";
 import { formatBlogDate } from "@/lib/data/blog";
 import { getBlogPostBySlug, getBlogPosts } from "@/server/modules/content/content.service";
@@ -56,12 +57,8 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
           )}
         </div>
 
-        <div className="mt-10 space-y-5">
-          {post.content.map((paragraph, i) => (
-            <p key={i} className="text-base leading-relaxed text-text-secondary">
-              {paragraph}
-            </p>
-          ))}
+        <div className="mt-10">
+          <BlogContent blocks={post.content} />
         </div>
 
         <CommentsSection slug={post.slug} />

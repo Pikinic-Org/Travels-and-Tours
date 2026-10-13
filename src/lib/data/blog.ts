@@ -3,6 +3,13 @@
 // date formatter, since those are used regardless of data source.
 export type BlogCategory = "Travel Tips" | "Visa & Documentation" | "Money & Fares" | "Destination Guides";
 
+// Matches pikinic-site's admin editor blocks. Paragraph and list text can
+// carry **bold**, *italic* and [link](https://…) markers.
+export type BlogContentBlock =
+  | { id: string; type: "h1" | "h2" | "h3" | "paragraph"; text: string }
+  | { id: string; type: "list"; ordered: boolean; items: string[] }
+  | { id: string; type: "image"; url: string; caption?: string };
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -11,7 +18,7 @@ export type BlogPost = {
   author: string;
   publishedAt: string;
   readTime: string;
-  content: string[];
+  content: BlogContentBlock[];
   imageUrl: string;
 };
 
