@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { DeepGreenBackdrop } from "@/components/ui/brand-pattern";
+import Image from "next/image";
 import { placesToVisit } from "@/lib/constants";
 
 // Replaced the homepage flight deals (user, 2026-11-06). Each card opens a WhatsApp enquiry
@@ -28,8 +28,15 @@ export function PlacesToVisit() {
               aria-label={`Make an enquiry on WhatsApp about a tour to ${place.name}, ${place.country}`}
               className="group relative isolate flex aspect-[3/4] w-[80%] shrink-0 snap-start flex-col justify-end overflow-hidden rounded-2xl sm:w-[45%] md:w-full"
             >
-              {/* Placeholder until real photos of each place are added. */}
-              <DeepGreenBackdrop className="transition-transform duration-700 ease-out group-hover:scale-105" />
+              <Image
+                src={place.image.src}
+                alt={place.image.alt}
+                fill
+                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 80vw"
+                className="-z-10 object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              {/* Dark gradient rising from the bottom, as on the deep-green cards, so the text stays legible. */}
+              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-neutral-900/90 via-neutral-900/25 to-transparent" />
 
               <div className="relative p-5">
                 <p className="text-sm font-semibold text-neutral-0/70">{place.country}</p>

@@ -17,19 +17,16 @@ export const whatsappLink = (phone: string, message?: string) =>
 export const enquiryWhatsapp = "+2348065794790";
 
 // Places to visit on the homepage: the destinations of the live packages (user, 2026-11-06).
-// No photos yet, so the cards use the deep-green placeholder like the package cards.
+// Photos are of each place, not of a Pikinic trip (Unsplash, free licence).
 export const placesToVisit = [
-  { name: "Zanzibar", country: "Tanzania" },
-  { name: "Accra", country: "Ghana" },
-  { name: "London", country: "United Kingdom" },
-  { name: "Dubai", country: "United Arab Emirates" },
+  { name: "Zanzibar", country: "Tanzania", image: { src: "/images/place-zanzibar.jpg", alt: "A wooden pier over turquoise sea off a white beach in Zanzibar" } },
+  { name: "Accra", country: "Ghana", image: { src: "/images/place-accra.jpg", alt: "Black Star Gate in Accra under a blue sky" } },
+  { name: "London", country: "United Kingdom", image: { src: "/images/place-london.jpg", alt: "Big Ben and the Houses of Parliament in London" } },
+  { name: "Dubai", country: "United Arab Emirates", image: { src: "/images/place-dubai.jpg", alt: "The Dubai skyline with the Burj Khalifa at dusk" } },
 ].map((place) => ({
   ...place,
   href: whatsappLink(enquiryWhatsapp, `Hi Pikinic, I'd like to make an enquiry about this tour: ${place.name}, ${place.country}.`),
 }));
-
-// A general tour enquiry, for the "What we do" banner.
-export const tourEnquiryHref = whatsappLink(enquiryWhatsapp, "Hi Pikinic, I'd like to make an enquiry about a tour.");
 
 export const navLinks = [
   { label: "Home", href: "/" },

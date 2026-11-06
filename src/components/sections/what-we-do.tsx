@@ -4,37 +4,48 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { tourEnquiryHref } from "@/lib/constants";
+import { siblingLinks } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-// "What we do" banner under the hero (user, 2026-11-06). References from Behance: the numbered
-// tab row from Phenomenon Studio's Effortless redesign, and poster-sized type set on the photo
-// from NordWayTours. One photo, one line and one button per service, each to the right place.
-// The photos are stand-ins until real ones are chosen.
+// Banner under the hero showing Pikinic's other businesses (user, 2026-11-06). References from
+// Behance: the numbered tab row from Phenomenon Studio's Effortless redesign, and poster-sized
+// type set on the photo from NordWayTours. Links come from siblingLinks, so they match the footer:
+// Study Abroad goes to its site, Stay and Ride and Finance to WhatsApp on 0806 579 4790.
+// Photos: Unsplash (free licence) for Study Abroad and Stay and Ride; Finance is the main site's.
+const hrefFor = (label: string) => siblingLinks.find((link) => link.label === label)?.href ?? "https://www.pikinic.ng";
+
 const slides = [
   {
-    label: "Flights",
-    title: ["Search, compare and ", "book", " your flight."],
-    text: "Search fares, pick your flight and book it in one place.",
-    cta: "Search flights",
-    href: "/flights",
-    image: { src: "/images/banner-flights.png", alt: "A traveller with a suitcase and passport walking through an airport" },
+    label: "Study abroad",
+    title: ["Study abroad with ", "no", " agent fees."],
+    text: "School placement, university applications and visa support, at no cost to you.",
+    cta: "Visit Study Abroad",
+    href: hrefFor("Study Abroad"),
+    image: {
+      src: "/images/banner-study-abroad.jpg",
+      alt: "Two graduates in gowns smiling and raising their caps",
+      position: "object-[center_30%]",
+    },
   },
   {
-    label: "Packages",
-    title: ["Holidays ", "planned", " from start to finish."],
-    text: "Ready-made trips, with the details handled for you.",
-    cta: "View packages",
-    href: "/packages",
-    image: { src: "/images/travel-tours.jpg", alt: "A group of friends cheering together outdoors" },
+    label: "Stay and ride",
+    title: ["A place to ", "stay", " and a car to get around."],
+    text: "Short-stay apartments and rental cars, sorted before you land.",
+    cta: "Enquire on WhatsApp",
+    href: hrefFor("Stay & Ride"),
+    image: { src: "/images/banner-stay-ride.jpg", alt: "A man at the wheel of a car", position: "object-center" },
   },
   {
-    label: "Tours",
-    title: ["Tell us where you want to ", "go", "."],
-    text: "Ask us on WhatsApp about a tour, and we'll plan it with you.",
-    cta: "Make an enquiry",
-    href: tourEnquiryHref,
-    image: { src: "/images/banner-tours.jpg", alt: "A historic stone building with a tall tower" },
+    label: "Finance",
+    title: ["The ", "money", " side of moving abroad."],
+    text: "Proof of funds, school fee and visa fee payments, and study loans.",
+    cta: "Enquire on WhatsApp",
+    href: hrefFor("Finance"),
+    image: {
+      src: "/images/banner-finance.jpg",
+      alt: "A man reading a document at a desk with a laptop and calculator",
+      position: "object-[center_20%]",
+    },
   },
 ];
 
@@ -44,7 +55,7 @@ export function WhatWeDo() {
   const slide = slides[active];
 
   return (
-    <section aria-label="What we do" className="py-16 md:py-24">
+    <section aria-label="More from Pikinic" className="py-16 md:py-24">
       <Container>
         <div
           className={cn(
@@ -65,6 +76,7 @@ export function WhatWeDo() {
               sizes="(min-width: 1280px) 1200px, 100vw"
               className={cn(
                 "-z-10 object-cover transition-opacity duration-700 ease-out",
+                s.image.position,
                 i === active ? "opacity-100" : "opacity-0"
               )}
             />
@@ -72,7 +84,7 @@ export function WhatWeDo() {
           {/* Keeps the tabs and the type legible on any photo. */}
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-neutral-900/85 via-neutral-900/35 to-neutral-900/50" />
 
-          <div role="tablist" aria-label="Our services" className="grid grid-cols-3 gap-3 p-5 md:gap-6 md:p-8">
+          <div role="tablist" aria-label="Pikinic services" className="grid grid-cols-3 gap-3 p-5 md:gap-6 md:p-8">
             {slides.map((s, i) => (
               <button
                 key={s.label}
