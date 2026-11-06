@@ -72,6 +72,8 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
+                      // WhatsApp (Finance, Stay and Ride) opens in a new tab so the visitor keeps the site.
+                      {...(link.href.startsWith("https://wa.me/") ? { target: "_blank", rel: "noreferrer noopener" } : {})}
                       className="text-sm text-neutral-200 transition-colors hover:text-text-inverse"
                     >
                       {link.label}

@@ -56,7 +56,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (href) {
       return (
-        <Link href={href} className={classes}>
+        <Link
+          href={href}
+          className={classes}
+          // WhatsApp opens in a new tab so the visitor keeps the site.
+          {...(href.startsWith("https://wa.me/") ? { target: "_blank", rel: "noreferrer noopener" } : {})}
+        >
           {children}
           {icon ?? (arrow && <Arrow />)}
         </Link>

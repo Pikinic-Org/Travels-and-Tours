@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/sections/hero";
+import { WhatWeDo } from "@/components/sections/what-we-do";
 import { Packages } from "@/components/sections/packages";
-import { FlightOffers } from "@/components/sections/flight-offers";
+import { PlacesToVisit } from "@/components/sections/places-to-visit";
 import { Cta } from "@/components/sections/cta";
 import { siteConfig, socialLinks } from "@/lib/constants";
 
@@ -29,8 +30,9 @@ export default function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
       <Hero />
+      <WhatWeDo />
       <Packages />
-      <FlightOffers />
+      <PlacesToVisit />
       <Cta />
     </>
   );

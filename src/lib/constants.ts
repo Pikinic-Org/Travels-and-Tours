@@ -9,6 +9,28 @@ export const siteConfig = {
   phones: ["+2348055308558", "+2349022525013"],
 };
 
+// A wa.me link that opens a chat with the message already typed.
+export const whatsappLink = (phone: string, message?: string) =>
+  `https://wa.me/${phone.replace(/\D/g, "")}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
+
+// Tour enquiries, Finance and Stay and Ride go to WhatsApp on 0806 579 4790 (user, 2026-11-06).
+export const enquiryWhatsapp = "+2348065794790";
+
+// Places to visit on the homepage: the destinations of the live packages (user, 2026-11-06).
+// No photos yet, so the cards use the deep-green placeholder like the package cards.
+export const placesToVisit = [
+  { name: "Zanzibar", country: "Tanzania" },
+  { name: "Accra", country: "Ghana" },
+  { name: "London", country: "United Kingdom" },
+  { name: "Dubai", country: "United Arab Emirates" },
+].map((place) => ({
+  ...place,
+  href: whatsappLink(enquiryWhatsapp, `Hi Pikinic, I'd like to make an enquiry about this tour: ${place.name}, ${place.country}.`),
+}));
+
+// A general tour enquiry, for the "What we do" banner.
+export const tourEnquiryHref = whatsappLink(enquiryWhatsapp, "Hi Pikinic, I'd like to make an enquiry about a tour.");
+
 export const navLinks = [
   { label: "Home", href: "/" },
   { label: "Flights", href: "/flights" },
@@ -18,8 +40,8 @@ export const navLinks = [
 ];
 
 export const socialLinks = [
-  { label: "Instagram", href: "https://instagram.com/pikinic", icon: "instagram" },
-  { label: "X", href: "https://x.com/pikinic_ng", icon: "x" },
+  // The Travels account (user, 2026-11-06). X removed the same day.
+  { label: "Instagram", href: "https://www.instagram.com/pikinictravels_ng/", icon: "instagram" },
   { label: "TikTok", href: "https://tiktok.com/@pikinic.ng", icon: "tiktok" },
   { label: "LinkedIn", href: "https://linkedin.com/company/pikinic", icon: "linkedin" },
 ] as const;
@@ -33,12 +55,15 @@ export const siblingLinks = [
   { label: "Travel & Tours", href: "https://travelsandtours.pikinic.ng" },
   {
     label: "Stay & Ride",
-    href: "https://stayandride.pikinic.ng",
+    href: whatsappLink(enquiryWhatsapp, "Hi Pikinic, I'd like to make an enquiry about Stay and Ride (a short-stay apartment or a rental car)."),
     description: "Accommodation and local rides sorted before you land.",
   },
   {
     label: "Finance",
-    href: "https://firstmushrooom.com",
+    href: whatsappLink(
+      enquiryWhatsapp,
+      "Hi Pikinic, I'd like to make an enquiry about your finance services (proof of funds, school fees, visa fees or a study loan)."
+    ),
     description: "Proof of funds and the financial documentation your journey needs.",
   },
 ];
