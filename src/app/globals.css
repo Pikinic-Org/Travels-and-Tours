@@ -180,7 +180,7 @@ h1, h2, h3, h4, h5, h6 {
   filter: blur(0);
 }
 
-/* "What we do" banner: the active tab's line fills over 7s, and the banner moves to the next
+/* "What we do" banner: the active tab's line fills over 3.5s (user wanted it quicker), and the banner moves to the next
    tab when it ends (onAnimationEnd). Paused on hover or focus. No animation under reduced
    motion, so the banner stays on the tab the visitor picks. */
 @keyframes banner-progress {
@@ -189,7 +189,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .banner-progress {
   transform-origin: left;
-  animation: banner-progress 7s linear forwards;
+  animation: banner-progress 3.5s linear forwards;
 }
 .banner-paused .banner-progress {
   animation-play-state: paused;

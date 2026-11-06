@@ -28,6 +28,20 @@ export const placesToVisit = [
   href: whatsappLink(enquiryWhatsapp, `Hi Pikinic, I'd like to make an enquiry about this tour: ${place.name}, ${place.country}.`),
 }));
 
+// Package cards open a WhatsApp enquiry on 0806 579 4790 instead of the cart (user, 2026-11-06).
+export const packageEnquiryHref = (pkg: { name: string; destination: string; duration: string }) =>
+  whatsappLink(enquiryWhatsapp, `Hi Pikinic, I'd like to make an enquiry about this package: ${pkg.name} (${pkg.destination}, ${pkg.duration}).`);
+
+// Destination photos for package cards, used until a photo is uploaded for the package in the
+// admin (pkg.imageUrls). Keyed by destination in lower case. Unsplash, free licence. These are
+// different shots from placesToVisit so the two homepage rows don't repeat.
+export const packagePhotos: Record<string, { src: string; alt: string }> = {
+  zanzibar: { src: "/images/package-zanzibar.jpg", alt: "Boats on turquoise water off a beach lined with thatched umbrellas in Zanzibar" },
+  accra: { src: "/images/package-accra.jpg", alt: "A painted fishing boat on a palm-lined beach in Ghana" },
+  london: { src: "/images/package-london.jpg", alt: "A black cab and a red bus under Union Jack bunting on a London street" },
+  dubai: { src: "/images/package-dubai.jpg", alt: "The Burj Al Arab and the Palm Jumeirah from above" },
+};
+
 export const navLinks = [
   { label: "Home", href: "/" },
   { label: "Flights", href: "/flights" },
